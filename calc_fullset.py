@@ -459,7 +459,7 @@ def meta_ful(set_num_dict,evert_list,bang_on_dict,list40_0):
         for case in case_list:
             for i in range(124,128): # 하팔법
                 for j in range(128,132): # 상목보
-                    for k in range(132,136): #신반귀
+                    for k in range(132,136): # 신반귀
                         for l in range(101,116): # 방어구
                             if set_num_dict.get(str(i))==3 and \
                                 set_num_dict.get(str(j))==3 and \
