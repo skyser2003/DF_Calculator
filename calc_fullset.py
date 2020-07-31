@@ -451,9 +451,9 @@ def meta_ful(set_num_dict,evert_list,bang_on_dict,list40_0):
         if mode==2:
             case_list=[[2,3,3,2],[3,2,3,2],[3,3,2,2],[3,3,3,1]]
         if mode==3:
-            case_list=[[2,2,3,3],[3,1,3,3],[3,2,2,3],[3,2,3,2]]
-        if mode==4:
             case_list=[[1,3,3,3],[2,2,3,3],[2,3,2,3],[2,3,3,2]]
+        if mode==4:
+            case_list=[[2,2,3,3],[3,1,3,3],[3,2,2,3],[3,2,3,2]]
         if mode==5:
             case_list=[[2,3,2,3],[3,2,2,3],[3,3,1,3],[3,3,2,2]]
         for case in case_list:
