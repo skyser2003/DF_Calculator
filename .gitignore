@@ -1,10 +1,14 @@
 # Python
 *.pyc
 
+# VS Code
+.vscode/
+
 # Project
 API_key.txt
 my_cha.png
 DATA.xlsx
+preset.XLSX
 ext_img/
 image/
 image_effect/
