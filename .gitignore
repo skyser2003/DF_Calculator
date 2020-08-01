@@ -1,8 +1,9 @@
 # Python
 *.pyc
 
-# VS Code
+# IDE
 .vscode/
+.idea/
 
 # Project
 API_key.txt
