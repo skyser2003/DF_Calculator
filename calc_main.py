@@ -508,24 +508,26 @@ def calc(mode):
     global style_calced,creature_calced
     style_calced=style_select.get()
     creature_calced=creature_select.get()
+
     if style_calced == '증뎀10%':
         fixed_dam=10
-    if style_calced == '증뎀15%':
+    elif style_calced == '증뎀15%':
         fixed_dam=15
-    if style_calced == '추뎀10%':
+    elif style_calced == '추뎀10%':
         extra_bon=10
-    if style_calced == '속강32':
+    elif style_calced == '속강32':
         ele_in=ele_in+32
+    elif style_calced == '크증10%':
+        fixed_cri=10
+
     if creature_calced == '모공15%':
         extra_all=15
-    if creature_calced == '크증18%':
+    elif creature_calced == '크증18%':
         fixed_cri=18
         extra_pas2=1
-    if creature_calced == '물마독공18%':
+    elif creature_calced == '물마독공18%':
         extra_att=18
         extra_pas2=1
-    if style_calced == '크증10%':
-        fixed_cri=10
 
     #잔향 부여 선기입 (직접 선택)
     if inv_tg ==1:
