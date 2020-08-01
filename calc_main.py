@@ -520,7 +520,9 @@ def calc(mode):
     elif style_calced == '크증10%':
         fixed_cri=10
 
-    if creature_calced == '모공15%':
+    if creature_calced == '증뎀10%':
+        fixed_dam = max(fixed_dam, 10)
+    elif creature_calced == '모공15%':
         extra_all=15
     elif creature_calced == '크증18%':
         fixed_cri=18
@@ -4559,7 +4561,7 @@ style_list=['증뎀15%','속강32','증뎀10%','추뎀10%','크증10%','기타(�
 style_select=tkinter.ttk.Combobox(self,width=13,values=style_list)
 style_select.set('증뎀15%')
 style_select.place(x=390-17,y=250+52)
-creature_list=['모공15%','크증18%','물마독공18%','기타(직접비교)']
+creature_list=['증뎀10%','모공15%','크증18%','물마독공18%','기타(직접비교)']
 creature_select=tkinter.ttk.Combobox(self,width=13,values=creature_list)
 creature_select.set('크증18%')
 creature_select.place(x=390-17,y=280+52)
