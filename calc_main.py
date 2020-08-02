@@ -2594,18 +2594,33 @@ def show_result_dealer():
         now_ele=now_base_array[9]
         change_updam=15;change_cridam=10;change_bondam=10;change_ele=32
         no_style_default=1
-        if style_calced=='증뎀10%': no_style_default=(now_updam-10+100)/(now_updam+100);now_updam=now_updam-10
-        elif style_calced=='증뎀15%': no_style_default=(now_updam-15+100)/(now_updam+100);now_updam=now_updam-15
+
+        if style_calced == '증뎀10%' and creature_calced != '증뎀10%': no_style_default=(now_updam-10+100)/(now_updam+100);now_updam=now_updam-10
+        elif style_calced == '증뎀15%':
+            if creature_calced == '증뎀10%':
+                updam_diff = -5
+            else:
+                updam_diff = -15
+
+            no_style_default = (now_updam + updam_diff + 100) / (now_updam + 100)
+            now_updam += updam_diff
         elif style_calced=='크증10%' and creature_calced!='크증18%': no_style_default=(now_cridam-10+100)/(now_cridam+100);now_cridam=now_cridam-10
         elif style_calced=='추뎀10%': no_style_default=(now_bondam-10+100)/(now_bondam+100);now_bondam=now_bondam-10
         elif style_calced=='속강32': no_style_default=((now_ele-32)*0.0045+1.05)/((now_ele)*0.0045+1.05);now_ele=now_ele-32
-        if creature_calced=='크증18%': change_cridam=0
+
+        if creature_calced=='크증18%':
+            change_cridam=0
+        elif creature_calced == '증뎀10%':
+            change_updam = 5
+
         style_updam=str(round((now_updam+change_updam+100)/(now_updam+100)*no_style_default*100-100,2))+"%"
         style_cridam=str(round((now_cridam+change_cridam+100)/(now_cridam+100)*no_style_default*100-100,2))+"%"
         style_bondam=str(round((now_bondam+change_bondam+100)/(now_bondam+100)*no_style_default*100-100,2))+"%"
         style_ele=str(round(((now_ele+change_ele)*0.0045+1.05)/((now_ele)*0.0045+1.05)*no_style_default*100-100,2))+"%"
+
         result_explain="현 계산값에서 데미지 칭호를 변경했을 때의 증감율을 나타냅니다. 특정 액티브 스킬공격력 증가 옵션은 계산되지 않습니다.\n\n\n"
         result_str='증뎀15% 칭호 : '+style_updam+'\n크증10% 칭호 : '+style_cridam+'\n추뎀10% 칭호 : '+style_bondam+'\n속강+32 칭호 : '+style_ele
+
         return result_explain+result_str
     
     style_compare_bt=tkinter.Label(result_window,image=style_compare_img,bd=0,bg=result_sub)
