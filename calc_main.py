@@ -441,7 +441,7 @@ def calc(mode):
     know_dict={}
     ##단품산물
     for know_one in know_list:
-        if eval('select_item["tg{}"]'.format(know_one)) == 1:
+        if select_item[f"tg{know_one}"] == 1:
             eval('list{}.append(str({}))'.format(know_one[0:2],know_one))
             if know_one[0:2] =='11':
                 eval('list{}_0.append(str({}))'.format(know_one[0:2],know_one))
@@ -3553,13 +3553,13 @@ def save_checklist():
 
             for code in opt_save.keys():
                 try:
-                    if eval("select_item['tg{}']".format(code)) == 1:
+                    if select_item[f"tg{code}"] == 1:
                         save_cell(opt_save[code],2+ssnum2).value=1
                 except KeyError as error:
                     passss1=1
                     
                 try:
-                    if eval("select_item['tg{}']".format(code)) == 0:
+                    if select_item[f"tg{code}"] == 0:
                         save_cell(opt_save[code],2+ssnum2).value=0
                 except KeyError as error:
                     passss1=1
@@ -3983,14 +3983,16 @@ def guide_speed():
 ## 장비 선택시 점등
 select_item={}
 def click_equipment(code):
-    if eval("select_item['tg{}']".format(code))==0:
+    code = str(code)
+
+    if select_item[f"tg{code}"]==0:
         eval('select_{}'.format(code))['image']=image_list[str(code)]
-        select_item['tg'+str('{}'.format(code))]=1
-    elif eval("select_item['tg{}']".format(code))==1:
+        select_item[f"tg{code}"]=1
+    elif select_item[f"tg{code}"]==1:
         eval('select_{}'.format(code))['image']=image_list2[str(code)]
-        select_item['tg'+str('{}'.format(code))]=0
-    if len(str(code))==5:
-        check_set(int('1'+str(code)[2:4]))
+        select_item[f"tg{code}"]=0
+    if len(code)==5:
+        check_set(int('1'+code[2:4]))
 
 ## 실제 저장 토글값과 이미지 표시값 동기화
 def check_equipment():
@@ -4011,17 +4013,17 @@ def check_equipment():
                    '33430100','33430110','33430120','33430130','33430140','33430150']
     for i in range(11010,43551):
         try:
-            if eval("select_item['tg{}']".format(i))==0:
+            if select_item[f"tg{i}"]==0:
                 eval('select_{}'.format(i))['image']=image_list2[str(i)]
-            elif eval("select_item['tg{}']".format(i))==1:
+            elif select_item[f"tg{i}"]==1:
                 eval('select_{}'.format(i))['image']=image_list[str(i)]
         except:
             pass
     for i in know_list2+know_set_list+know_jin_list:
         try:
-            if eval("select_item['tg{}']".format(i))==0:
+            if select_item[f"tg{i}"]==0:
                 eval('select_{}'.format(i))['image']=image_list2[str(i)]
-            elif eval("select_item['tg{}']".format(i))==1:
+            elif select_item[f"tg{i}"]==1:
                 eval('select_{}'.format(i))['image']=image_list[str(i)]
         except:
             pass
@@ -4422,24 +4424,25 @@ file_list = os.listdir("image")
 for i in file_list:
     if i[-3:]!='gif':
         if i[-5]=='n':
-            image_list[i[:-5]]=eval('PhotoImage(file="image/{}")'.format(i))
+            image_list[i[:-5]] = PhotoImage(file=f"image/{i}")
         elif i[-5]=='f':
-            image_list2[i[:-5]]=eval('PhotoImage(file="image/{}")'.format(i))
+            image_list2[i[:-5]] = PhotoImage(file=f"image/{i}")
         elif i[-5]=='t':
-            image_list_tag[i[:-5]]=eval('PhotoImage(file="image/{}")'.format(i))
+            image_list_tag[i[:-5]] = PhotoImage(file=f"image/{i}")
+
         if i[0]=='n' and i[-5]=='t':
-            image_list_tag[i[:-5]]=eval('PhotoImage(file="image/{}")'.format(i))
+            image_list_tag[i[:-5]] = PhotoImage(file=f"image/{i}")
         elif i[0]=='n':
-            image_list[i[:-4]]=eval('PhotoImage(file="image/{}")'.format(i))
+            image_list[i[:-4]] = PhotoImage(file=f"image/{i}")
 
 for i in range(1,56):
     try:
-        image_list_set[str(100+i)]=eval('PhotoImage(file="set_name/{}.png")'.format(i+100))
-        image_list_set2[str(100+i)]=eval('PhotoImage(file="set_name/{}f.png")'.format(i+100))
+        image_list_set[str(100+i)] = PhotoImage(file=f"set_name/{i+100}.png")
+        image_list_set2[str(100+i)] = PhotoImage(file=f"set_name/{i+100}f.png")
     except:
         pass
 for i in range(1,18):
-    image_list_set[str(200+i)]=eval('PhotoImage(file="set_name/{}.png")'.format(i+200))
+    image_list_set[str(200+i)] = PhotoImage(file=f"set_name/{i+200}.png")
 image_list['99990']=PhotoImage(file="image/99990.png")
 image_list2['99990']=PhotoImage(file="image/99990.png")
 image_list_tag['99990']=PhotoImage(file="image/99990.png")
