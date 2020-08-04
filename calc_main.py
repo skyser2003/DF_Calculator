@@ -82,6 +82,7 @@ all_list_list_num=0 #계산 전체 경우의 수
 inv_tg=0 #잔향 부여 선택(0:미부여,1:선택부여,2:최적부여)
 
 equip_buttons = {}
+set_buttons = {}
 
 ## GUI 메인
 self = tkinter.Tk()
@@ -4091,7 +4092,7 @@ def click_set(code):
                     select_item['tg'+str_i+code_str+'0']=0 ##모든 체크를 0으로 만듬
                 except KeyError as error:
                     c=1
-            eval('set'+str(code))['image']=image_list_set2[str(code)] ##세트이미지도 오프로 바꿈
+            set_buttons[str(code)]['image']=image_list_set2[str(code)] ##세트이미지도 오프로 바꿈
         else: ## 채택 숫자가 3미만이면
             for i in range(11,44): ##모든 부위에서
                 try:
@@ -4100,7 +4101,7 @@ def click_set(code):
                     select_item['tg'+str_i+code_str+'0']=1 ##모든 체크를 1으로 만듬
                 except KeyError as error:
                     c=1
-            eval('set'+str(code))['image']=image_list_set[str(code)] ##세트이미지도 온으로 바꿈
+            set_buttons[str(code)]['image']=image_list_set[str(code)] ##세트이미지도 온으로 바꿈
 
             
     else:
@@ -4118,7 +4119,7 @@ def click_set(code):
                     select_item['tg'+str(i)+code_str+'0']=0 ##모든 체크를 0으로 만듬
                 except KeyError as error:
                     c=1
-            eval('set'+str(code))['image']=image_list_set2[str(code)] ##세트이미지도 오프로 바꿈
+            set_buttons[str(code)]['image']=image_list_set2[str(code)] ##세트이미지도 오프로 바꿈
             
         else: ## 채택 숫자가 5미만이면
             for i in range(11,16): ## 방어구 부위에서
@@ -4128,7 +4129,7 @@ def click_set(code):
                     select_item['tg'+str_i+code_str+'0']=1 ##모든 체크를 1으로 만듬
                 except KeyError as error:
                     c=1
-            eval('set'+str(code))['image']=image_list_set[str(code)] ##세트이미지도 온으로 바꿈
+            set_buttons[str(code)]['image']=image_list_set[str(code)] ##세트이미지도 온으로 바꿈
 
 ## 세트명 태그 점등 여부와 실제 토글값 동기화
 def check_set(code):
@@ -4165,14 +4166,14 @@ def check_set(code):
                 
     if code < 116:
         if set_checked==5:
-            eval('set'+str(code))['image']=image_list_set[str(code)]
+            set_buttons[str(code)]['image']=image_list_set[str(code)]
         else:
-            eval('set'+str(code))['image']=image_list_set2[str(code)]
+            set_buttons[str(code)]['image']=image_list_set2[str(code)]
     else:
         if set_checked==3:
-            eval('set'+str(code))['image']=image_list_set[str(code)]
+            set_buttons[str(code)]['image']=image_list_set[str(code)]
         else:
-            eval('set'+str(code))['image']=image_list_set2[str(code)]
+            set_buttons[str(code)]['image']=image_list_set2[str(code)]
 
 # 정지
 def stop_calc():
@@ -4631,41 +4632,41 @@ show_count2=tkinter.Label(self,font=guide_font,fg="white",bg=dark_sub)
 show_count2.place(x=430+259,y=480-287)
 showcon2=show_count2.configure
 
-set101=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['101'],command=lambda:click_set(101));set101.place(x=29,y=100)
-set102=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['102'],command=lambda:click_set(102));set102.place(x=29,y=130)
-set103=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['103'],command=lambda:click_set(103));set103.place(x=29,y=160)
-set104=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['104'],command=lambda:click_set(104));set104.place(x=29,y=190)
-set105=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['105'],command=lambda:click_set(105));set105.place(x=29,y=220)
-set106=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['106'],command=lambda:click_set(106));set106.place(x=29,y=250)
-set107=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['107'],command=lambda:click_set(107));set107.place(x=29,y=280)
-set108=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['108'],command=lambda:click_set(108));set108.place(x=29,y=310)
-set109=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['109'],command=lambda:click_set(109));set109.place(x=29,y=340)
-set110=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['110'],command=lambda:click_set(110));set110.place(x=29,y=370)
-set111=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['111'],command=lambda:click_set(111));set111.place(x=29,y=400)
-set112=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['112'],command=lambda:click_set(112));set112.place(x=29,y=430)
-set113=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['113'],command=lambda:click_set(113));set113.place(x=29,y=460)
-set114=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['114'],command=lambda:click_set(114));set114.place(x=29,y=490)
-set115=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['115'],command=lambda:click_set(115));set115.place(x=29,y=520) ##
-set116=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['116'],command=lambda:click_set(116));set116.place(x=320-33,y=100)
-set117=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['117'],command=lambda:click_set(117));set117.place(x=320-33,y=130)
-set118=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['118'],command=lambda:click_set(118));set118.place(x=320-33,y=160)
-set119=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['119'],command=lambda:click_set(119));set119.place(x=320-33,y=190) ##
-set120=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['120'],command=lambda:click_set(120));set120.place(x=500-17,y=100)
-set121=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['121'],command=lambda:click_set(121));set121.place(x=500-17,y=130)
-set122=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['122'],command=lambda:click_set(122));set122.place(x=500-17,y=160)
-set123=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['123'],command=lambda:click_set(123));set123.place(x=500-17,y=190) ##
-set128=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['128'],command=lambda:click_set(128));set128.place(x=29,y=570)
-set129=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['129'],command=lambda:click_set(129));set129.place(x=29,y=600)
-set130=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['130'],command=lambda:click_set(130));set130.place(x=29,y=630)
-set131=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['131'],command=lambda:click_set(131));set131.place(x=29,y=660) ##
-set124=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['124'],command=lambda:click_set(124));set124.place(x=225,y=570)
-set125=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['125'],command=lambda:click_set(125));set125.place(x=225,y=600)
-set126=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['126'],command=lambda:click_set(126));set126.place(x=225,y=630)
-set127=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['127'],command=lambda:click_set(127));set127.place(x=225,y=660) ##
-set132=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['132'],command=lambda:click_set(132));set132.place(x=421,y=570)
-set133=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['133'],command=lambda:click_set(133));set133.place(x=421,y=600)
-set134=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['134'],command=lambda:click_set(134));set134.place(x=421,y=630)
-set135=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['135'],command=lambda:click_set(135));set135.place(x=421,y=660) ##
+set_buttons["101"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['101'],command=lambda:click_set(101));set_buttons["101"].place(x=29,y=100)
+set_buttons["102"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['102'],command=lambda:click_set(102));set_buttons["102"].place(x=29,y=130)
+set_buttons["103"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['103'],command=lambda:click_set(103));set_buttons["103"].place(x=29,y=160)
+set_buttons["104"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['104'],command=lambda:click_set(104));set_buttons["104"].place(x=29,y=190)
+set_buttons["105"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['105'],command=lambda:click_set(105));set_buttons["105"].place(x=29,y=220)
+set_buttons["106"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['106'],command=lambda:click_set(106));set_buttons["106"].place(x=29,y=250)
+set_buttons["107"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['107'],command=lambda:click_set(107));set_buttons["107"].place(x=29,y=280)
+set_buttons["108"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['108'],command=lambda:click_set(108));set_buttons["108"].place(x=29,y=310)
+set_buttons["109"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['109'],command=lambda:click_set(109));set_buttons["109"].place(x=29,y=340)
+set_buttons["110"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['110'],command=lambda:click_set(110));set_buttons["110"].place(x=29,y=370)
+set_buttons["111"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['111'],command=lambda:click_set(111));set_buttons["111"].place(x=29,y=400)
+set_buttons["112"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['112'],command=lambda:click_set(112));set_buttons["112"].place(x=29,y=430)
+set_buttons["113"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['113'],command=lambda:click_set(113));set_buttons["113"].place(x=29,y=460)
+set_buttons["114"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['114'],command=lambda:click_set(114));set_buttons["114"].place(x=29,y=490)
+set_buttons["115"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['115'],command=lambda:click_set(115));set_buttons["115"].place(x=29,y=520) ##
+set_buttons["116"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['116'],command=lambda:click_set(116));set_buttons["116"].place(x=320-33,y=100)
+set_buttons["117"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['117'],command=lambda:click_set(117));set_buttons["117"].place(x=320-33,y=130)
+set_buttons["118"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['118'],command=lambda:click_set(118));set_buttons["118"].place(x=320-33,y=160)
+set_buttons["119"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['119'],command=lambda:click_set(119));set_buttons["119"].place(x=320-33,y=190) ##
+set_buttons["120"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['120'],command=lambda:click_set(120));set_buttons["120"].place(x=500-17,y=100)
+set_buttons["121"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['121'],command=lambda:click_set(121));set_buttons["121"].place(x=500-17,y=130)
+set_buttons["122"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['122'],command=lambda:click_set(122));set_buttons["122"].place(x=500-17,y=160)
+set_buttons["123"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['123'],command=lambda:click_set(123));set_buttons["123"].place(x=500-17,y=190) ##
+set_buttons["128"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['128'],command=lambda:click_set(128));set_buttons["128"].place(x=29,y=570)
+set_buttons["129"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['129'],command=lambda:click_set(129));set_buttons["129"].place(x=29,y=600)
+set_buttons["130"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['130'],command=lambda:click_set(130));set_buttons["130"].place(x=29,y=630)
+set_buttons["131"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['131'],command=lambda:click_set(131));set_buttons["131"].place(x=29,y=660) ##
+set_buttons["124"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['124'],command=lambda:click_set(124));set_buttons["124"].place(x=225,y=570)
+set_buttons["125"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['125'],command=lambda:click_set(125));set_buttons["125"].place(x=225,y=600)
+set_buttons["126"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['126'],command=lambda:click_set(126));set_buttons["126"].place(x=225,y=630)
+set_buttons["127"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['127'],command=lambda:click_set(127));set_buttons["127"].place(x=225,y=660) ##
+set_buttons["132"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['132'],command=lambda:click_set(132));set_buttons["132"].place(x=421,y=570)
+set_buttons["133"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['133'],command=lambda:click_set(133));set_buttons["133"].place(x=421,y=600)
+set_buttons["134"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['134'],command=lambda:click_set(134));set_buttons["134"].place(x=421,y=630)
+set_buttons["135"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['135'],command=lambda:click_set(135));set_buttons["135"].place(x=421,y=660) ##
 
 
 ##잔향부여
@@ -4758,11 +4759,11 @@ inv_select3_1.bind("<<ComboboxSelected>>",update_inv_buf)
 inv_select4_1.bind("<<ComboboxSelected>>",update_inv_buf2)
 update_inv(0)
 ##장비융합
-set151=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['151'],command=lambda:click_set(151));set151.place(x=710+10,y=445+95) ##
-set152=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['152'],command=lambda:click_set(152));set152.place(x=710+10,y=475+95) ##
-set153=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['153'],command=lambda:click_set(153));set153.place(x=710+10,y=505+95) ##
-set154=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['154'],command=lambda:click_set(154));set154.place(x=710+10,y=535+95) ##
-set155=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['155'],command=lambda:click_set(155));set155.place(x=710+10,y=565+95) ##
+set_buttons["151"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['151'],command=lambda:click_set(151));set_buttons["151"].place(x=710+10,y=445+95) ##
+set_buttons["152"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['152'],command=lambda:click_set(152));set_buttons["152"].place(x=710+10,y=475+95) ##
+set_buttons["153"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['153'],command=lambda:click_set(153));set_buttons["153"].place(x=710+10,y=505+95) ##
+set_buttons["154"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['154'],command=lambda:click_set(154));set_buttons["154"].place(x=710+10,y=535+95) ##
+set_buttons["155"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['155'],command=lambda:click_set(155));set_buttons["155"].place(x=710+10,y=565+95) ##
 select_item['tg41510']=0;equip_buttons["41510"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['41510'], command=lambda:click_equipment(41510))
 select_item['tg41520']=0;equip_buttons["41520"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['41520'], command=lambda:click_equipment(41520))
 select_item['tg41530']=0;equip_buttons["41530"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['41530'], command=lambda:click_equipment(41530))
