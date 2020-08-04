@@ -42,6 +42,8 @@ class Calculator:
     def __init__(self):
         self.result_window = None
         self.photo_images = []
+        self.all_list_list_num = 0  # 계산 전체 경우의 수
+        self.a_num_all = 0
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -49,16 +51,19 @@ class Calculator:
 
         return photo_image
 
+
 calculator = Calculator()
 
 
 def _from_rgb(rgb):
     return "#%02x%02x%02x" % rgb
 
+
 dark_main=_from_rgb((32, 34, 37))
 dark_sub=_from_rgb((50, 46, 52))
 dark_blue=_from_rgb((29, 30, 36))
 result_sub=_from_rgb((31, 28, 31))
+
 
 def place_center(toplevel,move_x):
     toplevel.update_idletasks()
@@ -89,7 +94,6 @@ count_num=0 #유효 계산 카운터
 count_all=0 #전체 계산 카운터
 show_number=0 #숫자 갱신 여부
 all_list_num=0 #해당 사이클 당시 경우의 수
-all_list_list_num=0 #계산 전체 경우의 수
 inv_tg=0 #잔향 부여 선택(0:미부여,1:선택부여,2:최적부여)
 
 equip_buttons = {}
@@ -254,7 +258,6 @@ load_excel1.close()
 
 ## 계산 함수 ##
 def calc(mode):
-    global all_list_list_num, a_num_all
     try:
         result_window = calculator.result_window
         result_window.after(0,result_window.destroy) #기존 GIF 재생 정지
@@ -268,7 +271,7 @@ def calc(mode):
         set_perfect=1 #세트 필터 하락
     else:
         set_perfect=0
-    if a_num_all>20000000:
+    if calculator.a_num_all > 20000000:
         if select_perfect.get()[0:4] != "풀셋모드" and select_perfect.get() != "메타몽풀셋모드":
             ask_really=tkinter.messagebox.askquestion('확인',"2천만 가지가 넘는 경우의 수는 풀셋/메타몽풀셋 모드를 권장합니다.\n그냥 진행하시겠습니까?")
             if ask_really == 'yes':
@@ -697,7 +700,7 @@ def calc(mode):
 
 
     all_list_num=0
-    all_list_list_num=0
+    calculator.all_list_list_num = 0
     all_list_list=[]
 
     ##풀셋모드##
@@ -1160,28 +1163,29 @@ def calc(mode):
     #########################################################################################################################
 
     for i in all_list_list:
-        all_list_list_num=all_list_list_num+int(i[2])
-    all_list_list_num=all_list_list_num*len(wep_num)
+        calculator.all_list_list_num += int(i[2])
 
-    if all_list_list_num > 500000000:
+    calculator.all_list_list_num *= len(wep_num)
+
+    if calculator.all_list_list_num > 500000000:
         tkinter.messagebox.showerror('에러',"경우의 수가 5억가지가 넘습니다.\n진행이 불가능합니다.\n안 쓸 에픽 체크를 풀어주세요")
         showsta(text='중지됨')
         return
-    elif all_list_list_num > 100000000:
+    elif calculator.all_list_list_num > 100000000:
         ask_msg2=tkinter.messagebox.askquestion('확인',"경우의 수가 1억가지가 넘습니다.\n메모리 과부하가 날 수 있고 30분이상 걸릴 수 있습니다.\n강행으로 인한 PC파손은 책임지지 않습니다.\n진행하시겠습니까?")
         if ask_msg2 == 'no':
             showsta(text='중지됨')
             return
-    elif all_list_list_num > 30000000:
+    elif calculator.all_list_list_num > 30000000:
         ask_msg2=tkinter.messagebox.askquestion('확인',"경우의 수가 3천만가지가 넘습니다.\n다소 오래 걸릴 수 있습니다.\n강행으로 인한 PC파손은 책임지지 않습니다.\n진행하시겠습니까?")
         if ask_msg2 == 'no':
             showsta(text='중지됨')
             return
-    if set_perfect ==1 and all_list_list_num > 30000000:
+    if set_perfect ==1 and calculator.all_list_list_num > 30000000:
         tkinter.messagebox.showerror('에러',"정확도 높음 기능은 많은 경우의 수를 지원하지 않습니다.")
         showsta(text='중지됨')
         return
-    if set_perfect !=1 and all_list_list_num < 10000:
+    if set_perfect !=1 and calculator.all_list_list_num < 10000:
         set_perfect=1
 
 
@@ -3724,16 +3728,16 @@ def change_savelist(changed_savelist_name):
 
 ## 실시간 갱신 카운터 (1: 계산 카운트 / 2: 경우의 수 카운트)
 def update_count():
-    global count_num, count_all, show_number, all_list_list_num
+    global count_num, count_all, show_number
     global showcon
     while True:
-        showcon(text=str(count_num)+"유효/"+str(count_all)+"무효\n"+str(all_list_list_num)+"전체")
+        showcon(text=str(count_num)+"유효/"+str(count_all)+"무효\n"+str(calculator.all_list_list_num)+"전체")
         time.sleep(0.1)
 
 def update_count2():
     while True:
-        global select_item,a_num_all
-        a_num_all=0
+        global select_item
+        calculator.a_num_all = 0
         a_num=[0,0,0,0,0,0,0,0,0,0,0]
         for i in range(101,136):
             try:
@@ -3803,9 +3807,9 @@ def update_count2():
         global wep_name_list
         wep_num=len(wep_name_list)
         if wep_num==0: wep_num=1
-        a_num_all=a_num[0]*a_num[1]*a_num[2]*a_num[3]*a_num[4]*a_num[5]*a_num[6]*a_num[7]*a_num[8]*a_num[9]*a_num[10]*wep_num
-        showcon2(text="경우의 수= "+str(a_num_all))
-        if a_num_all>10000000:
+        calculator.a_num_all = a_num[0]*a_num[1]*a_num[2]*a_num[3]*a_num[4]*a_num[5]*a_num[6]*a_num[7]*a_num[8]*a_num[9]*a_num[10]*wep_num
+        showcon2(text="경우의 수= "+str(calculator.a_num_all))
+        if calculator.a_num_all > 10000000:
             show_count2['fg']="red"
         else:
             show_count2['fg']="white"
