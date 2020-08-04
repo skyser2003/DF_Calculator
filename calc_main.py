@@ -38,6 +38,14 @@ import calc_update
 from calc_calc import make_setopt_num, make_set_list, hard_coding_dealer, inv_auto_dealer, make_all_equ_list
 
 
+class Calculator:
+    def __init__(self):
+        self.result_window = None
+
+
+calculator = Calculator()
+
+
 photo_images: List[PhotoImage] = []
 def get_photo_image(file: str):
     photo_image = PhotoImage(file=file)
@@ -247,14 +255,15 @@ load_excel1.close()
 
 ## 계산 함수 ##
 def calc(mode):
-    global result_window,result_window2, all_list_list_num, a_num_all
+    global all_list_list_num, a_num_all
     try:
+        result_window = calculator.result_window
         result_window.after(0,result_window.destroy) #기존 GIF 재생 정지
         result_window.after(50,time_delay2)
         result_window.after(50,time_delay4)
         result_window.after(500,time_delay1)
         result_window.after(500,time_delay3)
-    except NameError as error:
+    except AttributeError as error:
         pass
     if select_perfect.get()[0:5] == '세트필터↓' or select_perfect.get()[0:4] == '풀셋모드' or select_perfect.get() == '메타몽풀셋모드':
         set_perfect=1 #세트 필터 하락
@@ -1711,8 +1720,7 @@ result_downbox_img=get_photo_image('ext_img/bg_result_downbox.png')
 result_sidebox_img=get_photo_image('ext_img/bg_result_sidebox.png')
 result_showbox_img=get_photo_image('ext_img/bg_result_showbox.png')
 def show_result(rank_list,job_type,ele_skill,cool_eff):
-    global result_window
-    result_window=tkinter.Toplevel(self)
+    result_window = calculator.result_window = tkinter.Toplevel(self)
     result_window.attributes("-topmost", True)
     result_window.geometry("585x402")
     result_window.title("결과값")
@@ -2410,7 +2418,8 @@ result_gauge_bar_img=get_photo_image('ext_img/result_gauge_bar.png')
 result_gauge_img=get_photo_image('ext_img/result_gauge.png')
 result_checklist_img=get_photo_image('ext_img/result_show_checklist.png')
 def show_result_dealer():
-    global result_window,canvas_res,guide_font
+    global canvas_res,guide_font
+    result_window = calculator.result_window
     result_window.geometry("585x710")
     global now_rank_num,tg_groggy,tg_result_first
     global rank1_list,rank0_list
@@ -2652,7 +2661,9 @@ def play_gif(count_frame,now_rank,now_pc,show_res,gif_list,mode,mode2,mode3):
     #mode:0(인포창),1(리스트)
     #mode2:0(정지불가),1(정지가능)  > 순위 바꾸기 정지
     #mode3:0(정지불가),1(정지가능)  > 버퍼 정렬변경 정지
-    global pause_gif, stop_gif, stop_gif2, result_window
+    global pause_gif, stop_gif, stop_gif2
+    result_window = calculator.result_window
+
     now_frame=gif_list[now_rank][now_pc][int(count_frame)]
     count_frame += 0.3
     if pause_gif ==0 or mode==1:
@@ -2695,7 +2706,7 @@ def change_groggy2(ele_skill):
     global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43
     global res_dam,res_stat,res_stat2,res_stat3,res_inv,res_cool_what,res_wep
     global tg_groggy,groggy,res_cool_what,cool_eff_text
-    global stop_gif,stop_gif2,result_window
+    global stop_gif,stop_gif2
     global result_image_on,rank_dam_noele,rank_dam,rank_stat,rank_stat2,rank_stat3,rank_inv,result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
     global rank_dam_tagk_noele,rank_dam_tagk,rank_stat_tagk,rank_stat_tagk2
     global result0_image_on,rank0_dam_noele,rank0_dam,rank0_stat,rank0_stat2,rank0_stat3,rank0_inv,result0_image_gif_tg,result0_image_gif,result0_siroco_gif_tg,result0_siroco_gif
@@ -2703,6 +2714,8 @@ def change_groggy2(ele_skill):
     global tagkgum_exist,tagk_tg
     global groggy_bt,tg_groggy_img2,tg_groggy_img1,now_rank_num
     global rank_wep_name,rank0_wep_name
+    result_window = calculator.result_window
+
     now_rank_num=0
     if tagkgum_exist==1:
         global  tagkgum,tagkgum_img
@@ -2891,7 +2904,8 @@ def change_rank_type(in_type):
 ## 순위 선택 변경
 def change_rank2(now,job_type,ele_skill):
     global image_list,canvas_res, res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num, res_wep, res_dam_list
-    global result_window
+    result_window = calculator.result_window
+
     now_rank_num=now
     if job_type =='deal':
         global tagk_tg, tagkgum, tagkgum_exist, rank_dam_tagk, rank_stat_tagk, rank_stat_tagk2, rank_dam_tagk_noele
@@ -3037,7 +3051,8 @@ def change_rank2(now,job_type,ele_skill):
 ## 에픽 이미지 세트옵션 보이기 전환
 def show_set_name(job_type):
     global image_list,canvas_res,res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num
-    global set_name_toggle, image_list_tag, result_image_on, result_image_tag,result0_image_tag, pause_gif, result_window
+    global set_name_toggle, image_list_tag, result_image_on, result_image_tag,result0_image_tag, pause_gif
+
     if job_type == "deal":
         global result_image_tag
         if tg_groggy==0:
@@ -3128,9 +3143,11 @@ def change_rank_type2(in_type):
     global result_image_on1,result_image_on2,result_image_on3,rank_buf1,rank_buf2,rank_buf3, rank_type_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
-    global stop_gif,stop_gif2, result_window,now_rank_num
+    global stop_gif,stop_gif2, now_rank_num
     global rank_wep_name1,rank_wep_name2,rank_wep_name3
     global res_wep_img,rank_wep_img1,rank_wep_img2,rank_wep_img3
+    result_window = calculator.result_window
+
     now_rank_num=0
     if in_type==1:
         rank_type_buf=1
