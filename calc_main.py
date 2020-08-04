@@ -41,17 +41,16 @@ from calc_calc import make_setopt_num, make_set_list, hard_coding_dealer, inv_au
 class Calculator:
     def __init__(self):
         self.result_window = None
+        self.photo_images = []
 
+    def get_photo_image(self, file: str):
+        photo_image = PhotoImage(file=file)
+        self.photo_images.append(photo_image)
+
+        return photo_image
 
 calculator = Calculator()
 
-
-photo_images: List[PhotoImage] = []
-def get_photo_image(file: str):
-    photo_image = PhotoImage(file=file)
-    photo_images.append(photo_image)
-
-    return photo_image
 
 def _from_rgb(rgb):
     return "#%02x%02x%02x" % rgb
@@ -108,7 +107,7 @@ guide_font=tkinter.font.Font(family="맑은 고딕", size=10, weight='bold')
 small_font=tkinter.font.Font(family="맑은 고딕", size=8, weight='bold')
 mid_font=tkinter.font.Font(family="맑은 고딕", size=14, weight='bold')
 big_font=tkinter.font.Font(family="맑은 고딕", size=18, weight='bold')
-bg_img=get_photo_image("ext_img/bg_img.png")
+bg_img=calculator.get_photo_image("ext_img/bg_img.png")
 bg_wall=tkinter.Label(self,image=bg_img)
 bg_wall.place(x=-2,y=0)
 self.configure(bg=dark_main)
@@ -1700,25 +1699,25 @@ def calc_thread():
 
 
 
-tagkgum_img=get_photo_image('ext_img/tagk_um.png')
-tg_groggy_img2=get_photo_image('ext_img/groggy_swi2.png')
-tg_groggy_img1=get_photo_image('ext_img/groggy_swi1.png')
-buf_jingak_img2=get_photo_image('ext_img/buf_jin_2.png')
-buf_jingak_img1=get_photo_image('ext_img/buf_jin_1.png')
-type1_img=get_photo_image('ext_img/type_bless.png')
-type2_img=get_photo_image('ext_img/type_crux.png')
-type3_img=get_photo_image('ext_img/type_all.png')
-show_detail_img=get_photo_image('ext_img/show_detail.png')
-show_tag_img=get_photo_image('ext_img/show_set_tag.png')
-capture_img=get_photo_image('ext_img/capture_img.png')
-style_compare_img=get_photo_image('ext_img/style_compare.png')
+tagkgum_img=calculator.get_photo_image('ext_img/tagk_um.png')
+tg_groggy_img2=calculator.get_photo_image('ext_img/groggy_swi2.png')
+tg_groggy_img1=calculator.get_photo_image('ext_img/groggy_swi1.png')
+buf_jingak_img2=calculator.get_photo_image('ext_img/buf_jin_2.png')
+buf_jingak_img1=calculator.get_photo_image('ext_img/buf_jin_1.png')
+type1_img=calculator.get_photo_image('ext_img/type_bless.png')
+type2_img=calculator.get_photo_image('ext_img/type_crux.png')
+type3_img=calculator.get_photo_image('ext_img/type_all.png')
+show_detail_img=calculator.get_photo_image('ext_img/show_detail.png')
+show_tag_img=calculator.get_photo_image('ext_img/show_set_tag.png')
+capture_img=calculator.get_photo_image('ext_img/capture_img.png')
+style_compare_img=calculator.get_photo_image('ext_img/style_compare.png')
 pause_gif=0
 stop_gif=0
 stop_gif2=0
-result_upbox_img=get_photo_image('ext_img/bg_result_upbox.png')
-result_downbox_img=get_photo_image('ext_img/bg_result_downbox.png')
-result_sidebox_img=get_photo_image('ext_img/bg_result_sidebox.png')
-result_showbox_img=get_photo_image('ext_img/bg_result_showbox.png')
+result_upbox_img=calculator.get_photo_image('ext_img/bg_result_upbox.png')
+result_downbox_img=calculator.get_photo_image('ext_img/bg_result_downbox.png')
+result_sidebox_img=calculator.get_photo_image('ext_img/bg_result_sidebox.png')
+result_showbox_img=calculator.get_photo_image('ext_img/bg_result_showbox.png')
 def show_result(rank_list,job_type,ele_skill,cool_eff):
     result_window = calculator.result_window = tkinter.Toplevel(self)
     result_window.attributes("-topmost", True)
@@ -1730,11 +1729,11 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     canvas_res = Canvas(result_window, width=587, height=804, bd=0, bg=dark_main)
     canvas_res.place(x=-2,y=-2)
     if job_type=='deal':
-        result_bg=get_photo_image('ext_img/bg_result.png')
+        result_bg=calculator.get_photo_image('ext_img/bg_result.png')
     else:
-        result_bg=get_photo_image('ext_img/bg_result2.png')
+        result_bg=calculator.get_photo_image('ext_img/bg_result2.png')
     canvas_res.create_image(0,0,image=result_bg,anchor='nw')
-    random_npc_img=get_photo_image('ext_img/bg_result_'+random.choice(['1','2'])+'.png')
+    random_npc_img=calculator.get_photo_image('ext_img/bg_result_'+random.choice(['1','2'])+'.png')
     random_npc=canvas_res.create_image(313-210,370,image=random_npc_img,anchor='nw')
 
 
@@ -2414,9 +2413,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     place_center(result_window,0)
 
 
-result_gauge_bar_img=get_photo_image('ext_img/result_gauge_bar.png')
-result_gauge_img=get_photo_image('ext_img/result_gauge.png')
-result_checklist_img=get_photo_image('ext_img/result_show_checklist.png')
+result_gauge_bar_img=calculator.get_photo_image('ext_img/result_gauge_bar.png')
+result_gauge_img=calculator.get_photo_image('ext_img/result_gauge.png')
+result_checklist_img=calculator.get_photo_image('ext_img/result_show_checklist.png')
 def show_result_dealer():
     global canvas_res,guide_font
     result_window = calculator.result_window
@@ -2832,8 +2831,8 @@ def change_tagk(ele_skill):
     global res_dam_list
     global tg_groggy
     now=now_rank_num
-    tagkgum_img=get_photo_image('ext_img/tagk_um.png')
-    tagkgum_img2=get_photo_image('ext_img/tagk_ang.png')
+    tagkgum_img=calculator.get_photo_image('ext_img/tagk_um.png')
+    tagkgum_img2=calculator.get_photo_image('ext_img/tagk_ang.png')
     if tg_groggy==0:
         c_rank_dam_tagk=rank_dam_tagk
         c_rank_stat_tagk=rank_stat_tagk
@@ -4245,9 +4244,9 @@ def show_profile2(name,server):
     profile_window.resizable(False,False)
     canvas = Canvas(profile_window, width=417, height=297, bd=0)
     canvas.place(x=-2,y=-2)
-    cha_bg=get_photo_image('ext_img/bg_info.png')
+    cha_bg=calculator.get_photo_image('ext_img/bg_info.png')
     canvas.create_image(0,0,image=cha_bg,anchor='nw')
-    cha_img=get_photo_image('my_cha.png')
+    cha_img=calculator.get_photo_image('my_cha.png')
     canvas.create_image(123,70,image=cha_img)
     image_on={}
     def play_gif_cha(count_frame,now_pc,show_res,gif_list):
@@ -4342,21 +4341,21 @@ def show_profile2(name,server):
     canvas.create_text(254,6+125,text=setting_dict['플티'],font=mid_font,fill='white',anchor='w')
     plt_img=[0,0]
     for i in [0,1]:
-        if setting_dict['플티상세'][i]=='S': plt_img[i]=get_photo_image('ext_img/plt_best.png')
-        elif setting_dict['플티상세'][i]=='A': plt_img[i]=get_photo_image('ext_img/plt_good.png')
-        elif setting_dict['플티상세'][i]=='B': plt_img[i]=get_photo_image('ext_img/plt_active.png')
-        elif setting_dict['플티상세'][i]=='C': plt_img[i]=get_photo_image('ext_img/plt_common.png')
-        else: plt_img[i]=get_photo_image('ext_img/plt_nope.png')
+        if setting_dict['플티상세'][i]=='S': plt_img[i]=calculator.get_photo_image('ext_img/plt_best.png')
+        elif setting_dict['플티상세'][i]=='A': plt_img[i]=calculator.get_photo_image('ext_img/plt_good.png')
+        elif setting_dict['플티상세'][i]=='B': plt_img[i]=calculator.get_photo_image('ext_img/plt_active.png')
+        elif setting_dict['플티상세'][i]=='C': plt_img[i]=calculator.get_photo_image('ext_img/plt_common.png')
+        else: plt_img[i]=calculator.get_photo_image('ext_img/plt_nope.png')
     img_plt1=canvas.create_image(350,124,image=plt_img[0]);img_plt2=canvas.create_image(390,124,image=plt_img[1])
 
     canvas.create_text(254,22+150,text='룬/탈리\n',font=guide_font,fill='white',anchor='w')
     canvas.create_text(254,6+175,text=setting_dict['탈리'],font=mid_font,fill='white',anchor='w')
     tal_img=[0,0]
     for i in [0,1]:
-        if setting_dict['탈리상세'][i]=='S': tal_img[i]=get_photo_image('ext_img/talisman_unique.png')
-        elif setting_dict['탈리상세'][i]=='A': tal_img[i]=get_photo_image('ext_img/talisman_rare.png')
-        elif setting_dict['탈리상세'][i]=='B': tal_img[i]=get_photo_image('ext_img/talisman_common.png')
-        else: tal_img[i]=get_photo_image('ext_img/talisman_nope.png')
+        if setting_dict['탈리상세'][i]=='S': tal_img[i]=calculator.get_photo_image('ext_img/talisman_unique.png')
+        elif setting_dict['탈리상세'][i]=='A': tal_img[i]=calculator.get_photo_image('ext_img/talisman_rare.png')
+        elif setting_dict['탈리상세'][i]=='B': tal_img[i]=calculator.get_photo_image('ext_img/talisman_common.png')
+        else: tal_img[i]=calculator.get_photo_image('ext_img/talisman_nope.png')
     img_tal1=canvas.create_image(350,170,image=tal_img[0]);img_tal2=canvas.create_image(390,170,image=tal_img[1])
     rune_img=[0,0,0,0,0,0]
     for i in range(0,6):
@@ -4374,12 +4373,12 @@ def show_profile2(name,server):
     canvas.create_text(254+83+30,22+210,text=setting_dict['스위칭최대'],font=guide_font,fill='white',anchor='w')
 
 
-    capture_img=get_photo_image('ext_img/capture_img.png')
+    capture_img=calculator.get_photo_image('ext_img/capture_img.png')
     capture_but=tkinter.Button(profile_window,command=lambda:calc_profile.make_profile_image(name,server,def_result),image=capture_img,bg=dark_sub,borderwidth=0,activebackground=dark_sub,anchor='nw')
     capture_but.place(x=378,y=248)
     def profile_detail():
         tkinter.messagebox.showinfo('세부보기',setting_str,parent=profile_window)
-    show_detail_img=get_photo_image('ext_img/show_detail2.png')
+    show_detail_img=calculator.get_photo_image('ext_img/show_detail2.png')
     show_detail=tkinter.Button(profile_window,command=profile_detail,image=show_detail_img,bg=dark_sub,borderwidth=0,activebackground=dark_sub,anchor='nw')
     show_detail.place(x=179,y=239)
 
@@ -4454,34 +4453,34 @@ file_list = os.listdir("image")
 for i in file_list:
     if i[-3:]!='gif':
         if i[-5]=='n':
-            image_list[i[:-5]] = get_photo_image(f"image/{i}")
+            image_list[i[:-5]] = calculator.get_photo_image(f"image/{i}")
         elif i[-5]=='f':
-            image_list2[i[:-5]] = get_photo_image(f"image/{i}")
+            image_list2[i[:-5]] = calculator.get_photo_image(f"image/{i}")
         elif i[-5]=='t':
-            image_list_tag[i[:-5]] = get_photo_image(f"image/{i}")
+            image_list_tag[i[:-5]] = calculator.get_photo_image(f"image/{i}")
 
         if i[0]=='n' and i[-5]=='t':
-            image_list_tag[i[:-5]] = get_photo_image(f"image/{i}")
+            image_list_tag[i[:-5]] = calculator.get_photo_image(f"image/{i}")
         elif i[0]=='n':
-            image_list[i[:-4]] = get_photo_image(f"image/{i}")
+            image_list[i[:-4]] = calculator.get_photo_image(f"image/{i}")
 
 for i in range(1,56):
     try:
-        image_list_set[str(100+i)] = get_photo_image(f"set_name/{i+100}.png")
-        image_list_set2[str(100+i)] = get_photo_image(f"set_name/{i+100}f.png")
+        image_list_set[str(100+i)] = calculator.get_photo_image(f"set_name/{i+100}.png")
+        image_list_set2[str(100+i)] = calculator.get_photo_image(f"set_name/{i+100}f.png")
     except:
         pass
 for i in range(1,18):
-    image_list_set[str(200+i)] = get_photo_image(f"set_name/{i+200}.png")
-image_list['99990']=get_photo_image("image/99990.png")
-image_list2['99990']=get_photo_image("image/99990.png")
-image_list_tag['99990']=get_photo_image("image/99990.png")
+    image_list_set[str(200+i)] = calculator.get_photo_image(f"set_name/{i+200}.png")
+image_list['99990']=calculator.get_photo_image("image/99990.png")
+image_list2['99990']=calculator.get_photo_image("image/99990.png")
+image_list_tag['99990']=calculator.get_photo_image("image/99990.png")
 
 image_list_wep={}
 file_list_wep = os.listdir("image_wep")
 for i in file_list_wep:
-    image_list_wep[calc_list_wep.wep_image_filename.get(i[:-4])]=get_photo_image("image_wep/{}".format(i))
-image_item_void=get_photo_image("ext_img/00000.png")
+    image_list_wep[calc_list_wep.wep_image_filename.get(i[:-4])]=calculator.get_photo_image("image_wep/{}".format(i))
+image_item_void=calculator.get_photo_image("ext_img/00000.png")
 
 sever_list=['카인','디레지에','바칼','힐더','안톤','카시야스','프레이','시로코']
 tkinter.Label(self,font=mid_font,fg="white",bg=dark_sub, text="<딜러 프로필 생성기>").place(x=301,y=401)
@@ -4492,7 +4491,7 @@ sever_in.set('카인')
 cha_Entry=tkinter.Entry(self,width=12);cha_Entry.place(x=346,y=462)
 sever_in.bind('<Return>',lambda e:show_profile(str(cha_Entry.get()),str(sever_in.get())))
 cha_Entry.bind('<Return>',lambda e:show_profile(str(cha_Entry.get()),str(sever_in.get())))
-generate_cha=get_photo_image("ext_img/generate_cha.png")
+generate_cha=calculator.get_photo_image("ext_img/generate_cha.png")
 tkinter.Button(self,image=generate_cha,command=lambda:show_profile(str(cha_Entry.get()),str(sever_in.get())),borderwidth=0,activebackground=dark_sub,bg=dark_sub).place(x=440,y=434)
 
 tkinter.Label(self,text='엔터로도 조회됩니다',font=guide_font,fg='white',bg=dark_sub).place(x=332,y=482)
@@ -4508,9 +4507,9 @@ tkinter.Label(self,text=cha_caution_text,font=small_font,fg='white',bg=dark_sub,
 select_perfect=tkinter.ttk.Combobox(self,values=['풀셋모드(매우빠름)','메타몽풀셋모드','단품제외(보통)','단품포함(느림)','세트필터↓(매우느림)'],width=15)
 select_perfect.place(x=145+605,y=11)
 select_perfect.set('단품포함(느림)')
-select_speed_img=get_photo_image("ext_img/select_speed.png")
+select_speed_img=calculator.get_photo_image("ext_img/select_speed.png")
 tkinter.Button(self,command=guide_speed,image=select_speed_img,borderwidth=0,activebackground=dark_main,bg=dark_main).place(x=29+605,y=7)
-reset_img=get_photo_image("ext_img/reset.png")
+reset_img=calculator.get_photo_image("ext_img/reset.png")
 tkinter.Button(self,command=reset,image=reset_img,borderwidth=0,activebackground=dark_main,bg=dark_main).place(x=302+180+17+135,y=476-435)
 
 wep_name_list=[];wep_img_list=[]
@@ -4563,7 +4562,7 @@ def sync_wep_list():
 
 
 
-wep_image=get_photo_image("ext_img/wep.png")
+wep_image=calculator.get_photo_image("ext_img/wep.png")
 wep_g=tkinter.Label(self,image=wep_image,borderwidth=0,activebackground=dark_main,bg=dark_main)
 wep_g.place(x=29,y=10)
 wep_job_type=list(calc_list_wep.DNF_wep_list.keys())
@@ -4581,8 +4580,8 @@ wep_select=tkinter.ttk.Combobox(self,width=30,values=wep_default)
 wep_select.place(x=110,y=38)
 wep_select.set('(광검)별의 바다 : 바드나후')
 
-wep_select_image=get_photo_image("ext_img/wep_select.png")
-wep_reset_image=get_photo_image("ext_img/wep_reset.png")
+wep_select_image=calculator.get_photo_image("ext_img/wep_select.png")
+wep_reset_image=calculator.get_photo_image("ext_img/wep_reset.png")
 wep_select_bt=tkinter.Button(self,image=wep_select_image,fg="white",borderwidth=0,activebackground=dark_main,command=wep_list_select,bg=dark_main,font=mid_font)
 wep_select_bt.place(x=350,y=10)
 wep_select_bt=tkinter.Button(self,image=wep_reset_image,fg="white",borderwidth=0,activebackground=dark_main,command=wep_list_reset,bg=dark_main)
@@ -4617,28 +4616,28 @@ req_cool=tkinter.ttk.Combobox(self,width=13,values=['X(지속딜만)','O(그로�
 req_cool.set('X(지속딜만)')
 req_cool.place(x=390-17,y=310+52)
 
-calc_img=get_photo_image("ext_img/calc.png")
+calc_img=calculator.get_photo_image("ext_img/calc.png")
 select_all=tkinter.Button(self,image=calc_img,borderwidth=0,activebackground=dark_main,command=calc_thread,bg=dark_main)
 select_all.place(x=390-35+150,y=7)
-stop_img=get_photo_image("ext_img/stop.png")
+stop_img=calculator.get_photo_image("ext_img/stop.png")
 tkinter.Button(self,image=stop_img,borderwidth=0,activebackground=dark_main,command=stop_calc,bg=dark_main).place(x=390-35+150,y=62)
 
-timeline_img=get_photo_image("ext_img/timeline.png")
+timeline_img=calculator.get_photo_image("ext_img/timeline.png")
 select_custom=tkinter.Button(self,image=timeline_img,borderwidth=0,activebackground=dark_main,command=timeline_select,bg=dark_sub)
 select_custom.place(x=345+165,y=340-100)
-custom_img=get_photo_image("ext_img/custom.png")
+custom_img=calculator.get_photo_image("ext_img/custom.png")
 select_custom2=tkinter.Button(self,image=custom_img,borderwidth=0,activebackground=dark_main,command=lambda:costum(0),bg=dark_sub)
 select_custom2.place(x=435+165,y=340-100)
 
 save_select=tkinter.ttk.Combobox(self,width=8,values=save_name_list)
 save_select.place(x=345+165,y=410-100);save_select.set(save_name_list[0])
-save_img=get_photo_image("ext_img/SAVE.png")
+save_img=calculator.get_photo_image("ext_img/SAVE.png")
 save=tkinter.Button(self,image=save_img,borderwidth=0,activebackground=dark_main,command=save_checklist,bg=dark_sub)
 save.place(x=345+165,y=440-100)
-load_img=get_photo_image("ext_img/LOAD.png")
+load_img=calculator.get_photo_image("ext_img/LOAD.png")
 load=tkinter.Button(self,image=load_img,borderwidth=0,activebackground=dark_main,command=load_checklist,bg=dark_sub)
 load.place(x=435+165,y=440-100)
-change_name_img=get_photo_image("ext_img/name_change.png")
+change_name_img=calculator.get_photo_image("ext_img/name_change.png")
 change_list_but=tkinter.Button(self,image=change_name_img,borderwidth=0,activebackground=dark_main,command=change_list_name,bg=dark_sub)
 change_list_but.place(x=435+165,y=405-100)
 
@@ -4969,7 +4968,7 @@ def know_epic():
                                                             +"불마/엘드 셋의 '마딜 전용'옵션은\n따로 구분되어 계산되지 않습니다.\n알아서 빼주세요.\n\n"
                                                             +"스탯 옵션은 버프+가호 받은 기준입니다.\n가호 미적용 스탯이 많은 산물 특성상,\n수련방 솔플 효율과 굉장히 다를수 있습니다.")).place(x=250,y=70)
 
-know_image=get_photo_image("set_name/know_name.png")
+know_image=calculator.get_photo_image("set_name/know_name.png")
 tkinter.Button(self,bg=dark_main,image=know_image,command=know_epic).place(x=302,y=520)
 
 ##디폴트 변경
@@ -4977,12 +4976,12 @@ default_legend=1
 default_chawon=0
 default_old=0
 legend_on_tg=IntVar()
-default_img1n=get_photo_image("ext_img/default1n.png")
-default_img1f=get_photo_image("ext_img/default1f.png")
-default_img2n=get_photo_image("ext_img/default2n.png")
-default_img2f=get_photo_image("ext_img/default2f.png")
-default_img3n=get_photo_image("ext_img/default3n.png")
-default_img3f=get_photo_image("ext_img/default3f.png")
+default_img1n=calculator.get_photo_image("ext_img/default1n.png")
+default_img1f=calculator.get_photo_image("ext_img/default1f.png")
+default_img2n=calculator.get_photo_image("ext_img/default2n.png")
+default_img2f=calculator.get_photo_image("ext_img/default2f.png")
+default_img3n=calculator.get_photo_image("ext_img/default3n.png")
+default_img3f=calculator.get_photo_image("ext_img/default3f.png")
 def change_default(value):
     global default_legend,default_chawon,default_old
     if value==0:
@@ -5016,7 +5015,7 @@ select_legend_on=tkinter.Checkbutton(self,variable=legend_on_tg,bg=dark_main,act
 select_legend_on.place(x=432,y=547)
 tkinter.Label(self,text="레전 적극 반영 여부(느려짐)",font=small_font,fg='white',bg=dark_main,bd=0).place(x=450,y=551)
 
-default_tag_img=get_photo_image("ext_img/default_tag.png")
+default_tag_img=calculator.get_photo_image("ext_img/default_tag.png")
 tkinter.Label(self,bg=dark_main,image=default_tag_img).place(x=431,y=515)
 
 
@@ -5376,24 +5375,24 @@ equip_buttons["33351"].place(x=584, y=660)
 
 def donate():
     webbrowser.open('https://twip.kr/dawnclass16')
-donate_image=get_photo_image('ext_img/donate.png')
+donate_image=calculator.get_photo_image('ext_img/donate.png')
 donate_bt=tkinter.Button(self,image=donate_image, command=donate,borderwidth=0,bg=dark_main,activebackground=dark_main)
 donate_bt.place(x=622,y=520)
 def dunfaoff():
     webbrowser.open('https://dunfaoff.com/')
-dunfaoff_image=get_photo_image('ext_img/dunfaoff.png')
+dunfaoff_image=calculator.get_photo_image('ext_img/dunfaoff.png')
 dunfaoff_url=tkinter.Button(self,image=dunfaoff_image, command=dunfaoff,borderwidth=0,bg=dark_main,activebackground=dark_main)
 dunfaoff_url.place(x=535+219,y=410-402+32)
 
 def blog():
     webbrowser.open('https://blog.naver.com/dawnclass16/221837654941')
-blog_image=get_photo_image('ext_img/blog.png')
+blog_image=calculator.get_photo_image('ext_img/blog.png')
 blog_url=tkinter.Button(self,image=blog_image, command=blog,borderwidth=0,bg=dark_main,activebackground=dark_main)
 blog_url.place(x=615+219,y=410-402+32)
 
 def hamjung():
     tkinter.messagebox.showinfo("제작자 크레딧","총제작자=Dawnclass(새벽반)\n이미지/그래픽=경철부동산\n직업/버퍼DB=대략볼록할철\n기타조언=히든 도비 4,5,6,7호\n\n오류 제보는 블로그 덧글이나 던조 쪽지로")
-maker_image=get_photo_image('ext_img/maker.png')
+maker_image=calculator.get_photo_image('ext_img/maker.png')
 maker=tkinter.Button(self,image=maker_image, command=hamjung,borderwidth=0,bg=dark_main,activebackground=dark_main)
 def check_update(event):
     try:
