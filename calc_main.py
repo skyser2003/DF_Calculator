@@ -74,6 +74,7 @@ class Calculator:
         self.style_calced = ""
         self.creature_calced = ""
         self.default_base_equip = 0  # 레전더리(0), 차원 레전더리(1), 초오광(2)
+        self.exit_calc = 0  # 계산 종료 판정
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -117,7 +118,6 @@ def capture_screen(toplevel):
 
 
 auto_saved=0 #클라이언트 업데이트 시 preset 업데이트 변수
-exit_calc=0 #계산 종료 판정
 save_name_list=[] #프리셋 이름 리스트
 save_select=0 #세이브 드롭다운 리스트 변수 임시
 all_list_num=0 #해당 사이클 당시 경우의 수
@@ -1223,7 +1223,6 @@ def calc(mode):
 
     #########################################################################################################################계산 시작
 
-    global exit_calc
     showsta(text='계산 시작')
     save_list={} #딜러1번
     save_list0={} #딜러2번
@@ -1248,7 +1247,7 @@ def calc(mode):
 
                 if len(all_list_god)!=0:
                     for calc_now in all_list_god:
-                        if exit_calc==1:
+                        if calculator.exit_calc==1:
                             showsta(text='중지됨')
                             return
                         set_list=make_setopt_num(calc_now,1)[0]
@@ -1329,7 +1328,7 @@ def calc(mode):
                 # 13공속 14크확 / 15 특수액티브 / 16~19 패시브 /20 그로기포함/21 2각캐특수액티브 /22~27 액티브레벨링/
                 if calculator.max_setopt != 8 or set_perfect==1:
                     for calc_now in all_list:
-                        if exit_calc==1:
+                        if calculator.exit_calc==1:
                             showsta(text='중지됨')
                             return
                         set_list=make_setopt_num(calc_now,0)[0]
@@ -1432,7 +1431,7 @@ def calc(mode):
                 setget=opt_buf.get
                 if len(all_list_god)!=0:
                     for calc_now in all_list_god:
-                        if exit_calc==1:
+                        if calculator.exit_calc==1:
                             showsta(text='중지됨')
                             return
                         set_list=make_setopt_num(calc_now,1)[0]
@@ -1536,7 +1535,7 @@ def calc(mode):
 
                 if calculator.max_setopt != 8 or set_perfect==1:
                     for calc_now in all_list:
-                        if exit_calc==1:
+                        if calculator.exit_calc==1:
                             showsta(text='중지됨')
                             return
                         set_list=make_setopt_num(calc_now,0)[0]
@@ -4230,12 +4229,13 @@ def check_set(code):
         else:
             set_buttons[str(code)]['image']=image_list_set2[str(code)]
 
+
 # 정지
 def stop_calc():
-    global exit_calc
-    exit_calc=1
+    # TODO: thread fix
+    calculator.exit_calc = 1
     time.sleep(1)
-    exit_calc=0
+    calculator.exit_calc = 0
 
 
 
