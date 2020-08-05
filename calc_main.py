@@ -127,6 +127,8 @@ class Calculator:
         self.tagk_tg = 0
         self.tagkgum: Button = None
         self.tagkgum_img: PhotoImage = None
+        self.rank_stat_tagk_um: List[List[int]] = [[], []]
+        self.rank_stat_tagk_yang: List[List[int]] = [[], []]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2074,10 +2076,11 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank0_stat2.extend([0,0,0,0,0])
         rank0_stat3.extend([0,0,0,0,0])
 
-        global rank_stat_tagk, rank_stat_tagk2
-        global rank0_stat_tagk, rank0_stat_tagk2
-        rank_stat_tagk=[0,0,0,0,0];rank0_stat_tagk=[0,0,0,0,0]
-        rank_stat_tagk2=[0,0,0,0,0];rank0_stat_tagk2=[0,0,0,0,0]
+        rank_stat_tagk = calculator.rank_stat_tagk_um[0] = [0, 0, 0, 0, 0]
+        rank0_stat_tagk = calculator.rank_stat_tagk_um[1] = [0, 0, 0, 0, 0]
+        rank_stat_tagk2 = calculator.rank_stat_tagk_yang[0] = [0, 0, 0, 0, 0]
+        rank0_stat_tagk2 = calculator.rank_stat_tagk_yang[1] = [0, 0, 0, 0, 0]
+
         for i in range(0,5):
             try:
                 rank_stat[i]=("증뎀= "+str(int(round(rss[i][2],0)))+
@@ -2874,8 +2877,6 @@ def change_groggy(ele_skill):
     threading.Timer(0, time_delayy).start()
 def change_groggy2(ele_skill):
     global tg_groggy,groggy
-    global rank_stat_tagk,rank_stat_tagk2
-    global rank0_rank0_stat_tagk,rank0_stat_tagk2
     global groggy_bt,tg_groggy_img2,tg_groggy_img1
 
     result_window = calculator.result_window
@@ -3014,8 +3015,6 @@ def change_groggy2(ele_skill):
 
 ##태극검 음양 전환
 def change_tagk(ele_skill):
-    global rank_stat_tagk, rank_stat_tagk2
-    global rank0_stat_tagk, rank0_stat_tagk2
     global res_dam_list
     global tg_groggy
 
@@ -3037,6 +3036,10 @@ def change_tagk(ele_skill):
     rank0_dam_noele = calculator.rank_dam_noele[1]
     rank_dam_tagk_noele = calculator.rank_dam_tagk_noele[0]
     rank0_dam_tagk_noele = calculator.rank_dam_tagk_noele[1]
+    rank_stat_tagk = calculator.rank_stat_tagk_um[0]
+    rank0_stat_tagk = calculator.rank_stat_tagk_um[1]
+    rank_stat_tagk2 = calculator.rank_stat_tagk_yang[0]
+    rank0_stat_tagk2 = calculator.rank_stat_tagk_yang[1]
 
     now = calculator.now_rank_num
     tagkgum_img=calculator.get_photo_image('ext_img/tagk_um.png')
@@ -3117,7 +3120,6 @@ def change_rank2(now,job_type,ele_skill):
 
     calculator.now_rank_num = now
     if job_type =='deal':
-        global rank_stat_tagk, rank_stat_tagk2
         global tg_groggy
 
         res_dam = calculator.res_dam
@@ -3164,8 +3166,8 @@ def change_rank2(now,job_type,ele_skill):
                 c_rank_wep = calculator.deal_rank_wep_name[0]
                 if c_rank_wep[now]=="(도)태극천제검" and tagkgum_exist==1 and tagk_tg==1:
                     c_rank_dam=rank_dam_tagk
-                    c_rank_stat=rank_stat_tagk
-                    c_rank_stat2=rank_stat_tagk2
+                    c_rank_stat = calculator.rank_stat_tagk_um[0]
+                    c_rank_stat2 = calculator.rank_stat_tagk_yang[0]
                     c_rank_dam_noele=rank_dam_tagk_noele
                     canvas_res.itemconfig(calculator.res_wep, fill="red")
                 else:
@@ -3187,8 +3189,8 @@ def change_rank2(now,job_type,ele_skill):
                 c_rank_wep = calculator.deal_rank_wep_name[1]
                 if c_rank_wep[now]=="(도)태극천제검" and tagkgum_exist==1 and tagk_tg==1:
                     c_rank_dam=rank0_dam_tagk
-                    c_rank_stat=rank0_stat_tagk
-                    c_rank_stat2=rank0_stat_tagk2
+                    c_rank_stat = calculator.rank_stat_tagk_um[1]
+                    c_rank_stat2 = calculator.rank_stat_tagk_yang[1]
                     c_rank_dam_noele=rank0_dam_tagk_noele
                     canvas_res.itemconfig(calculator.res_wep, fill="red")
                 else:
