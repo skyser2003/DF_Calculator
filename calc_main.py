@@ -40,8 +40,8 @@ from calc_calc import make_setopt_num, make_set_list, hard_coding_dealer, inv_au
 
 class Calculator:
     def __init__(self):
-        self.result_window = None
-        self.canvas_res = None
+        self.result_window: Toplevel = None
+        self.canvas_res: Canvas = None
         self.photo_images = []
         self.all_list_list_num = 0  # 계산 전체 경우의 수
         self.a_num_all = 0
