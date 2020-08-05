@@ -65,6 +65,9 @@ class Calculator:
             "inv_select4_1": None,
             "inv_select4_2": None
         }
+        self.count_num = 0  # 유효 계산 카운터
+        self.count_all = 0  # 전체 계산 카운터
+        self.show_number = 0  # 숫자 갱신 여부
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -111,9 +114,6 @@ auto_saved=0 #클라이언트 업데이트 시 preset 업데이트 변수
 exit_calc=0 #계산 종료 판정
 save_name_list=[] #프리셋 이름 리스트
 save_select=0 #세이브 드롭다운 리스트 변수 임시
-count_num=0 #유효 계산 카운터
-count_all=0 #전체 계산 카운터
-show_number=0 #숫자 갱신 여부
 all_list_num=0 #해당 사이클 당시 경우의 수
 inv_tg=0 #잔향 부여 선택(0:미부여,1:선택부여,2:최적부여)
 
@@ -371,9 +371,7 @@ def calc(mode):
         aria_fix=0.25
         aria_dif=0
 
-
-    global count_num, count_all, show_number, max_setopt, inv_tg
-    count_num=0;count_all=0;show_number=0;metamong=0
+    global max_setopt, inv_tg
 
     #진각/2각에 따른 실마리, 쿨감 효율 차이
     if jobup_select.get()[-4:] == "(진각)":
@@ -1321,9 +1319,9 @@ def calc(mode):
                             inv_string="잔향부여= "+inv1_opt+"("+str(inv1_val)+"%) / "+inv2_opt+"("+str(inv2_val)+"%)"
                             save_list[final_damage]=[calc_wep,base_array,damage,damage_not_ele,inv_string,[ult_1,ult_2,ult_3,ult_skiper],damage_only_equ,final_damage2,wep_name_list_temp[calc_wep_num]]
                             save_list0[final_damage2]=[calc_wep,base_array,damage,damage_not_ele2,inv_string,[ult_1,ult_2,ult_3,ult_skiper],damage_only_equ,final_damage,wep_name_list_temp[calc_wep_num]]
-                            count_num=count_num+1
+                            calculator.count_num += 1
                         else:
-                            count_all=count_all+1
+                            calculator.count_all += 1
                 # 코드 이름
                 # 0추스탯 1추공 2증 3크 4추 5속추
                 # 6모 7공 8스탯 9속강 10지속 11스증 12특수
@@ -1401,12 +1399,12 @@ def calc(mode):
                             inv_string="잔향부여= "+inv1_opt+"("+str(inv1_val)+"%) / "+inv2_opt+"("+str(inv2_val)+"%)"
                             save_list[final_damage]=[calc_wep,base_array,damage,damage_not_ele,inv_string,[ult_1,ult_2,ult_3,ult_skiper],damage_only_equ,final_damage2,wep_name_list_temp[calc_wep_num]]
                             save_list0[final_damage2]=[calc_wep,base_array,damage,damage_not_ele2,inv_string,[ult_1,ult_2,ult_3,ult_skiper],damage_only_equ,final_damage,wep_name_list_temp[calc_wep_num]]
-                            count_num=count_num+1
+                            calculator.count_num += 1
                         else:
-                            count_all=count_all+1
+                            calculator.count_all += 1
                 else:
                     print('스킵됨')
-                    count_all=count_all+len(all_list)
+                    calculator.count_all += len(all_list)
 
             else: ##버퍼
                 base_b=10+int(db_preset['H2'].value)+int(db_preset['H4'].value)+int(db_preset['H5'].value)+1+extra_blvl
@@ -1531,9 +1529,9 @@ def calc(mode):
                             save_list2[final_buf2]=[list(calc_wep),[save1,save2,pas1_out],inv_string,base_array,final_buf2_2,wep_name_list_temp[calc_wep_num]]
                             save_list3[final_buf3]=[list(calc_wep),[save1,save2,pas1_out],inv_string,base_array,final_buf3_2,wep_name_list_temp[calc_wep_num]]
 
-                            count_num=count_num+1
+                            calculator.count_num += 1
                         else:
-                            count_all=count_all+1
+                            calculator.count_all += 1
 
                 if max_setopt != 8 or set_perfect==1:
                     for calc_now in all_list:
@@ -1635,19 +1633,19 @@ def calc(mode):
                             save_list2[final_buf2]=[list(calc_wep),[save1,save2,pas1_out],inv_string,base_array,final_buf2_2,wep_name_list_temp[calc_wep_num]]
                             save_list3[final_buf3]=[list(calc_wep),[save1,save2,pas1_out],inv_string,base_array,final_buf3_2,wep_name_list_temp[calc_wep_num]]
 
-                            count_num=count_num+1
+                            calculator.count_num += 1
                         else:
-                            count_all=count_all+1
+                            calculator.count_all += 1
                 else:
                     print('스킵됨')
-                    count_all=count_all+len(all_list_god)
+                    calculator.count_all += len(all_list_god)
 
 
 
     ###### 결과 순위 매기기 #######################################################################################
-    if jobup_select.get()[4:7] != "세인트" and jobup_select.get()[4:7] != "세라핌" and jobup_select.get()[4:7] != "헤카테":
+    calculator.show_number = 0
 
-        show_number=0
+    if jobup_select.get()[4:7] != "세인트" and jobup_select.get()[4:7] != "세라핌" and jobup_select.get()[4:7] != "헤카테":
         showsta(text='결과 집계중')
 
         ranking=[]
@@ -1668,11 +1666,7 @@ def calc(mode):
                 pass
         ranking=[ranking,ranking0]
         show_result(ranking,'deal',ele_skill,cool_eff)
-
-
     else: ##버퍼
-
-        show_number=0
         showsta(text='결과 집계중')
 
         ranking1=[];ranking2=[];ranking3=[]
@@ -3761,10 +3755,10 @@ def change_savelist(changed_savelist_name):
 
 ## 실시간 갱신 카운터 (1: 계산 카운트 / 2: 경우의 수 카운트)
 def update_count():
-    global count_num, count_all, show_number
     global showcon
+
     while True:
-        showcon(text=str(count_num)+"유효/"+str(count_all)+"무효\n"+str(calculator.all_list_list_num)+"전체")
+        showcon(text=str(calculator.count_num)+"유효/"+str(calculator.count_all)+"무효\n"+str(calculator.all_list_list_num)+"전체")
         time.sleep(0.1)
 
 def update_count2():
