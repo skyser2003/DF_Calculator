@@ -17,7 +17,7 @@ import webbrowser
 from collections import Counter
 from json import loads
 from tkinter import *
-from typing import List, Dict
+from typing import List, Dict, Tuple
 from urllib import parse
 
 import numpy as np
@@ -122,6 +122,7 @@ class Calculator:
         self.result_siroco_gif_tg: List[List[int]] =[[], []]
         self.res_cool_what: Text = None
         self.cool_eff_text = ""
+        self.rank_list: List[List[Tuple[float, List[str]]]] = [[], []]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1864,10 +1865,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
         calculator.res_cool_what = canvas_res.create_text(122,114,text=cool_eff_text_all,font=small_font,fill='white')
 
-        global rank0_list,rank1_list
-        rank0_list=rank_list[1]
-        rank1_list=rank_list[0]
-
+        rank0_list = calculator.rank_list[0] = rank_list[1]
+        rank1_list = calculator.rank_list[1] = rank_list[0]
+        
         rank_dam = calculator.rank_dam[0] = [0, 0, 0, 0, 0]
         rank0_dam = calculator.rank_dam[1] = [0, 0, 0, 0, 0]
 
@@ -2586,7 +2586,10 @@ def show_result_dealer():
 
     result_window.geometry("585x710")
     global tg_groggy,tg_result_first
-    global rank1_list,rank0_list
+
+    rank0_list = calculator.rank_list[0]
+    rank1_list = calculator.rank_list[1]
+
     set_list=[]
     cool_list=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] ##최종값
     cool_list1=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] ##쿨감
