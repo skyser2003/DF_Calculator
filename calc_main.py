@@ -100,6 +100,9 @@ class Calculator:
         self.buff_result_image_on: List[List[Dict[str, PhotoImage]]] = [[], [], []]
         self.deal_result_image_tag: List[List[Dict[str, str]]] = [[], []]
         self.rank_dam: List[List[int]] = [[], []]
+        self.deal_rank_stat1: List[List[int]] = [[], []]
+        self.deal_rank_stat2: List[List[int]] = [[], []]
+        self.deal_rank_stat3: List[List[int]] = [[], []]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1813,8 +1816,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
     rank_ult=[0,0,0,0,0];rank0_ult=[0,0,0,0,0]
     if job_type=='deal': ########################### 딜러 ###########################
-        global rank_stat,rank_stat2,rank_stat3,req_cool,res_dam,res_stat,res_stat2, res_stat3, rank_dam_tagk,rank_dam_noele, res_ele, rank_inv, res_inv, rank_dam_tagk_noele
-        global rank0_stat,rank0_stat2,rank0_stat3,rank0_dam_tagk,rank0_dam_noele,rank0_inv,rank0_dam_tagk_noele
+        global req_cool,res_dam,res_stat,res_stat2, res_stat3, rank_dam_tagk,rank_dam_noele, res_ele, rank_inv, res_inv, rank_dam_tagk_noele
+        global rank0_dam_tagk,rank0_dam_noele,rank0_inv,rank0_dam_tagk_noele
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg,rank_dam_nolv,rank_dam_tagk_nolv
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg,rank0_dam_nolv,rank0_dam_tagk_nolv
         global res_cool_what,cool_eff_text
@@ -1827,6 +1830,14 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
         result_image_tag = calculator.deal_result_image_tag[0]
         result0_image_tag = calculator.deal_result_image_tag[1]
+
+        rank_stat = calculator.deal_rank_stat1[0]
+        rank_stat2 = calculator.deal_rank_stat2[0]
+        rank_stat3 = calculator.deal_rank_stat3[0]
+
+        rank0_stat = calculator.deal_rank_stat1[1]
+        rank0_stat2 = calculator.deal_rank_stat2[1]
+        rank0_stat3 = calculator.deal_rank_stat3[1]
 
         cool_check=req_cool.get()[0]
         if cool_check=='O':
@@ -2009,9 +2020,23 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         else:
             simari=1
             jingakgi=0
-        rank_stat=[0,0,0,0,0];rank0_stat=[0,0,0,0,0]
-        rank_stat2=[0,0,0,0,0];rank0_stat2=[0,0,0,0,0]
-        rank_stat3=[0,0,0,0,0];rank0_stat3=[0,0,0,0,0]
+
+        rank_stat.clear()
+        rank_stat2.clear()
+        rank_stat3.clear()
+
+        rank0_stat.clear()
+        rank0_stat2.clear()
+        rank0_stat3.clear()
+
+        rank_stat.extend([0,0,0,0,0])
+        rank_stat2.extend([0,0,0,0,0])
+        rank_stat3.extend([0,0,0,0,0])
+
+        rank0_stat.extend([0,0,0,0,0])
+        rank0_stat2.extend([0,0,0,0,0])
+        rank0_stat3.extend([0,0,0,0,0])
+
         global rank_stat_tagk, rank_stat_tagk2
         global rank0_stat_tagk, rank0_stat_tagk2
         rank_stat_tagk=[0,0,0,0,0];rank0_stat_tagk=[0,0,0,0,0]
@@ -2809,9 +2834,9 @@ def change_groggy(ele_skill):
 def change_groggy2(ele_skill):
     global res_dam,res_stat,res_stat2,res_stat3,res_inv,res_cool_what
     global tg_groggy,groggy,res_cool_what,cool_eff_text
-    global rank_dam_noele,rank_stat,rank_stat2,rank_stat3,rank_inv,result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
+    global rank_dam_noele,rank_inv,result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
     global rank_dam_tagk_noele,rank_dam_tagk,rank_stat_tagk,rank_stat_tagk2
-    global rank0_dam_noele,rank0_stat,rank0_stat2,rank0_stat3,rank0_inv,result0_image_gif_tg,result0_image_gif,result0_siroco_gif_tg,result0_siroco_gif
+    global rank0_dam_noele,rank0_inv,result0_image_gif_tg,result0_image_gif,result0_siroco_gif_tg,result0_siroco_gif
     global rank0_dam_tagk_noele,rank0_dam_tagk,rank0_stat_tagk,rank0_stat_tagk2
     global tagkgum_exist,tagk_tg
     global groggy_bt,tg_groggy_img2,tg_groggy_img1
@@ -2821,6 +2846,12 @@ def change_groggy2(ele_skill):
     gif_images = calculator.gif_images
     rank_wep_name = calculator.deal_rank_wep_name[0]
     rank0_wep_name = calculator.deal_rank_wep_name[1]
+    rank_stat = calculator.deal_rank_stat1[0]
+    rank_stat2 = calculator.deal_rank_stat2[0]
+    rank_stat3 = calculator.deal_rank_stat3[0]
+    rank0_stat = calculator.deal_rank_stat1[1]
+    rank0_stat2 = calculator.deal_rank_stat2[1]
+    rank0_stat3 = calculator.deal_rank_stat3[1]
 
     calculator.now_rank_num = 0
     if tagkgum_exist==1:
@@ -2932,9 +2963,9 @@ def change_groggy2(ele_skill):
 ##태극검 음양 전환
 def change_tagk(ele_skill):
     global tagk_tg, tagkgum
-    global res_stat,res_stat2,rank_stat_tagk, rank_stat, rank_stat_tagk2, rank_stat2
+    global res_stat,res_stat2,rank_stat_tagk, rank_stat_tagk2
     global res_dam, rank_dam_tagk, rank_dam_tagk_noele, rank_dam_noele
-    global rank0_stat_tagk, rank0_stat, rank0_stat_tagk2, rank0_stat2
+    global rank0_stat_tagk, rank0_stat_tagk2
     global rank0_dam_tagk, rank0_dam_tagk_noele, rank0_dam_noele
     global res_dam_list
     global tg_groggy
@@ -2944,6 +2975,10 @@ def change_tagk(ele_skill):
     rank0_wep_name = calculator.deal_rank_wep_name[1]
     rank_dam = calculator.rank_dam[0]
     rank0_dam = calculator.rank_dam[1]
+    rank_stat = calculator.deal_rank_stat1[0]
+    rank_stat2 = calculator.deal_rank_stat2[0]
+    rank0_stat = calculator.deal_rank_stat1[1]
+    rank0_stat2 = calculator.deal_rank_stat2[1]
 
     now = calculator.now_rank_num
     tagkgum_img=calculator.get_photo_image('ext_img/tagk_um.png')
@@ -3027,11 +3062,19 @@ def change_rank2(now,job_type,ele_skill):
     calculator.now_rank_num = now
     if job_type =='deal':
         global tagk_tg, tagkgum, tagkgum_exist, rank_dam_tagk, rank_stat_tagk, rank_stat_tagk2, rank_dam_tagk_noele
-        global res_dam,res_stat,res_stat2,res_stat3,rank_stat,rank_stat2,rank_stat3,res_ele,rank_dam_noele, rank_inv, res_inv
+        global res_dam,res_stat,res_stat2,res_stat3,res_ele,rank_dam_noele, rank_inv, res_inv
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg
-        global rank0_stat,rank0_stat2,rank0_stat3,rank0_dam_noele, rank0_inv
+        global rank0_dam_noele, rank0_inv
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg
         global tg_groggy
+
+        rank_stat = calculator.deal_rank_stat1[0]
+        rank_stat2 = calculator.deal_rank_stat2[0]
+        rank_stat3 = calculator.deal_rank_stat3[0]
+
+        rank0_stat = calculator.deal_rank_stat1[1]
+        rank0_stat2 = calculator.deal_rank_stat2[1]
+        rank0_stat3 = calculator.deal_rank_stat3[1]
 
         try:
             if tg_groggy==0:
