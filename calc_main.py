@@ -45,6 +45,26 @@ class Calculator:
         self.all_list_list_num = 0  # 계산 전체 경우의 수
         self.a_num_all = 0
         self.equip_list = {}
+        self.preset_values = {
+            "jobtype_select": None,
+            "jobup_select": None,
+            "wep_job_select": None,
+            "wep_type_select": None,
+            "wep_select": None,
+            "select_perfect": None,
+            "style_select": None,
+            "creature_select": None,
+            "req_cool": None,
+            "inv_mod": None,
+            "inv_select1_1": None,
+            "inv_select1_2": None,
+            "inv_select2_1": None,
+            "inv_select2_2": None,
+            "inv_select3_1": None,
+            "inv_select3_2": None,
+            "inv_select4_1": None,
+            "inv_select4_2": None
+        }
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -3525,7 +3545,7 @@ def load_checklist():
         for i in range(52,70):
             temp_opt=str(load_cus(i,1).value)
             temp_val=str(load_cus(i,2+ssnum1).value)
-            eval(temp_opt+".set(temp_val)")
+            calculator.preset_values[temp_opt].set(temp_val)
         for i in range(1,20):
             load_cus(i,2).value=str(load_cus(i+25,2+ssnum1).value)
         for i in range(1,8):
@@ -3533,7 +3553,7 @@ def load_checklist():
         load_cus(20,2).value=str(load_cus(70,2+ssnum1).value)
         global wep_name_list
         saved_wep_str=load_cus(71,2+ssnum1).value
-        wep_name_list=eval("list("+saved_wep_str+")")
+        wep_name_list = eval(saved_wep_str)
         sync_wep_list()
         load_preset3.save("preset.xlsx")
         load_preset3.close()
@@ -3614,7 +3634,7 @@ def save_checklist():
                 passss=1
             for i in range(52,70):
                 temp_opt=str(save_cus(i,1).value)
-                temp_val=eval(temp_opt+".get()")
+                temp_val=calculator.preset_values[temp_opt].get()
                 save_cus(i,2+ssnum2).value=temp_val
             for i in range(1,20):
                 save_cus(i+25,2+ssnum2).value=str(save_cus(i,2).value)
@@ -4521,7 +4541,7 @@ cha_caution_text="""장비%:  12부위장비+칭호클쳐의
            (노증극세팅이 100%)"""
 tkinter.Label(self,text=cha_caution_text,font=small_font,fg='white',bg=dark_sub,anchor='nw',justify='left').place(x=512,y=405)
 
-select_perfect=tkinter.ttk.Combobox(self,values=['풀셋모드(매우빠름)','메타몽풀셋모드','단품제외(보통)','단품포함(느림)','세트필터↓(매우느림)'],width=15)
+select_perfect = calculator.preset_values["select_perfect"] = tkinter.ttk.Combobox(self,values=['풀셋모드(매우빠름)','메타몽풀셋모드','단품제외(보통)','단품포함(느림)','세트필터↓(매우느림)'],width=15)
 select_perfect.place(x=145+605,y=11)
 select_perfect.set('단품포함(느림)')
 select_speed_img=calculator.get_photo_image("ext_img/select_speed.png")
@@ -4583,17 +4603,19 @@ wep_image=calculator.get_photo_image("ext_img/wep.png")
 wep_g=tkinter.Label(self,image=wep_image,borderwidth=0,activebackground=dark_main,bg=dark_main)
 wep_g.place(x=29,y=10)
 wep_job_type=list(calc_list_wep.DNF_wep_list.keys())
-wep_job_select=tkinter.ttk.Combobox(self,width=12,values=wep_job_type)
+wep_job_select = calculator.preset_values["wep_job_select"] = tkinter.ttk.Combobox(self,width=12,values=wep_job_type)
 wep_job_select.place(x=110,y=10)
 wep_job_select.set('귀검/나이트')
 wep_job_select.bind("<<ComboboxSelected>>",wep_job_selected)
+
 wep_type=list(calc_list_wep.DNF_wep_list['귀검/나이트'].keys())
-wep_type_select=tkinter.ttk.Combobox(self,width=12,values=wep_type)
+wep_type_select = calculator.preset_values["wep_type_select"] = tkinter.ttk.Combobox(self,width=12,values=wep_type)
 wep_type_select.place(x=236,y=10)
 wep_type_select.set('광검')
 wep_type_select.bind("<<ComboboxSelected>>",wep_job_selected2)
+
 wep_default=list(calc_list_wep.DNF_wep_list['귀검/나이트']['광검'])
-wep_select=tkinter.ttk.Combobox(self,width=30,values=wep_default)
+wep_select = calculator.preset_values["wep_select"] = tkinter.ttk.Combobox(self,width=30,values=wep_default)
 wep_select.place(x=110,y=38)
 wep_select.set('(광검)별의 바다 : 바드나후')
 
@@ -4614,22 +4636,26 @@ def job_type_selected(event):
     jobup_select["values"]=list(calc_list_job.DNF_job_list[jobtype_select.get()])
     jobup_select.set(list(calc_list_job.DNF_job_list[jobtype_select.get()])[0])
 
-jobtype_select=tkinter.ttk.Combobox(self,width=13,values=list(calc_list_job.DNF_job_list.keys()))
+jobtype_select = calculator.preset_values["jobtype_select"] = tkinter.ttk.Combobox(self,width=13,values=list(calc_list_job.DNF_job_list.keys()))
 jobtype_select.bind("<<ComboboxSelected>>",job_type_selected)
 jobtype_select.set('귀검사(남)')
 jobtype_select.place(x=390-17,y=190+52)
-jobup_select=tkinter.ttk.Combobox(self,width=13,values=list(calc_list_job.DNF_job_list['귀검사(남)']))
+
+jobup_select = calculator.preset_values["jobup_select"] = tkinter.ttk.Combobox(self,width=13,values=list(calc_list_job.DNF_job_list['귀검사(남)']))
 jobup_select.set('검신(진각)')
 jobup_select.place(x=390-17,y=220+52)
+
 style_list=['증뎀15%','속강32','증뎀10%','추뎀10%','크증10%','기타(직접비교)']
-style_select=tkinter.ttk.Combobox(self,width=13,values=style_list)
+style_select = calculator.preset_values["style_select"] = tkinter.ttk.Combobox(self,width=13,values=style_list)
 style_select.set('증뎀15%')
 style_select.place(x=390-17,y=250+52)
+
 creature_list=['증뎀10%','모공15%','크증18%','물마독공18%','기타(직접비교)']
-creature_select=tkinter.ttk.Combobox(self,width=13,values=creature_list)
+creature_select = calculator.preset_values["creature_select"] = tkinter.ttk.Combobox(self,width=13,values=creature_list)
 creature_select.set('크증18%')
 creature_select.place(x=390-17,y=280+52)
-req_cool=tkinter.ttk.Combobox(self,width=13,values=['X(지속딜만)','O(그로기포함)'])
+
+req_cool = calculator.preset_values["req_cool"] = tkinter.ttk.Combobox(self,width=13,values=['X(지속딜만)','O(그로기포함)'])
 req_cool.set('X(지속딜만)')
 req_cool.place(x=390-17,y=310+52)
 
@@ -4773,25 +4799,25 @@ def update_inv_buf2(event):
         inv_select4_2['values']=['+1/30(상)','+1/20(중)','+1/10(하)']
         inv_select4_2.set('+1/30(상)')
 inv_mod_list=["미부여","선택부여","최적부여(버퍼X)"]
-inv_mod=tkinter.ttk.Combobox(self,width=10,values=inv_mod_list);inv_mod.place(x=785,y=285);inv_mod.set("미부여")
+inv_mod = calculator.preset_values["inv_mod"] = tkinter.ttk.Combobox(self,width=10,values=inv_mod_list);inv_mod.place(x=785,y=285);inv_mod.set("미부여")
 inv_mod.bind("<<ComboboxSelected>>",update_inv)
 
 inv_type_list=["증뎀","크증","추뎀","모공","공%","스탯"]
 inv_value_list1=[6,8,10]
 inv_value_list2=[3,4,5]
-inv_select1_1=tkinter.ttk.Combobox(self,width=4,values=inv_type_list);inv_select1_1.place(x=785,y=315);inv_select1_1.set("증뎀")
-inv_select1_2=tkinter.ttk.Combobox(self,width=3,values=inv_value_list1);inv_select1_2.place(x=842,y=315);inv_select1_2.set(10)
-inv_select2_1=tkinter.ttk.Combobox(self,width=4,values=inv_type_list);inv_select2_1.place(x=785,y=345);inv_select2_1.set("증뎀")
-inv_select2_2=tkinter.ttk.Combobox(self,width=3,values=inv_value_list2);inv_select2_2.place(x=842,y=345);inv_select2_2.set(5)
+inv_select1_1 = calculator.preset_values["inv_select1_1"] = tkinter.ttk.Combobox(self,width=4,values=inv_type_list);inv_select1_1.place(x=785,y=315);inv_select1_1.set("증뎀")
+inv_select1_2 = calculator.preset_values["inv_select1_2"] = tkinter.ttk.Combobox(self,width=3,values=inv_value_list1);inv_select1_2.place(x=842,y=315);inv_select1_2.set(10)
+inv_select2_1 = calculator.preset_values["inv_select2_1"] = tkinter.ttk.Combobox(self,width=4,values=inv_type_list);inv_select2_1.place(x=785,y=345);inv_select2_1.set("증뎀")
+inv_select2_2 = calculator.preset_values["inv_select2_2"] = tkinter.ttk.Combobox(self,width=3,values=inv_value_list2);inv_select2_2.place(x=842,y=345);inv_select2_2.set(5)
 
 inv_type_list2=["축스탯%/1각","축스탯%/1각%","축앞뎀%/1각","축앞뎀%/1각%","전직패","축스탯%/1각+1"]
 inv_type_list2_1=["축스탯%/1각","축스탯%/1각%","축앞뎀%/1각","축앞뎀%/1각%","전직패","축+1/1각"]
 inv_value_list3=['3%/60(상)','3%/40(중)','3%/20(하)']
 inv_value_list3_1=['3%/40(상)','3%/30(중)','3%/20(하)']
-inv_select3_1=tkinter.ttk.Combobox(self,width=12,values=inv_type_list2);inv_select3_1.place(x=785,y=385);inv_select3_1.set("축스탯%/1각")
-inv_select3_2=tkinter.ttk.Combobox(self,width=12,values=inv_value_list3);inv_select3_2.place(x=785,y=412);inv_select3_2.set('3%/60(상)')
-inv_select4_1=tkinter.ttk.Combobox(self,width=12,values=inv_type_list2_1);inv_select4_1.place(x=785,y=440);inv_select4_1.set("축스탯%/1각")
-inv_select4_2=tkinter.ttk.Combobox(self,width=12,values=inv_value_list3_1);inv_select4_2.place(x=785,y=467);inv_select4_2.set('3%/40(상)')
+inv_select3_1 = calculator.preset_values["inv_select3_1"] = tkinter.ttk.Combobox(self,width=12,values=inv_type_list2);inv_select3_1.place(x=785,y=385);inv_select3_1.set("축스탯%/1각")
+inv_select3_2 = calculator.preset_values["inv_select3_2"] = tkinter.ttk.Combobox(self,width=12,values=inv_value_list3);inv_select3_2.place(x=785,y=412);inv_select3_2.set('3%/60(상)')
+inv_select4_1 = calculator.preset_values["inv_select4_1"] = tkinter.ttk.Combobox(self,width=12,values=inv_type_list2_1);inv_select4_1.place(x=785,y=440);inv_select4_1.set("축스탯%/1각")
+inv_select4_2 = calculator.preset_values["inv_select4_2"] = tkinter.ttk.Combobox(self,width=12,values=inv_value_list3_1);inv_select4_2.place(x=785,y=467);inv_select4_2.set('3%/40(상)')
 inv_select3_1.bind("<<ComboboxSelected>>",update_inv_buf)
 inv_select4_1.bind("<<ComboboxSelected>>",update_inv_buf2)
 update_inv(0)
