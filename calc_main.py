@@ -3549,7 +3549,11 @@ def load_checklist():
             load_cus(i,8).value=str(load_cus(i+44,2+ssnum1).value)
         load_cus(20,2).value=str(load_cus(70,2+ssnum1).value)
         saved_wep_str=load_cus(71,2+ssnum1).value
+
         calculator.wep_name_list = eval(saved_wep_str)
+        if not isinstance(calculator.wep_name_list, list):
+            calculator.wep_name_list = []
+
         sync_wep_list()
         load_preset3.save("preset.xlsx")
         load_preset3.close()
