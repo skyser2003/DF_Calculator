@@ -88,6 +88,7 @@ class Calculator:
         self.stop_gif2 = 0
         self.gif_images = {}
         self.now_rank_num = 0
+        self.res_wep = None
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1777,7 +1778,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     random_npc_img=calculator.get_photo_image('ext_img/bg_result_'+random.choice(['1','2'])+'.png')
     random_npc=canvas_res.create_image(313-210,370,image=random_npc_img,anchor='nw')
 
-    global res_wep,res_wep_img
+    global res_wep_img
     image_list = calculator.image_list
     image_list_wep = calculator.image_list_wep
 
@@ -2086,7 +2087,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
             except:
                 pass
 
-        res_wep=canvas_res.create_text(12,22,text=rank_wep_name[0],font=guide_font,fill='white',anchor='w')
+        calculator.res_wep = canvas_res.create_text(12,22,text=rank_wep_name[0],font=guide_font,fill='white',anchor='w')
         if int(ele_skill) != 0:
             ele_change_toggle=1
             res_ele=canvas_res.create_text(122,149,text="자속강X="+str(rank_dam_noele[0])+"%",fill='white',font=small_font)
@@ -2355,7 +2356,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
             buf_jingak.image=buf_jingak_img2
             buf_jingak.command=change_buf_jingak
 
-        res_wep=canvas_res.create_text(12,22,text=rank_wep_name3[0],font=guide_font,fill='white',anchor='w')
+        calculator.res_wep = canvas_res.create_text(12,22,text=rank_wep_name3[0],font=guide_font,fill='white',anchor='w')
         canvas_res.create_text(122-55,193,text=rank_inv1[0],font=small_font,fill='white',anchor="w")
         res_buf=canvas_res.create_text(122,125,text=rank_buf3[0],font=mid_font,fill='white')
         res_buf_type_what=canvas_res.create_text(122,145,text="총합 기준",font=guide_font,fill='white')
@@ -2750,7 +2751,7 @@ def change_groggy(ele_skill):
     threading.Timer(0.07, change_groggy2,args=(ele_skill,)).start()
     threading.Timer(0, time_delayy).start()
 def change_groggy2(ele_skill):
-    global res_dam,res_stat,res_stat2,res_stat3,res_inv,res_cool_what,res_wep
+    global res_dam,res_stat,res_stat2,res_stat3,res_inv,res_cool_what
     global tg_groggy,groggy,res_cool_what,cool_eff_text
     global result_image_on,rank_dam_noele,rank_dam,rank_stat,rank_stat2,rank_stat3,rank_inv,result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
     global rank_dam_tagk_noele,rank_dam_tagk,rank_stat_tagk,rank_stat_tagk2
@@ -2807,7 +2808,7 @@ def change_groggy2(ele_skill):
         tg_groggy=0
 
     ###############
-    canvas_res.itemconfig(res_wep,text=wep_changed[0],fill="white")
+    canvas_res.itemconfig(calculator.res_wep,text=wep_changed[0],fill="white")
     canvas_res.itemconfig(res_cool_what,text=cool_what)
     if int(ele_skill) != 0:
         canvas_res.itemconfig(res_ele,text="자속강X="+str(change_dam_noele[0])+"%")
@@ -2913,7 +2914,7 @@ def change_tagk(ele_skill):
             canvas_res.itemconfig(res_stat2,text=c_rank_stat_tagk2[now])
             if ele_skill !=0:
                 canvas_res.itemconfig(res_ele,text="자속강X="+str(c_rank_dam_tagk_noele[now])+"%")
-            canvas_res.itemconfig(res_wep,fill='red')
+            canvas_res.itemconfig(calculator.res_wep,fill='red')
 
         elif tagk_tg==1:
             canvas_res.itemconfig(res_dam,text=c_rank_dam[now])
@@ -2921,7 +2922,7 @@ def change_tagk(ele_skill):
             canvas_res.itemconfig(res_stat2,text=c_rank_stat2[now])
             if ele_skill !=0:
                 canvas_res.itemconfig(res_ele,text="자속강X="+str(c_rank_dam_noele[now])+"%")
-            canvas_res.itemconfig(res_wep,fill='white')
+            canvas_res.itemconfig(calculator.res_wep,fill='white')
     if tagk_tg==0:
         tagk_tg=1
         tagkgum['image']=tagkgum_img2
@@ -2953,7 +2954,7 @@ def change_rank_type(in_type):
 
 ## 순위 선택 변경
 def change_rank2(now,job_type,ele_skill):
-    global res_wep, res_dam_list
+    global res_dam_list
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
     gif_images = calculator.gif_images
@@ -2976,13 +2977,13 @@ def change_rank2(now,job_type,ele_skill):
                     c_rank_stat=rank_stat_tagk
                     c_rank_stat2=rank_stat_tagk2
                     c_rank_dam_noele=rank_dam_tagk_noele
-                    canvas_res.itemconfig(res_wep,fill="red")
+                    canvas_res.itemconfig(calculator.res_wep, fill="red")
                 else:
                     c_rank_dam=rank_dam
                     c_rank_stat=rank_stat
                     c_rank_stat2=rank_stat2
                     c_rank_dam_noele=rank_dam_noele
-                    canvas_res.itemconfig(res_wep,fill="white")
+                    canvas_res.itemconfig(calculator.res_wep, fill="white")
                 c_rank_stat3=rank_stat3
                 c_rank_inv=rank_inv
                 image_gif_changed=result_image_gif
@@ -2999,13 +3000,13 @@ def change_rank2(now,job_type,ele_skill):
                     c_rank_stat=rank0_stat_tagk
                     c_rank_stat2=rank0_stat_tagk2
                     c_rank_dam_noele=rank0_dam_tagk_noele
-                    canvas_res.itemconfig(res_wep,fill="red")
+                    canvas_res.itemconfig(calculator.res_wep, fill="red")
                 else:
                     c_rank_dam=rank0_dam
                     c_rank_stat=rank0_stat
                     c_rank_stat2=rank0_stat2
                     c_rank_dam_noele=rank0_dam_noele
-                    canvas_res.itemconfig(res_wep,fill="white")
+                    canvas_res.itemconfig(calculator.res_wep, fill="white")
                 c_rank_stat3=rank0_stat3
                 c_rank_inv=rank0_inv
                 image_gif_changed=result0_image_gif
@@ -3072,7 +3073,7 @@ def change_rank2(now,job_type,ele_skill):
 
         except KeyError as error:
             c=1
-    canvas_res.itemconfig(res_wep,text=c_rank_wep[now])
+    canvas_res.itemconfig(calculator.res_wep, text=c_rank_wep[now])
     canvas_res.itemconfig(gif_images["11"],image=image_changed['11'])
     canvas_res.itemconfig(gif_images["12"],image=image_changed['12'])
     canvas_res.itemconfig(gif_images["13"],image=image_changed['13'])
@@ -3195,7 +3196,6 @@ def show_set_name(job_type):
 
 ## 버퍼용 축복/1각/종합 버프력 전환
 def change_rank_type2(in_type):
-    global res_wep
     global result_image_on1,result_image_on2,result_image_on3,rank_buf1,rank_buf2,rank_buf3, rank_type_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
@@ -3245,7 +3245,7 @@ def change_rank_type2(in_type):
         siroco_gif_changed_tg=result_siroco_gif3_tg
         c_rank_wep=rank_wep_name3
         wep_img_changed=rank_wep_img3
-    canvas_res.itemconfig(res_wep,text=c_rank_wep[0])
+    canvas_res.itemconfig(calculator.res_wep, text=c_rank_wep[0])
     canvas_res.itemconfig(res_buf_type_what,text=type_changed)
     canvas_res.itemconfig(res_buf_ex1,text=rank_buf_ex_changed[0][0])
     canvas_res.itemconfig(res_buf_ex2,text=rank_buf_ex_changed[0][1])
