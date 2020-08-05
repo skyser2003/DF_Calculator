@@ -73,6 +73,7 @@ class Calculator:
         self.wep_name_list: List[str] = []
         self.style_calced = ""
         self.creature_calced = ""
+        self.default_base_equip = 0  # 레전더리(0), 차원 레전더리(1), 초오광(2)
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1014,14 +1015,13 @@ def calc(mode):
     else:
     ##레전기본값##
     ##########################################################################################################################
-        global default_legend,default_chawon,default_old
-        if default_legend==1:
+        if calculator.default_base_equip == 0:
             df11='11360';df12='12360';df13='13360';df14='14360';df15='15360'
             df21='21370';df22='22370';df23='23370';df31='31380';df32='32380';df33='33380'
-        elif default_chawon==1:
+        elif calculator.default_base_equip == 1:
             df11='11440';df12='12440';df13='13440';df14='14440';df15='15440'
             df21='21450';df22='22450';df23='23450';df31='31460';df32='32460';df33='33460'
-        elif default_old==1:
+        elif calculator.default_base_equip == 2:
             df11='11470';df12='12470';df13='13470';df14='14470';df15='15470'
             df21='21480';df22='22480';df23='23480';df31='31490';df32='32490';df33='33490'
         if legend_on_tg.get()==1:
@@ -5014,7 +5014,6 @@ know_image=calculator.get_photo_image("set_name/know_name.png")
 tkinter.Button(self,bg=dark_main,image=know_image,command=know_epic).place(x=302,y=520)
 
 ##디폴트 변경
-default_legend=1
 default_chawon=0
 default_old=0
 legend_on_tg=IntVar()
@@ -5025,25 +5024,18 @@ default_img2f=calculator.get_photo_image("ext_img/default2f.png")
 default_img3n=calculator.get_photo_image("ext_img/default3n.png")
 default_img3f=calculator.get_photo_image("ext_img/default3f.png")
 def change_default(value):
-    global default_legend,default_chawon,default_old
     if value==0:
-        default_legend=1
-        default_chawon=0
-        default_old=0
+        calculator.default_base_equip = 0
         select_default_lengend['image']=default_img1n
         select_default_chawon['image']=default_img2f
         select_default_old['image']=default_img3f
     elif value==1:
-        default_legend=0
-        default_chawon=1
-        default_old=0
+        calculator.default_base_equip = 1
         select_default_lengend['image']=default_img1f
         select_default_chawon['image']=default_img2n
         select_default_old['image']=default_img3f
     elif value==2:
-        default_legend=0
-        default_chawon=0
-        default_old=1
+        calculator.default_base_equip = 2
         select_default_lengend['image']=default_img1f
         select_default_chawon['image']=default_img2f
         select_default_old['image']=default_img3n
