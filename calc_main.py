@@ -70,6 +70,7 @@ class Calculator:
         self.show_number = 0  # 숫자 갱신 여부
         self.max_setopt = 0
         self.inv_tg = 0  # 잔향 부여 선택(0:미부여,1:선택부여,2:최적부여)
+        self.wep_name_list: List[str] = []
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -403,11 +404,11 @@ def calc(mode):
     ##무기 다중화
     check_wep_tg=0
     wep_pre_calced=[];cool_pre_calced=[];cool_pre_calced2=[];wep_num=[]
-    global wep_name_list
-    if len(wep_name_list)==0:
+
+    if len(calculator.wep_name_list) == 0:
         wep_name_list_temp=[wep_select.get()]
     else:
-        wep_name_list_temp=wep_name_list
+        wep_name_list_temp = calculator.wep_name_list
     for now_wep in wep_name_list_temp:
         for i in range(0,76):
             if now_wep == wep_list[i]:
@@ -3544,9 +3545,8 @@ def load_checklist():
         for i in range(1,8):
             load_cus(i,8).value=str(load_cus(i+44,2+ssnum1).value)
         load_cus(20,2).value=str(load_cus(70,2+ssnum1).value)
-        global wep_name_list
         saved_wep_str=load_cus(71,2+ssnum1).value
-        wep_name_list = eval(saved_wep_str)
+        calculator.wep_name_list = eval(saved_wep_str)
         sync_wep_list()
         load_preset3.save("preset.xlsx")
         load_preset3.close()
@@ -3632,8 +3632,7 @@ def save_checklist():
             for i in range(1,20):
                 save_cus(i+25,2+ssnum2).value=str(save_cus(i,2).value)
             save_cus(70,2+ssnum2).value=str(save_cus(20,2).value)
-            global wep_name_list
-            save_cus(71,2+ssnum2).value=str(wep_name_list)
+            save_cus(71,2+ssnum2).value = str(calculator.wep_name_list)
             for i in range(1,8):
                 save_cus(i+44,2+ssnum2).value=str(save_cus(i,8).value)
 
@@ -3830,8 +3829,7 @@ def update_count2():
             a_num[9]=a_num[9]+1
         if a_num[10]==0:
             a_num[10]=a_num[10]+1
-        global wep_name_list
-        wep_num=len(wep_name_list)
+        wep_num = len(calculator.wep_name_list)
         if wep_num==0: wep_num=1
         calculator.a_num_all = a_num[0]*a_num[1]*a_num[2]*a_num[3]*a_num[4]*a_num[5]*a_num[6]*a_num[7]*a_num[8]*a_num[9]*a_num[10]*wep_num
         showcon2(text="경우의 수= "+str(calculator.a_num_all))
@@ -4542,7 +4540,7 @@ tkinter.Button(self,command=guide_speed,image=select_speed_img,borderwidth=0,act
 reset_img=calculator.get_photo_image("ext_img/reset.png")
 tkinter.Button(self,command=reset,image=reset_img,borderwidth=0,activebackground=dark_main,bg=dark_main).place(x=302+180+17+135,y=476-435)
 
-wep_name_list=[];wep_img_list=[]
+wep_img_list=[]
 wep_list=[]
 for i in range(0,75):
     wep_list.append(name_one[str(i+111001)][1])
@@ -4559,7 +4557,9 @@ def wep_job_selected2(event):
     wep_select.set(list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])[0])
 
 def wep_list_select():
-    global wep_name_list,wep_list_num,wep_img_list,image_list_wep
+    global wep_list_num,wep_img_list,image_list_wep
+    wep_name_list = calculator.wep_name_list
+
     if wep_name_list.count(wep_select.get())!=0:
         tkinter.messagebox.showerror('에러',"중복된 무기 선택")
         return
@@ -4572,8 +4572,10 @@ def wep_list_select():
         tkinter.messagebox.showerror('에러',"무기는 최대 10가지만 선택 가능합니다")
         return
 def wep_list_reset():
-    global wep_name_list,wep_list_num,wep_img_list
-    wep_name_list=[]
+    global wep_list_num,wep_img_list
+    wep_name_list = calculator.wep_name_list
+
+    wep_name_list.clear()
     wep_list_num.configure(text="무기 수="+str(len(wep_name_list))+" / 10")
     wep_img_list=[]
     wep_img_list_refresh()
@@ -4583,7 +4585,9 @@ def wep_img_list_refresh():
         try: wep_select_img[i].configure(image=wep_img_list[i])
         except: wep_select_img[i].configure(image=image_item_void)
 def sync_wep_list():
-    global wep_name_list,wep_list_num,wep_img_list,image_list_wep
+    global wep_list_num,wep_img_list,image_list_wep
+    wep_name_list = calculator.wep_name_list
+
     wep_img_list=[]
     for wep_name in wep_name_list:
         wep_img_list.append(image_list_wep[wep_name])
