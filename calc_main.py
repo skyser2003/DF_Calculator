@@ -76,6 +76,7 @@ class Calculator:
         self.creature_calced = ""
         self.default_base_equip = 0  # 레전더리(0), 차원 레전더리(1), 초오광(2)
         self.exit_calc = 0  # 계산 종료 판정
+        self.image_list_wep = {}
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1768,8 +1769,10 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     random_npc=canvas_res.create_image(313-210,370,image=random_npc_img,anchor='nw')
 
 
-    global image_list_wep,image_list, set_name_toggle, image_list_tag, now_version,pause_gif,stop_gif,stop_gif2
+    global image_list, set_name_toggle, image_list_tag, now_version,pause_gif,stop_gif,stop_gif2
     global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43,wep_select,jobup_select, now_rank_num, res_wep,res_wep_img
+    image_list_wep = calculator.image_list_wep
+
     now_rank_num=0
     set_name_toggle=0
     pause_gif=0;stop_gif=0;stop_gif2=0
@@ -4519,10 +4522,9 @@ image_list['99990']=calculator.get_photo_image("image/99990.png")
 image_list2['99990']=calculator.get_photo_image("image/99990.png")
 image_list_tag['99990']=calculator.get_photo_image("image/99990.png")
 
-image_list_wep={}
 file_list_wep = os.listdir("image_wep")
 for i in file_list_wep:
-    image_list_wep[calc_list_wep.wep_image_filename.get(i[:-4])]=calculator.get_photo_image("image_wep/{}".format(i))
+    calculator.image_list_wep[calc_list_wep.wep_image_filename.get(i[:-4])] = calculator.get_photo_image("image_wep/{}".format(i))
 image_item_void=calculator.get_photo_image("ext_img/00000.png")
 
 sever_list=['카인','디레지에','바칼','힐더','안톤','카시야스','프레이','시로코']
@@ -4572,15 +4574,16 @@ def wep_job_selected2(event):
     wep_select.set(list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])[0])
 
 def wep_list_select():
-    global wep_list_num,wep_img_list,image_list_wep
+    global wep_list_num,wep_img_list
     wep_name_list = calculator.wep_name_list
 
     if wep_name_list.count(wep_select.get())!=0:
         tkinter.messagebox.showerror('에러',"중복된 무기 선택")
         return
+
     if len(wep_name_list)!=10:
         wep_name_list.append(wep_select.get())
-        wep_img_list.append(image_list_wep[wep_select.get()])
+        wep_img_list.append(calculator.image_list_wep[wep_select.get()])
         wep_list_num.configure(text="무기 수="+str(len(wep_name_list))+" / 10")
         wep_img_list_refresh()
     else:
@@ -4595,17 +4598,17 @@ def wep_list_reset():
     wep_img_list=[]
     wep_img_list_refresh()
 def wep_img_list_refresh():
-    global wep_select_img,image_list_wep,image_item_void
+    global wep_select_img,image_item_void
     for i in range(0,10):
         try: wep_select_img[i].configure(image=wep_img_list[i])
         except: wep_select_img[i].configure(image=image_item_void)
 def sync_wep_list():
-    global wep_list_num,wep_img_list,image_list_wep
+    global wep_list_num,wep_img_list
     wep_name_list = calculator.wep_name_list
 
     wep_img_list=[]
     for wep_name in wep_name_list:
-        wep_img_list.append(image_list_wep[wep_name])
+        wep_img_list.append(calculator.image_list_wep[wep_name])
     wep_list_num.configure(text="무기 수="+str(len(wep_name_list))+" / 10")
     wep_img_list_refresh()
 
