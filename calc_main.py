@@ -89,7 +89,7 @@ class Calculator:
         self.gif_images = {}
         self.now_rank_num = 0
         self.res_wep = None
-        self.res_wep_img = {}
+        self.res_wep_img = []
         self.rank_setting: List[int] = []
         self.rank0_setting: List[int] = []
         self.deal_rank_wep_name: List[List[int]] = [[], []]
@@ -2147,7 +2147,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                 cn1=0
                 cn4=5
                 res_dam_list[j]=canvas_res.create_text(358,34+78*j,text=rank_dam[j],font=mid_font,fill='white')
-                calculator.res_wep_img[j].append(canvas_res.create_image(304,36+78*j,image=rank_wep_img[j]))
+                calculator.res_wep_img.append(canvas_res.create_image(304, 36+78*j, image=rank_wep_img[j]))
             except KeyError as error:
                 cn1=0
                 cn4=5
