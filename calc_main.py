@@ -71,6 +71,8 @@ class Calculator:
         self.max_setopt = 0
         self.inv_tg = 0  # 잔향 부여 선택(0:미부여,1:선택부여,2:최적부여)
         self.wep_name_list: List[str] = []
+        self.style_calced = ""
+        self.creature_calced = ""
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -561,9 +563,8 @@ def calc(mode):
     extra_stat=0
 
     #칭호
-    global style_calced,creature_calced
-    style_calced=style_select.get()
-    creature_calced=creature_select.get()
+    style_calced = calculator.style_calced = style_select.get()
+    creature_calced = calculator.creature_calced = creature_select.get()
 
     if style_calced == '증뎀10%':
         fixed_dam=10
@@ -2640,7 +2641,9 @@ def show_result_dealer():
     check_list7_bt.bind("<Enter>",show_check_list7);check_list7_bt.bind("<Leave>",del_check_list7)
 
     def style_compare():
-        global style_calced,creature_calced
+        style_calced = calculator.style_calced
+        creature_calced = calculator.creature_calced
+
         now_updam=now_base_array[2]
         now_cridam=now_base_array[3]
         now_bondam=now_base_array[4]
