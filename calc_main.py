@@ -83,6 +83,9 @@ class Calculator:
         self.image_list_set2: Dict[str, PhotoImage] = {}
         self.set_name_toggle = 0
         self.now_version = "4.0.2"
+        self.pause_gif = 0
+        self.stop_gif = 0
+        self.stop_gif2 = 0
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1750,9 +1753,7 @@ show_detail_img=calculator.get_photo_image('ext_img/show_detail.png')
 show_tag_img=calculator.get_photo_image('ext_img/show_set_tag.png')
 capture_img=calculator.get_photo_image('ext_img/capture_img.png')
 style_compare_img=calculator.get_photo_image('ext_img/style_compare.png')
-pause_gif=0
-stop_gif=0
-stop_gif2=0
+
 result_upbox_img=calculator.get_photo_image('ext_img/bg_result_upbox.png')
 result_downbox_img=calculator.get_photo_image('ext_img/bg_result_downbox.png')
 result_sidebox_img=calculator.get_photo_image('ext_img/bg_result_sidebox.png')
@@ -1775,14 +1776,15 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     random_npc=canvas_res.create_image(313-210,370,image=random_npc_img,anchor='nw')
 
 
-    global pause_gif,stop_gif,stop_gif2
     global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43,wep_select,jobup_select, now_rank_num, res_wep,res_wep_img
     image_list = calculator.image_list
     image_list_wep = calculator.image_list_wep
 
     now_rank_num=0
     calculator.set_name_toggle=0
-    pause_gif=0;stop_gif=0;stop_gif2=0
+    calculator.pause_gif = 0
+    calculator.stop_gif = 0
+    calculator.stop_gif2 = 0
     job_name=jobup_select.get()[:-4]
     job_up_name=jobup_select.get()[-4:]
     canvas_res.create_text(122,50,text="<직업>",font=guide_font,fill='white')
@@ -2705,16 +2707,15 @@ def play_gif(count_frame,now_rank,now_pc,show_res,gif_list,mode,mode2,mode3):
     #mode:0(인포창),1(리스트)
     #mode2:0(정지불가),1(정지가능)  > 순위 바꾸기 정지
     #mode3:0(정지불가),1(정지가능)  > 버퍼 정렬변경 정지
-    global pause_gif, stop_gif, stop_gif2
     result_window = calculator.result_window
 
     now_frame=gif_list[now_rank][now_pc][int(count_frame)]
     count_frame += 0.3
-    if pause_gif ==0 or mode==1:
+    if calculator.pause_gif == 0 or mode == 1:
         canvas_res.itemconfig(show_res,image=now_frame)
-    while stop_gif==1 and mode2==1:
+    while calculator.stop_gif == 1 and mode2 == 1:
         return
-    while stop_gif2==1 and mode3==1:
+    while calculator.stop_gif2 == 1 and mode3 == 1:
         return
     else:
         if count_frame >=len(gif_list[now_rank][now_pc]):
@@ -2723,21 +2724,18 @@ def play_gif(count_frame,now_rank,now_pc,show_res,gif_list,mode,mode2,mode3):
             result_window.after(30, play_gif, count_frame,now_rank,now_pc,show_res,gif_list,mode,mode2,mode3)
 
 # GIF 정지용 쓰레딩
+# TODO: optimize thread?
 def time_delay1():
-    global stop_gif
-    stop_gif=0
+    calculator.stop_gif = 0
 def time_delay2():
-    global stop_gif
-    stop_gif=1
+    calculator.stop_gif = 1
     threading.Timer(0.035, time_delay1).start()
 def time_delay():
     threading.Timer(0, time_delay2).start()
 def time_delay3():
-    global stop_gif2
-    stop_gif2=0
+    calculator.stop_gif2 = 0
 def time_delay4():
-    global stop_gif2
-    stop_gif2=1
+    calculator.stop_gif2 = 1
     threading.Timer(0.035, time_delay3).start()
 def time_delayy():
     threading.Timer(0, time_delay4).start()
@@ -2750,7 +2748,6 @@ def change_groggy2(ele_skill):
     global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43
     global res_dam,res_stat,res_stat2,res_stat3,res_inv,res_cool_what,res_wep
     global tg_groggy,groggy,res_cool_what,cool_eff_text
-    global stop_gif,stop_gif2
     global result_image_on,rank_dam_noele,rank_dam,rank_stat,rank_stat2,rank_stat3,rank_inv,result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
     global rank_dam_tagk_noele,rank_dam_tagk,rank_stat_tagk,rank_stat_tagk2
     global result0_image_on,rank0_dam_noele,rank0_dam,rank0_stat,rank0_stat2,rank0_stat3,rank0_inv,result0_image_gif_tg,result0_image_gif,result0_siroco_gif_tg,result0_siroco_gif
@@ -2828,9 +2825,11 @@ def change_groggy2(ele_skill):
     canvas_res.itemconfig(res_img41,image=image_changed[0]['41'])
     canvas_res.itemconfig(res_img42,image=image_changed[0]['42'])
     canvas_res.itemconfig(res_img43,image=image_changed[0]['43'])
-    stop_gif=1;stop_gif2=1
+    calculator.stop_gif = 1
+    calculator.stop_gif2 = 1
     time.sleep(0.2)
-    stop_gif=0;stop_gif2=0
+    calculator.stop_gif = 0
+    calculator.stop_gif2 = 0
     if image_gif_changed_tg[0][0]==1:
         result_window.after(0,play_gif,0,0,0,res_img11,image_gif_changed,0,1,1)
     if image_gif_changed_tg[0][1]==1:
@@ -3099,7 +3098,7 @@ def change_rank2(now,job_type,ele_skill):
 ## 에픽 이미지 세트옵션 보이기 전환
 def show_set_name(job_type):
     global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num
-    global result_image_on, result_image_tag,result0_image_tag, pause_gif
+    global result_image_on, result_image_tag,result0_image_tag
     canvas_res = calculator.canvas_res
     image_list = calculator.image_list
     image_list_tag = calculator.image_list_tag
@@ -3112,7 +3111,7 @@ def show_set_name(job_type):
             temp_image_tag=result0_image_tag
         if calculator.set_name_toggle == 0:
             calculator.set_name_toggle = 1
-            pause_gif=1
+            calculator.pause_gif = 1
             canvas_res.itemconfig(res_img11,image=image_list_tag[temp_image_tag[now_rank_num]['11']])
             canvas_res.itemconfig(res_img12,image=image_list_tag[temp_image_tag[now_rank_num]['12']])
             canvas_res.itemconfig(res_img13,image=image_list_tag[temp_image_tag[now_rank_num]['13']])
@@ -3129,7 +3128,7 @@ def show_set_name(job_type):
             canvas_res.itemconfig(res_img43,image=image_list_tag[temp_image_tag[now_rank_num]['43']])
         elif calculator.set_name_toggle == 1:
             calculator.set_name_toggle = 0
-            pause_gif=0
+            calculator.pause_gif = 0
             canvas_res.itemconfig(res_img11,image=image_list[temp_image_tag[now_rank_num]['11']])
             canvas_res.itemconfig(res_img12,image=image_list[temp_image_tag[now_rank_num]['12']])
             canvas_res.itemconfig(res_img13,image=image_list[temp_image_tag[now_rank_num]['13']])
@@ -3154,7 +3153,7 @@ def show_set_name(job_type):
             temp_image_tag=result_image_on3_tag
         if calculator.set_name_toggle == 0:
             calculator.set_name_toggle = 1
-            pause_gif=1
+            calculator.pause_gif = 1
             canvas_res.itemconfig(res_img11,image=image_list_tag[temp_image_tag[now_rank_num]['11']])
             canvas_res.itemconfig(res_img12,image=image_list_tag[temp_image_tag[now_rank_num]['12']])
             canvas_res.itemconfig(res_img13,image=image_list_tag[temp_image_tag[now_rank_num]['13']])
@@ -3171,7 +3170,7 @@ def show_set_name(job_type):
             canvas_res.itemconfig(res_img43,image=image_list_tag[temp_image_tag[now_rank_num]['43']])
         elif calculator.set_name_toggle == 1:
             calculator.set_name_toggle = 0
-            pause_gif=0
+            calculator.pause_gif = 0
             canvas_res.itemconfig(res_img11,image=image_list[temp_image_tag[now_rank_num]['11']])
             canvas_res.itemconfig(res_img12,image=image_list[temp_image_tag[now_rank_num]['12']])
             canvas_res.itemconfig(res_img13,image=image_list[temp_image_tag[now_rank_num]['13']])
@@ -3194,7 +3193,7 @@ def change_rank_type2(in_type):
     global result_image_on1,result_image_on2,result_image_on3,rank_buf1,rank_buf2,rank_buf3, rank_type_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
-    global stop_gif,stop_gif2, now_rank_num
+    global now_rank_num
     global rank_wep_name1,rank_wep_name2,rank_wep_name3
     global res_wep_img,rank_wep_img1,rank_wep_img2,rank_wep_img3
     result_window = calculator.result_window
@@ -3260,9 +3259,12 @@ def change_rank_type2(in_type):
     canvas_res.itemconfig(res_img41,image=image_changed['41'])
     canvas_res.itemconfig(res_img42,image=image_changed['42'])
     canvas_res.itemconfig(res_img43,image=image_changed['43'])
-    stop_gif=1;stop_gif2=1
+    calculator.stop_gif = 1
+    calculator.stop_gif2 = 1
     time.sleep(0.2)
-    stop_gif=0;stop_gif2=0
+    calculator.stop_gif = 0
+    calculator.stop_gif2 = 0
+
     if image_gif_changed_tg[0][0]==1:
         result_window.after(0,play_gif,0,0,0,res_img11,image_gif_changed,0,1,1)
     if image_gif_changed_tg[0][1]==1:
