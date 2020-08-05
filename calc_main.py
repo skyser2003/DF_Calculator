@@ -68,6 +68,8 @@ class Calculator:
         self.count_num = 0  # 유효 계산 카운터
         self.count_all = 0  # 전체 계산 카운터
         self.show_number = 0  # 숫자 갱신 여부
+        self.max_setopt = 0
+        self.inv_tg = 0  # 잔향 부여 선택(0:미부여,1:선택부여,2:최적부여)
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -115,7 +117,6 @@ exit_calc=0 #계산 종료 판정
 save_name_list=[] #프리셋 이름 리스트
 save_select=0 #세이브 드롭다운 리스트 변수 임시
 all_list_num=0 #해당 사이클 당시 경우의 수
-inv_tg=0 #잔향 부여 선택(0:미부여,1:선택부여,2:최적부여)
 
 equip_buttons = {}
 set_buttons = {}
@@ -371,8 +372,6 @@ def calc(mode):
         aria_fix=0.25
         aria_dif=0
 
-    global max_setopt, inv_tg
-
     #진각/2각에 따른 실마리, 쿨감 효율 차이
     if jobup_select.get()[-4:] == "(진각)":
         silmari=0
@@ -588,7 +587,7 @@ def calc(mode):
         extra_pas2=1
 
     #잔향 부여 선기입 (직접 선택)
-    if inv_tg ==1:
+    if calculator.inv_tg ==1:
         inv1_opt=inv_select1_1.get()
         inv1_val=int(inv_select1_2.get())
         inv2_opt=inv_select2_1.get()
@@ -714,7 +713,7 @@ def calc(mode):
         inv2_val=" X "
         inv4_opt="미충족"
         inv4_val=""
-    if inv_tg==0:
+    if calculator.inv_tg == 0:
         inv1_opt="미부여"
         inv1_val=""
         inv2_opt=""
@@ -723,7 +722,7 @@ def calc(mode):
         inv3_val=""
         inv4_opt="미부여"
         inv4_val=""
-    if inv_tg==2:
+    if calculator.inv_tg == 2:
         inv3_opt="미부여"
         inv3_val=""
         inv4_opt="미부여"
@@ -1229,7 +1228,7 @@ def calc(mode):
     save_list1={} #버퍼1번
     save_list2={} #버퍼2번
     save_list3={} #버퍼3번
-    max_setopt=0
+    calculator.max_setopt = 0
     loop_counter=0
 
     for calc_wep_num in range(len(wep_num)):
@@ -1252,8 +1251,8 @@ def calc(mode):
                             return
                         set_list=make_setopt_num(calc_now,1)[0]
                         setopt_num=make_setopt_num(calc_now,1)[1]
-                        if setopt_num >= max_setopt-set_perfect :
-                            if setopt_num >= max_setopt: max_setopt = setopt_num
+                        if setopt_num >= calculator.max_setopt-set_perfect :
+                            if setopt_num >= calculator.max_setopt: calculator.max_setopt = setopt_num
                             base_array=np.array([0,0,extra_dam,extra_cri,extra_bon,0,extra_all,extra_att,extra_sta,ele_in,0,1,0,0,0,0,0,0,extra_pas2,0,0,0,0,0,0,0,0,0])
                             max_damper=fixed_dam
                             max_criper=fixed_cri
@@ -1293,7 +1292,7 @@ def calc(mode):
                                     base_array[25]*job_lv4+base_array[26]*job_lv5+base_array[27]*job_lv6)/100+1)
                             actlvl2=base_array[22]*(0.5-silmari*0.06)*0.0213+base_array[24]*(0.5-silmari*0.06)*0.04+base_array[24]*(0.1484-silmari*0.0284)*0.0674+1
                             paslvl=((100+base_array[16]*job_pas0)/100)*((100+base_array[17]*job_pas1)/100)*((100+base_array[18]*job_pas2)/100)*((100+base_array[19]*job_pas3)/100)
-                            if inv_tg ==2:
+                            if calculator.inv_tg == 2:
                                 inv_auto=inv_auto_dealer(base_array,only_bon,inv2_on_tg,inv_type_list)
                                 base_array=inv_auto[0]
                                 only_bon=inv_auto[1]
@@ -1326,15 +1325,15 @@ def calc(mode):
                 # 0추스탯 1추공 2증 3크 4추 5속추
                 # 6모 7공 8스탯 9속강 10지속 11스증 12특수
                 # 13공속 14크확 / 15 특수액티브 / 16~19 패시브 /20 그로기포함/21 2각캐특수액티브 /22~27 액티브레벨링/
-                if max_setopt != 8 or set_perfect==1:
+                if calculator.max_setopt != 8 or set_perfect==1:
                     for calc_now in all_list:
                         if exit_calc==1:
                             showsta(text='중지됨')
                             return
                         set_list=make_setopt_num(calc_now,0)[0]
                         setopt_num=make_setopt_num(calc_now,0)[1]
-                        if setopt_num >= max_setopt-set_perfect :
-                            if setopt_num >= max_setopt: max_setopt = setopt_num
+                        if setopt_num >= calculator.max_setopt-set_perfect :
+                            if setopt_num >= calculator.max_setopt: calculator.max_setopt = setopt_num
                             base_array=np.array([0,0,extra_dam,extra_cri,extra_bon,0,extra_all,extra_att,extra_sta,ele_in,0,1,0,0,0,0,0,0,extra_pas2,0,0,0,0,0,0,0,0,0])
                             ult_1=0;ult_2=0;ult_3=0;ult_skiper=0
                             skiper=0;damage=0;coolper=0
@@ -1373,7 +1372,7 @@ def calc(mode):
                                     base_array[25]*job_lv4+base_array[26]*job_lv5+base_array[27]*job_lv6)/100+1)
                             actlvl2=base_array[22]*(0.5-silmari*0.06)*0.0213+base_array[24]*(0.5-silmari*0.06)*0.04+base_array[24]*(0.1484-silmari*0.0284)*0.0674+1
                             paslvl=((100+base_array[16]*job_pas0)/100)*((100+base_array[17]*job_pas1)/100)*((100+base_array[18]*job_pas2)/100)*((100+base_array[19]*job_pas3)/100)
-                            if inv_tg ==2:
+                            if calculator.inv_tg == 2:
                                 inv_auto=inv_auto_dealer(base_array,only_bon,inv2_on_tg,inv_type_list)
                                 base_array=inv_auto[0]
                                 only_bon=inv_auto[1]
@@ -1436,10 +1435,10 @@ def calc(mode):
                             return
                         set_list=make_setopt_num(calc_now,1)[0]
                         setopt_num=make_setopt_num(calc_now,1)[1]
-                        if setopt_num >= max_setopt-set_perfect :
+                        if setopt_num >= calculator.max_setopt-set_perfect :
                             base_array=np.array([base_stat_h,base_stat_s,0,0,0,0,extra_cstat,0,base_b,base_c,0,base_pas0,base_pas0_1,0,0,0,0,0,0,0,0,0,0])
 
-                            if setopt_num >= max_setopt: max_setopt = setopt_num
+                            if setopt_num >= calculator.max_setopt: calculator.max_setopt = setopt_num
                             b_stat=(extra_bstat/100+1)*(10.24/100+1)*100-100  ##탈리스만 6%/4%
                             b_phy=extra_batt
                             b_mag=extra_batt
@@ -1533,17 +1532,17 @@ def calc(mode):
                         else:
                             calculator.count_all += 1
 
-                if max_setopt != 8 or set_perfect==1:
+                if calculator.max_setopt != 8 or set_perfect==1:
                     for calc_now in all_list:
                         if exit_calc==1:
                             showsta(text='중지됨')
                             return
                         set_list=make_setopt_num(calc_now,0)[0]
                         setopt_num=make_setopt_num(calc_now,0)[1]
-                        if setopt_num >= max_setopt-set_perfect :
+                        if setopt_num >= calculator.max_setopt-set_perfect :
                             base_array=np.array([base_stat_h,base_stat_s,0,0,0,0,extra_cstat,0,base_b,base_c,0,base_pas0,base_pas0_1,0,0,0,0,0,0,0,0,0,0])
 
-                            if setopt_num >= max_setopt: max_setopt = setopt_num
+                            if setopt_num >= calculator.max_setopt: calculator.max_setopt = setopt_num
                             b_stat=(extra_bstat/100+1)*(10.24/100+1)*100-100  ##탈리스만 6%/4%
                             b_phy=extra_batt
                             b_mag=extra_batt
@@ -4729,12 +4728,11 @@ set_buttons["135"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackgrou
 ##잔향부여
 
 def update_inv(event):
-    global inv_tg
     if inv_mod.get()=="미부여" or inv_mod.get()=="최적부여(버퍼X)":
         if inv_mod.get()=="미부여":
-            inv_tg=0
+            calculator.inv_tg = 0
         elif inv_mod.get()=="최적부여(버퍼X)":
-            inv_tg=2
+            calculator.inv_tg = 2
         inv_select1_1['state']='disabled'
         inv_select1_2['state']='disabled'
         inv_select2_1['state']='disabled'
@@ -4744,7 +4742,7 @@ def update_inv(event):
         inv_select4_1['state']='disabled'
         inv_select4_2['state']='disabled'
     elif inv_mod.get()=="선택부여":
-        inv_tg=1
+        calculator.inv_tg = 1
         inv_select1_1['state']='normal'
         inv_select1_2['state']='normal'
         inv_select2_1['state']='normal'
