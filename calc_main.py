@@ -107,6 +107,11 @@ class Calculator:
         self.res_stat: Text = None
         self.res_stat2: Text = None
         self.res_stat3: Text = None
+        self.rank_dam_tagk: List[List[int]] = [[], []]
+        self.rank_dam_nolv: List[List[int]] = [[], []]
+        self.rank_dam_noele: List[List[int]] = [[], []]
+        self.rank_dam_tagk_nolv: List[List[int]] = [[], []]
+        self.rank_dam_tagk_noele: List[List[int]] = [[], []]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1820,10 +1825,10 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
     rank_ult=[0,0,0,0,0];rank0_ult=[0,0,0,0,0]
     if job_type=='deal': ########################### 딜러 ###########################
-        global rank_dam_tagk,rank_dam_noele, res_ele, rank_inv, res_inv, rank_dam_tagk_noele
-        global rank0_dam_tagk,rank0_dam_noele,rank0_inv,rank0_dam_tagk_noele
-        global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg,rank_dam_nolv,rank_dam_tagk_nolv
-        global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg,rank0_dam_nolv,rank0_dam_tagk_nolv
+        global res_ele, rank_inv, res_inv
+        global rank0_inv
+        global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg
+        global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg
         global res_cool_what,cool_eff_text
 
         req_cool = calculator.preset_values["req_cool"]
@@ -1862,13 +1867,25 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
         rank_dam = calculator.rank_dam[0] = [0, 0, 0, 0, 0]
         rank0_dam = calculator.rank_dam[1] = [0, 0, 0, 0, 0]
-        rank_dam_tagk=[0,0,0,0,0];rank0_dam_tagk=[0,0,0,0,0]
-        rank_dam_nolv=[0,0,0,0,0];rank0_dam_nolv=[0,0,0,0,0]
-        rank_dam_noele=[0,0,0,0,0];rank0_dam_noele=[0,0,0,0,0]
+
+        rank_dam_tagk = calculator.rank_dam_tagk[0] = [0, 0, 0, 0, 0]
+        rank0_dam_tagk = calculator.rank_dam_tagk[1] = [0, 0, 0, 0, 0]
+
+        rank_dam_nolv = calculator.rank_dam_nolv[0] = [0, 0, 0, 0, 0]
+        rank0_dam_nolv = calculator.rank_dam_nolv[1] = [0, 0, 0, 0, 0]
+
+        rank_dam_noele = calculator.rank_dam_noele[0] = [0, 0, 0, 0, 0]
+        rank0_dam_noele = calculator.rank_dam_noele[1] = [0, 0, 0, 0, 0]
+
         rank_inv=[0,0,0,0,0];rank0_inv=[0,0,0,0,0]
-        rank_dam_tagk_nolv=[0,0,0,0,0];rank0_dam_tagk_nolv=[0,0,0,0,0]
-        rank_dam_tagk_noele=[0,0,0,0,0];rank0_dam_tagk_noele=[0,0,0,0,0]
-        rank_dam_onlyequ=[0,0,0,0,0];rank0_dam_onlyequ=[0,0,0,0,0]
+
+        rank_dam_tagk_nolv = calculator.rank_dam_tagk_nolv[0] = [0, 0, 0, 0, 0]
+        rank0_dam_tagk_nolv = calculator.rank_dam_tagk_nolv[1] = [0, 0, 0, 0, 0]
+        rank_dam_tagk_noele = calculator.rank_dam_tagk_noele[0] = [0, 0, 0, 0, 0]
+        rank0_dam_tagk_noele = calculator.rank_dam_tagk_noele[1] = [0, 0, 0, 0, 0]
+        rank_dam_onlyequ = [0, 0, 0, 0, 0]
+        rank0_dam_onlyequ = [0, 0, 0, 0, 0]
+
         rss=[0,0,0,0,0];rss0=[0,0,0,0,0]
 
         rank_wep_img.clear()
@@ -2841,10 +2858,10 @@ def change_groggy(ele_skill):
 def change_groggy2(ele_skill):
     global res_inv,res_cool_what
     global tg_groggy,groggy,res_cool_what,cool_eff_text
-    global rank_dam_noele,rank_inv,result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
-    global rank_dam_tagk_noele,rank_dam_tagk,rank_stat_tagk,rank_stat_tagk2
-    global rank0_dam_noele,rank0_inv,result0_image_gif_tg,result0_image_gif,result0_siroco_gif_tg,result0_siroco_gif
-    global rank0_dam_tagk_noele,rank0_dam_tagk,rank0_stat_tagk,rank0_stat_tagk2
+    global rank_inv,result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
+    global rank_stat_tagk,rank_stat_tagk2
+    global rank0_inv,result0_image_gif_tg,result0_image_gif,result0_siroco_gif_tg,result0_siroco_gif
+    global rank0_rank0_stat_tagk,rank0_stat_tagk2
     global tagkgum_exist,tagk_tg
     global groggy_bt,tg_groggy_img2,tg_groggy_img1
 
@@ -2863,6 +2880,8 @@ def change_groggy2(ele_skill):
     res_stat = calculator.res_stat
     res_stat2 = calculator.res_stat2
     res_stat3 = calculator.res_stat3
+    rank_dam_noele = calculator.rank_dam_noele[0]
+    rank0_dam_noele = calculator.rank_dam_noele[1]
 
     calculator.now_rank_num = 0
     if tagkgum_exist==1:
@@ -2975,9 +2994,7 @@ def change_groggy2(ele_skill):
 def change_tagk(ele_skill):
     global tagk_tg, tagkgum
     global rank_stat_tagk, rank_stat_tagk2
-    global rank_dam_tagk, rank_dam_tagk_noele, rank_dam_noele
     global rank0_stat_tagk, rank0_stat_tagk2
-    global rank0_dam_tagk, rank0_dam_tagk_noele, rank0_dam_noele
     global res_dam_list
     global tg_groggy
 
@@ -2993,6 +3010,12 @@ def change_tagk(ele_skill):
     res_dam = calculator.res_dam
     res_stat = calculator.res_stat
     res_stat2 = calculator.res_stat2
+    rank_dam_tagk = calculator.rank_dam_tagk[0]
+    rank0_dam_tagk = calculator.rank_dam_tagk[1]
+    rank_dam_noele = calculator.rank_dam_noele[0]
+    rank0_dam_noele = calculator.rank_dam_noele[1]
+    rank_dam_tagk_noele = calculator.rank_dam_tagk_noele[0]
+    rank0_dam_tagk_noele = calculator.rank_dam_tagk_noele[1]
 
     now = calculator.now_rank_num
     tagkgum_img=calculator.get_photo_image('ext_img/tagk_um.png')
@@ -3075,10 +3098,10 @@ def change_rank2(now,job_type,ele_skill):
 
     calculator.now_rank_num = now
     if job_type =='deal':
-        global tagk_tg, tagkgum, tagkgum_exist, rank_dam_tagk, rank_stat_tagk, rank_stat_tagk2, rank_dam_tagk_noele
-        global res_ele,rank_dam_noele, rank_inv, res_inv
+        global tagk_tg, tagkgum, tagkgum_exist, rank_stat_tagk, rank_stat_tagk2
+        global res_ele, rank_inv, res_inv
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg
-        global rank0_dam_noele, rank0_inv
+        global rank0_inv
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg
         global tg_groggy
 
@@ -3094,6 +3117,15 @@ def change_rank2(now,job_type,ele_skill):
         rank0_stat = calculator.deal_rank_stat1[1]
         rank0_stat2 = calculator.deal_rank_stat2[1]
         rank0_stat3 = calculator.deal_rank_stat3[1]
+
+        rank_dam_tagk = calculator.rank_dam_tagk[0]
+        rank0_dam_tagk = calculator.rank_dam_tagk[1]
+
+        rank_dam_noele = calculator.rank_dam_noele[0]
+        rank0_dam_noele = calculator.rank_dam_noele[1]
+
+        rank_dam_tagk_noele = calculator.rank_dam_tagk_noele[0]
+        rank0_dam_tagk_noele = calculator.rank_dam_tagk_noele[1]
 
         try:
             if tg_groggy==0:
