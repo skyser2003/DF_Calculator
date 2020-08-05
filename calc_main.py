@@ -18,7 +18,7 @@ import webbrowser
 from collections import Counter
 from json import loads
 from tkinter import *
-from typing import List
+from typing import List, Dict
 from urllib import parse
 
 import numpy as np
@@ -77,6 +77,11 @@ class Calculator:
         self.default_base_equip = 0  # 레전더리(0), 차원 레전더리(1), 초오광(2)
         self.exit_calc = 0  # 계산 종료 판정
         self.image_list_wep = {}
+        self.image_list: Dict[str, PhotoImage] = {}
+        self.image_list2: Dict[str, PhotoImage] = {}
+        self.image_list_tag: Dict[str, PhotoImage] = {}
+        self.image_list_set: Dict[str, PhotoImage] = {}
+        self.image_list_set2: Dict[str, PhotoImage] = {}
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1769,8 +1774,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     random_npc=canvas_res.create_image(313-210,370,image=random_npc_img,anchor='nw')
 
 
-    global image_list, set_name_toggle, image_list_tag, now_version,pause_gif,stop_gif,stop_gif2
+    global set_name_toggle, now_version,pause_gif,stop_gif,stop_gif2
     global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43,wep_select,jobup_select, now_rank_num, res_wep,res_wep_img
+    image_list = calculator.image_list
     image_list_wep = calculator.image_list_wep
 
     now_rank_num=0
@@ -2943,7 +2949,7 @@ def change_rank_type(in_type):
 
 ## 순위 선택 변경
 def change_rank2(now,job_type,ele_skill):
-    global image_list, res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num, res_wep, res_dam_list
+    global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num, res_wep, res_dam_list
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
 
@@ -3091,9 +3097,11 @@ def change_rank2(now,job_type,ele_skill):
 
 ## 에픽 이미지 세트옵션 보이기 전환
 def show_set_name(job_type):
-    global image_list,res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num
-    global set_name_toggle, image_list_tag, result_image_on, result_image_tag,result0_image_tag, pause_gif
+    global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num
+    global set_name_toggle, result_image_on, result_image_tag,result0_image_tag, pause_gif
     canvas_res = calculator.canvas_res
+    image_list = calculator.image_list
+    image_list_tag = calculator.image_list_tag
 
     if job_type == "deal":
         global result_image_tag
@@ -3181,7 +3189,7 @@ def show_set_name(job_type):
 
 ## 버퍼용 축복/1각/종합 버프력 전환
 def change_rank_type2(in_type):
-    global image_list, res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43,res_wep
+    global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43,res_wep
     global result_image_on1,result_image_on2,result_image_on3,rank_buf1,rank_buf2,rank_buf3, rank_type_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
@@ -4061,10 +4069,10 @@ def click_equipment(code):
     code = str(code)
 
     if select_item[f"tg{code}"]==0:
-        equip_buttons[code]['image']=image_list[code]
+        equip_buttons[code]['image'] = calculator.image_list[code]
         select_item[f"tg{code}"]=1
     elif select_item[f"tg{code}"]==1:
-        equip_buttons[code]['image']=image_list2[code]
+        equip_buttons[code]['image'] = calculator.image_list2[code]
         select_item[f"tg{code}"]=0
     if len(code)==5:
         check_set(int('1'+code[2:4]))
@@ -4084,18 +4092,18 @@ def check_equipment():
         try:
             str_i = str(i)
             if select_item[f"tg{i}"]==0:
-                equip_buttons[str_i]['image']=image_list2[str_i]
+                equip_buttons[str_i]['image'] = calculator.image_list2[str_i]
             elif select_item[f"tg{i}"]==1:
-                equip_buttons[str_i]['image']=image_list[str_i]
+                equip_buttons[str_i]['image'] = calculator.image_list[str_i]
         except:
             pass
     for i in know_list2+know_set_list+know_jin_list:
         try:
             str_i = str(i)
             if select_item[f"tg{i}"]==0:
-                equip_buttons[str_i]['image']=image_list2[str_i]
+                equip_buttons[str_i]['image'] = calculator.image_list2[str_i]
             elif select_item[f"tg{i}"]==1:
-                equip_buttons[str_i]['image']=image_list[str_i]
+                equip_buttons[str_i]['image'] = calculator.image_list[str_i]
         except:
             pass
 
@@ -4153,20 +4161,20 @@ def click_set(code):
             for i in range(11,44): ##모든 부위에서
                 try:
                     str_i = str(i)
-                    equip_buttons[str_i + code_str + '0']['image']=image_list2[str_i + code_str + '0'] ##이미지도 오프로 바꿈
+                    equip_buttons[str_i + code_str + '0']['image'] = calculator.image_list2[str_i + code_str + '0'] ##이미지도 오프로 바꿈
                     select_item['tg'+str_i+code_str+'0']=0 ##모든 체크를 0으로 만듬
                 except KeyError as error:
                     c=1
-            set_buttons[str(code)]['image']=image_list_set2[str(code)] ##세트이미지도 오프로 바꿈
+            set_buttons[str(code)]['image'] = calculator.image_list_set2[str(code)] ##세트이미지도 오프로 바꿈
         else: ## 채택 숫자가 3미만이면
             for i in range(11,44): ##모든 부위에서
                 try:
                     str_i = str(i)
-                    equip_buttons[str_i + code_str + '0']['image']=image_list[str_i + code_str + '0'] ##이미지도 온으로 바꿈
+                    equip_buttons[str_i + code_str + '0']['image'] = calculator.image_list[str_i + code_str + '0'] ##이미지도 온으로 바꿈
                     select_item['tg'+str_i+code_str+'0']=1 ##모든 체크를 1으로 만듬
                 except KeyError as error:
                     c=1
-            set_buttons[str(code)]['image']=image_list_set[str(code)] ##세트이미지도 온으로 바꿈
+            set_buttons[str(code)]['image'] = calculator.image_list_set[str(code)] ##세트이미지도 온으로 바꿈
 
 
     else:
@@ -4180,24 +4188,27 @@ def click_set(code):
         if set_checked==5: ## 채택 숫자가 5이면
             for i in range(11,16): ## 방어구 부위에서
                 try:
-                    equip_buttons[str(i) + code_str + '0']['image']=image_list2[str(i) + code_str + '0'] ##이미지도 오프로 바꿈
+                    equip_buttons[str(i) + code_str + '0']['image'] = calculator.image_list2[str(i) + code_str + '0'] ##이미지도 오프로 바꿈
                     select_item['tg'+str(i)+code_str+'0']=0 ##모든 체크를 0으로 만듬
                 except KeyError as error:
                     c=1
-            set_buttons[str(code)]['image']=image_list_set2[str(code)] ##세트이미지도 오프로 바꿈
+            set_buttons[str(code)]['image'] = calculator.image_list_set2[str(code)] ##세트이미지도 오프로 바꿈
 
         else: ## 채택 숫자가 5미만이면
             for i in range(11,16): ## 방어구 부위에서
                 try:
                     str_i = str(i)
-                    equip_buttons[str_i + code_str + '0']['image']=image_list[str_i + code_str + '0'] ##이미지도 온으로 바꿈
+                    equip_buttons[str_i + code_str + '0']['image'] = calculator.image_list[str_i + code_str + '0'] ##이미지도 온으로 바꿈
                     select_item['tg'+str_i+code_str+'0']=1 ##모든 체크를 1으로 만듬
                 except KeyError as error:
                     c=1
-            set_buttons[str(code)]['image']=image_list_set[str(code)] ##세트이미지도 온으로 바꿈
+            set_buttons[str(code)]['image'] = calculator.image_list_set[str(code)] ##세트이미지도 온으로 바꿈
 
 ## 세트명 태그 점등 여부와 실제 토글값 동기화
 def check_set(code):
+    image_list_set = calculator.image_list_set
+    image_list_set2 = calculator.image_list_set2
+
     code_str=str(code)[1:3]
     set_checked=0
     if code < 116:
@@ -4305,7 +4316,8 @@ def show_profile2(name,server):
             profile_window.after(100, play_gif_cha, 0,now_pc,show_res,gif_list)
         else:
             profile_window.after(100, play_gif_cha, count_frame,now_pc,show_res,gif_list)
-    global image_list
+
+    image_list = calculator.image_list
     cha_god_gif=[None,None,None]
     for i in [11,12,13,14,15,21,22,23,31,32,33]:
         for j in setting_dict['장비']:
@@ -4489,38 +4501,33 @@ know_set_list=['22400150','22400250','22400350','22400450','22400550','21400640'
 know_jin_list=['11410100','11410110','11410120','11410130','11410140','11410150',
                '21420100','21420110','21420120','21420130','21420140','21420150',
                '33430100','33430110','33430120','33430130','33430140','33430150']
-image_list={}
-image_list2={}
-image_list_tag={}
-image_list_set={}
-image_list_set2={}
 
 file_list = os.listdir("image")
 for i in file_list:
     if i[-3:]!='gif':
         if i[-5]=='n':
-            image_list[i[:-5]] = calculator.get_photo_image(f"image/{i}")
+            calculator.image_list[i[:-5]] = calculator.get_photo_image(f"image/{i}")
         elif i[-5]=='f':
-            image_list2[i[:-5]] = calculator.get_photo_image(f"image/{i}")
+            calculator.image_list2[i[:-5]] = calculator.get_photo_image(f"image/{i}")
         elif i[-5]=='t':
-            image_list_tag[i[:-5]] = calculator.get_photo_image(f"image/{i}")
+            calculator.image_list_tag[i[:-5]] = calculator.get_photo_image(f"image/{i}")
 
         if i[0]=='n' and i[-5]=='t':
-            image_list_tag[i[:-5]] = calculator.get_photo_image(f"image/{i}")
+            calculator.image_list_tag[i[:-5]] = calculator.get_photo_image(f"image/{i}")
         elif i[0]=='n':
-            image_list[i[:-4]] = calculator.get_photo_image(f"image/{i}")
+            calculator.image_list[i[:-4]] = calculator.get_photo_image(f"image/{i}")
 
 for i in range(1,56):
     try:
-        image_list_set[str(100+i)] = calculator.get_photo_image(f"set_name/{i+100}.png")
-        image_list_set2[str(100+i)] = calculator.get_photo_image(f"set_name/{i+100}f.png")
+        calculator.image_list_set[str(100+i)] = calculator.get_photo_image(f"set_name/{i+100}.png")
+        calculator.image_list_set2[str(100+i)] = calculator.get_photo_image(f"set_name/{i+100}f.png")
     except:
         pass
 for i in range(1,18):
-    image_list_set[str(200+i)] = calculator.get_photo_image(f"set_name/{i+200}.png")
-image_list['99990']=calculator.get_photo_image("image/99990.png")
-image_list2['99990']=calculator.get_photo_image("image/99990.png")
-image_list_tag['99990']=calculator.get_photo_image("image/99990.png")
+    calculator.image_list_set[str(200+i)] = calculator.get_photo_image(f"set_name/{i+200}.png")
+calculator.image_list['99990']=calculator.get_photo_image("image/99990.png")
+calculator.image_list2['99990']=calculator.get_photo_image("image/99990.png")
+calculator.image_list_tag['99990']=calculator.get_photo_image("image/99990.png")
 
 file_list_wep = os.listdir("image_wep")
 for i in file_list_wep:
@@ -4710,6 +4717,7 @@ show_count2=tkinter.Label(self,font=guide_font,fg="white",bg=dark_sub)
 show_count2.place(x=430+259,y=480-287)
 showcon2=show_count2.configure
 
+image_list_set2 = calculator.image_list_set2
 set_buttons["101"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['101'],command=lambda:click_set(101));set_buttons["101"].place(x=29,y=100)
 set_buttons["102"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['102'],command=lambda:click_set(102));set_buttons["102"].place(x=29,y=130)
 set_buttons["103"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['103'],command=lambda:click_set(103));set_buttons["103"].place(x=29,y=160)
@@ -4836,6 +4844,9 @@ inv_select3_1.bind("<<ComboboxSelected>>",update_inv_buf)
 inv_select4_1.bind("<<ComboboxSelected>>",update_inv_buf2)
 update_inv(0)
 ##장비융합
+image_list2 = calculator.image_list2
+image_list_set2 = calculator.image_list_set2
+
 set_buttons["151"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['151'],command=lambda:click_set(151));set_buttons["151"].place(x=710+10,y=445+95) ##
 set_buttons["152"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['152'],command=lambda:click_set(152));set_buttons["152"].place(x=710+10,y=475+95) ##
 set_buttons["153"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['153'],command=lambda:click_set(153));set_buttons["153"].place(x=710+10,y=505+95) ##
@@ -4898,6 +4909,9 @@ select_item['tg33430130']=0;select_item['tg33430140']=0;select_item['tg33430150'
 def know_epic():
     global select_item
     global know_window
+
+    image_list_set = calculator.image_list_set
+
     try:
         know_window.destroy()
     except:
@@ -4910,9 +4924,9 @@ def know_epic():
     know_image_list={}
     for i in know_list+know_set_list+know_jin_list:
         if select_item['tg'+i]==0:
-            know_image_list[i]=image_list2[i]
+            know_image_list[i] = calculator.image_list2[i]
         else:
-            know_image_list[i]=image_list[i]
+            know_image_list[i] = calculator.image_list[i]
     equip_buttons["13390150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['13390150'], command=lambda:click_equipment(13390150))
     equip_buttons["13390150"].place(x=303 - 290, y=20)
     equip_buttons["22390240"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['22390240'], command=lambda:click_equipment(22390240))
@@ -5069,6 +5083,8 @@ tkinter.Label(self,bg=dark_main,image=default_tag_img).place(x=431,y=515)
 
 
 ##상의
+image_list2 = calculator.image_list2
+
 select_item['tg11010']=0;equip_buttons["11010"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11010'], command=lambda:click_equipment(11010))
 equip_buttons["11010"].place(x=100, y=100)
 select_item['tg11011']=0;equip_buttons["11011"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11011'], command=lambda:click_equipment(11011))
