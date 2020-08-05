@@ -120,6 +120,8 @@ class Calculator:
         self.result_image_gif_tg: List[List[int]] = [[], []]
         self.result_siroco_gif: List[List[int]] =[[], []]
         self.result_siroco_gif_tg: List[List[int]] =[[], []]
+        self.res_cool_what: Text = None
+        self.cool_eff_text = ""
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1833,8 +1835,6 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
     rank_ult=[0,0,0,0,0];rank0_ult=[0,0,0,0,0]
     if job_type=='deal': ########################### 딜러 ###########################
-        global res_cool_what,cool_eff_text
-
         req_cool = calculator.preset_values["req_cool"]
 
         result_image_on = calculator.deal_result_image_on[0]
@@ -1856,14 +1856,13 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
         cool_check=req_cool.get()[0]
         if cool_check=='O':
-            cool_eff_check=1
-            cool_eff_text='(쿨감O)'
+            calculator.cool_eff_text = '(쿨감O)'
             cool_eff_text_all='그로기(쿨감O)'
         else:
-            cool_eff_check=0
-            cool_eff_text='(쿨감X)'
+            calculator.cool_eff_text = '(쿨감X)'
             cool_eff_text_all='그로기(쿨감X)'
-        res_cool_what=canvas_res.create_text(122,114,text=cool_eff_text_all,font=small_font,fill='white')
+
+        calculator.res_cool_what = canvas_res.create_text(122,114,text=cool_eff_text_all,font=small_font,fill='white')
 
         global rank0_list,rank1_list
         rank0_list=rank_list[1]
@@ -2867,8 +2866,7 @@ def change_groggy(ele_skill):
     threading.Timer(0.07, change_groggy2,args=(ele_skill,)).start()
     threading.Timer(0, time_delayy).start()
 def change_groggy2(ele_skill):
-    global res_cool_what
-    global tg_groggy,groggy,res_cool_what,cool_eff_text
+    global tg_groggy,groggy
     global rank_stat_tagk,rank_stat_tagk2
     global rank0_rank0_stat_tagk,rank0_stat_tagk2
     global tagkgum_exist,tagk_tg
@@ -2909,7 +2907,7 @@ def change_groggy2(ele_skill):
         tagk_tg=0
     if tg_groggy==0:
         groggy_bt["image"]=tg_groggy_img2
-        cool_what='지속딜(쿨감O)'
+        cool_what = f"지속딜{calculator.cool_eff_text}"
         image_changed = calculator.deal_result_image_on[1]
         change_dam_noele=rank0_dam_noele
         change_dam = calculator.rank_dam[1]
@@ -2929,7 +2927,7 @@ def change_groggy2(ele_skill):
 
     elif tg_groggy==1:
         groggy_bt["image"]=tg_groggy_img1
-        cool_what='그로기'+cool_eff_text
+        cool_what = f"그로기{calculator.cool_eff_text}"
         image_changed = calculator.deal_result_image_on[0]
         change_dam_noele=rank_dam_noele
         change_dam = calculator.rank_dam[0]
@@ -2948,7 +2946,7 @@ def change_groggy2(ele_skill):
 
     ###############
     canvas_res.itemconfig(calculator.res_wep,text=wep_changed[0],fill="white")
-    canvas_res.itemconfig(res_cool_what,text=cool_what)
+    canvas_res.itemconfig(calculator.res_cool_what,text=cool_what)
     if int(ele_skill) != 0:
         canvas_res.itemconfig(calculator.res_ele,text="자속강X="+str(change_dam_noele[0])+"%")
     canvas_res.itemconfig(res_dam,text=change_dam[0])
