@@ -1776,8 +1776,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     random_npc_img=calculator.get_photo_image('ext_img/bg_result_'+random.choice(['1','2'])+'.png')
     random_npc=canvas_res.create_image(313-210,370,image=random_npc_img,anchor='nw')
 
-
-    global wep_select,jobup_select, now_rank_num, res_wep,res_wep_img
+    global now_rank_num, res_wep,res_wep_img
     image_list = calculator.image_list
     image_list_wep = calculator.image_list_wep
 
