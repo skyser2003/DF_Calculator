@@ -41,6 +41,7 @@ from calc_calc import make_setopt_num, make_set_list, hard_coding_dealer, inv_au
 class Calculator:
     def __init__(self):
         self.result_window = None
+        self.canvas_res = None
         self.photo_images = []
         self.all_list_list_num = 0  # 계산 전체 경우의 수
         self.a_num_all = 0
@@ -1756,8 +1757,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     result_window.title("결과값")
     result_window.resizable(False,False)
     result_window.configure(bg=dark_main)
-    global canvas_res
-    canvas_res = Canvas(result_window, width=587, height=804, bd=0, bg=dark_main)
+    canvas_res = calculator.canvas_res = Canvas(result_window, width=587, height=804, bd=0, bg=dark_main)
     canvas_res.place(x=-2,y=-2)
     if job_type=='deal':
         result_bg=calculator.get_photo_image('ext_img/bg_result.png')
@@ -2448,8 +2448,10 @@ result_gauge_bar_img=calculator.get_photo_image('ext_img/result_gauge_bar.png')
 result_gauge_img=calculator.get_photo_image('ext_img/result_gauge.png')
 result_checklist_img=calculator.get_photo_image('ext_img/result_show_checklist.png')
 def show_result_dealer():
-    global canvas_res,guide_font
+    global guide_font
     result_window = calculator.result_window
+    canvas_res = calculator.canvas_res
+
     result_window.geometry("585x710")
     global now_rank_num,tg_groggy,tg_result_first
     global rank1_list,rank0_list
@@ -2747,6 +2749,7 @@ def change_groggy2(ele_skill):
     global groggy_bt,tg_groggy_img2,tg_groggy_img1,now_rank_num
     global rank_wep_name,rank0_wep_name
     result_window = calculator.result_window
+    canvas_res = calculator.canvas_res
 
     now_rank_num=0
     if tagkgum_exist==1:
@@ -2863,6 +2866,8 @@ def change_tagk(ele_skill):
     global now_rank_num
     global res_dam_list
     global tg_groggy
+    canvas_res = calculator.canvas_res
+
     now=now_rank_num
     tagkgum_img=calculator.get_photo_image('ext_img/tagk_um.png')
     tagkgum_img2=calculator.get_photo_image('ext_img/tagk_ang.png')
@@ -2935,8 +2940,9 @@ def change_rank_type(in_type):
 
 ## 순위 선택 변경
 def change_rank2(now,job_type,ele_skill):
-    global image_list,canvas_res, res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num, res_wep, res_dam_list
+    global image_list, res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num, res_wep, res_dam_list
     result_window = calculator.result_window
+    canvas_res = calculator.canvas_res
 
     now_rank_num=now
     if job_type =='deal':
@@ -3082,8 +3088,9 @@ def change_rank2(now,job_type,ele_skill):
 
 ## 에픽 이미지 세트옵션 보이기 전환
 def show_set_name(job_type):
-    global image_list,canvas_res,res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num
+    global image_list,res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num
     global set_name_toggle, image_list_tag, result_image_on, result_image_tag,result0_image_tag, pause_gif
+    canvas_res = calculator.canvas_res
 
     if job_type == "deal":
         global result_image_tag
@@ -3171,7 +3178,7 @@ def show_set_name(job_type):
 
 ## 버퍼용 축복/1각/종합 버프력 전환
 def change_rank_type2(in_type):
-    global image_list,canvas_res, res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43,res_wep
+    global image_list, res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43,res_wep
     global result_image_on1,result_image_on2,result_image_on3,rank_buf1,rank_buf2,rank_buf3, rank_type_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
@@ -3179,6 +3186,7 @@ def change_rank_type2(in_type):
     global rank_wep_name1,rank_wep_name2,rank_wep_name3
     global res_wep_img,rank_wep_img1,rank_wep_img2,rank_wep_img3
     result_window = calculator.result_window
+    canvas_res = calculator.canvas_res
 
     now_rank_num=0
     if in_type==1:
