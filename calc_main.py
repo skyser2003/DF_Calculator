@@ -113,6 +113,8 @@ class Calculator:
         self.rank_dam_tagk_nolv: List[List[int]] = [[], []]
         self.rank_dam_tagk_noele: List[List[int]] = [[], []]
         self.res_ele: Text = None
+        self.deal_rank_inv: List[List[int]] = [[], []]
+        self.buff_rank_inv: List[List[int]] = [[], [], []]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1826,8 +1828,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
     rank_ult=[0,0,0,0,0];rank0_ult=[0,0,0,0,0]
     if job_type=='deal': ########################### 딜러 ###########################
-        global rank_inv, res_inv
-        global rank0_inv
+        global res_inv
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg
         global res_cool_what,cool_eff_text
@@ -1878,7 +1879,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank_dam_noele = calculator.rank_dam_noele[0] = [0, 0, 0, 0, 0]
         rank0_dam_noele = calculator.rank_dam_noele[1] = [0, 0, 0, 0, 0]
 
-        rank_inv=[0,0,0,0,0];rank0_inv=[0,0,0,0,0]
+        rank_inv = calculator.deal_rank_inv[0] = [0, 0, 0, 0, 0]
+        rank0_inv = calculator.deal_rank_inv[1] = [0, 0, 0, 0, 0]
 
         rank_dam_tagk_nolv = calculator.rank_dam_tagk_nolv[0] = [0, 0, 0, 0, 0]
         rank0_dam_tagk_nolv = calculator.rank_dam_tagk_nolv[1] = [0, 0, 0, 0, 0]
@@ -2261,7 +2263,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         load_presetr=load_workbook("preset.xlsx", data_only=True)
         r_preset=load_presetr["custom"]
         global rank_buf1,rank_buf2,rank_buf3, rank_type_buf, res_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
-        global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag,rank_inv1,rank_inv2,rank_inv3
+        global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag
         global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
         global rank_neo_buf1,rank_neo_buf2,rank_neo_buf3
@@ -2278,9 +2280,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank_setting1=[0,0,0,0,0]
         rank_setting2=[0,0,0,0,0]
         rank_setting3=[0,0,0,0,0]
-        rank_inv1=[0,0,0,0,0]
-        rank_inv2=[0,0,0,0,0]
-        rank_inv3=[0,0,0,0,0]
+        rank_inv1 = calculator.buff_rank_inv[0] = [0, 0, 0, 0, 0]
+        rank_inv2 = calculator.buff_rank_inv[1] = [0, 0, 0, 0, 0]
+        rank_inv3 = calculator.buff_rank_inv[2] = [0, 0, 0, 0, 0]
 
         result_image_on1.clear()
         result_image_on2.clear()
@@ -2859,9 +2861,9 @@ def change_groggy(ele_skill):
 def change_groggy2(ele_skill):
     global res_inv,res_cool_what
     global tg_groggy,groggy,res_cool_what,cool_eff_text
-    global rank_inv,result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
+    global result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
     global rank_stat_tagk,rank_stat_tagk2
-    global rank0_inv,result0_image_gif_tg,result0_image_gif,result0_siroco_gif_tg,result0_siroco_gif
+    global result0_image_gif_tg,result0_image_gif,result0_siroco_gif_tg,result0_siroco_gif
     global rank0_rank0_stat_tagk,rank0_stat_tagk2
     global tagkgum_exist,tagk_tg
     global groggy_bt,tg_groggy_img2,tg_groggy_img1
@@ -2883,6 +2885,8 @@ def change_groggy2(ele_skill):
     res_stat3 = calculator.res_stat3
     rank_dam_noele = calculator.rank_dam_noele[0]
     rank0_dam_noele = calculator.rank_dam_noele[1]
+    rank_inv = calculator.deal_rank_inv[0]
+    rank0_inv = calculator.deal_rank_inv[1]
 
     calculator.now_rank_num = 0
     if tagkgum_exist==1:
@@ -3100,9 +3104,8 @@ def change_rank2(now,job_type,ele_skill):
     calculator.now_rank_num = now
     if job_type =='deal':
         global tagk_tg, tagkgum, tagkgum_exist, rank_stat_tagk, rank_stat_tagk2
-        global rank_inv, res_inv
+        global res_inv
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg
-        global rank0_inv
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg
         global tg_groggy
 
@@ -3127,6 +3130,9 @@ def change_rank2(now,job_type,ele_skill):
 
         rank_dam_tagk_noele = calculator.rank_dam_tagk_noele[0]
         rank0_dam_tagk_noele = calculator.rank_dam_tagk_noele[1]
+
+        rank_inv = calculator.deal_rank_inv[0]
+        rank0_inv = calculator.deal_rank_inv[1]
 
         try:
             if tg_groggy==0:
