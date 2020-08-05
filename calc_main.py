@@ -2817,7 +2817,8 @@ def change_groggy2(ele_skill):
         siroco_gif_changed_tg=result0_siroco_gif_tg
         siroco_gif_changed=result0_siroco_gif
         wep_changed=rank0_wep_name
-        wep_img_changed=rank0_wep_img
+        wep_img_changed=calculator.deal_rank_wep_img[1]
+
         tg_groggy=1
 
     elif tg_groggy==1:
@@ -2836,7 +2837,7 @@ def change_groggy2(ele_skill):
         siroco_gif_changed_tg=result_siroco_gif_tg
         siroco_gif_changed=result_siroco_gif
         wep_changed=rank_wep_name
-        wep_img_changed=rank_wep_img
+        wep_img_changed=calculator.deal_rank_wep_img[0]
         tg_groggy=0
 
     ###############
