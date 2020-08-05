@@ -87,6 +87,7 @@ class Calculator:
         self.stop_gif = 0
         self.stop_gif2 = 0
         self.gif_images = {}
+        self.now_rank_num = 0
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1776,11 +1777,11 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     random_npc_img=calculator.get_photo_image('ext_img/bg_result_'+random.choice(['1','2'])+'.png')
     random_npc=canvas_res.create_image(313-210,370,image=random_npc_img,anchor='nw')
 
-    global now_rank_num, res_wep,res_wep_img
+    global res_wep,res_wep_img
     image_list = calculator.image_list
     image_list_wep = calculator.image_list_wep
 
-    now_rank_num=0
+    calculator.now_rank_num = 0
     calculator.set_name_toggle=0
     calculator.pause_gif = 0
     calculator.stop_gif = 0
@@ -2341,11 +2342,11 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                     c_rank_buf=rank_buf3
                 if buf_jingak_tg==0:
                     buf_jingak["image"]=buf_jingak_img1
-                    canvas_res.itemconfig(res_buf,text=c_rank0_buf[now_rank_num],fill='gray')
+                    canvas_res.itemconfig(res_buf,text=c_rank0_buf[calculator.now_rank_num],fill='gray')
                     buf_jingak_tg=1
                 elif buf_jingak_tg==1:
                     buf_jingak["image"]=buf_jingak_img2
-                    canvas_res.itemconfig(res_buf,text=c_rank_buf[now_rank_num],fill='white')
+                    canvas_res.itemconfig(res_buf,text=c_rank_buf[calculator.now_rank_num],fill='white')
                     buf_jingak_tg=0
 
             buf_jingak_exist=1
@@ -2465,9 +2466,10 @@ def show_result_dealer():
     global guide_font
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
+    now_rank_num = calculator.now_rank_num
 
     result_window.geometry("585x710")
-    global now_rank_num,tg_groggy,tg_result_first
+    global tg_groggy,tg_result_first
     global rank1_list,rank0_list
     set_list=[]
     cool_list=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] ##최종값
@@ -2755,13 +2757,13 @@ def change_groggy2(ele_skill):
     global result0_image_on,rank0_dam_noele,rank0_dam,rank0_stat,rank0_stat2,rank0_stat3,rank0_inv,result0_image_gif_tg,result0_image_gif,result0_siroco_gif_tg,result0_siroco_gif
     global rank0_dam_tagk_noele,rank0_dam_tagk,rank0_stat_tagk,rank0_stat_tagk2
     global tagkgum_exist,tagk_tg
-    global groggy_bt,tg_groggy_img2,tg_groggy_img1,now_rank_num
+    global groggy_bt,tg_groggy_img2,tg_groggy_img1
     global rank_wep_name,rank0_wep_name
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
     gif_images = calculator.gif_images
 
-    now_rank_num=0
+    calculator.now_rank_num = 0
     if tagkgum_exist==1:
         global  tagkgum,tagkgum_img
         tagkgum["image"]=tagkgum_img
@@ -2875,12 +2877,11 @@ def change_tagk(ele_skill):
     global rank0_stat_tagk, rank0_stat, rank0_stat_tagk2, rank0_stat2
     global rank0_dam_tagk, rank0_dam, rank0_dam_tagk_noele, rank0_dam_noele
     global rank_wep_name,rank0_wep_name
-    global now_rank_num
     global res_dam_list
     global tg_groggy
     canvas_res = calculator.canvas_res
 
-    now=now_rank_num
+    now = calculator.now_rank_num
     tagkgum_img=calculator.get_photo_image('ext_img/tagk_um.png')
     tagkgum_img2=calculator.get_photo_image('ext_img/tagk_ang.png')
     if tg_groggy==0:
@@ -2905,7 +2906,7 @@ def change_tagk(ele_skill):
         c_rank_dam_noele=rank0_dam_noele
         c_rank_dam=rank0_dam
         c_rank_wep_name=rank0_wep_name
-    if c_rank_wep_name[now_rank_num]=="(도)태극천제검":
+    if c_rank_wep_name[calculator.now_rank_num] == "(도)태극천제검":
         if tagk_tg==0:
             canvas_res.itemconfig(res_dam,text=c_rank_dam_tagk[now])
             canvas_res.itemconfig(res_stat,text=c_rank_stat_tagk[now])
@@ -2952,12 +2953,12 @@ def change_rank_type(in_type):
 
 ## 순위 선택 변경
 def change_rank2(now,job_type,ele_skill):
-    global now_rank_num, res_wep, res_dam_list
+    global res_wep, res_dam_list
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
     gif_images = calculator.gif_images
 
-    now_rank_num=now
+    calculator.now_rank_num = now
     if job_type =='deal':
         global tagk_tg, tagkgum, tagkgum_exist, rank_dam_tagk, rank_stat_tagk, rank_stat_tagk2, rank_dam_tagk_noele
         global res_dam,res_stat,res_stat2,res_stat3,rank_stat,rank_stat2,rank_stat3,result_image_on,res_ele,rank_dam_noele, rank_inv, res_inv
@@ -3101,12 +3102,12 @@ def change_rank2(now,job_type,ele_skill):
 
 ## 에픽 이미지 세트옵션 보이기 전환
 def show_set_name(job_type):
-    global now_rank_num
     global result_image_on, result_image_tag,result0_image_tag
     canvas_res = calculator.canvas_res
     image_list = calculator.image_list
     image_list_tag = calculator.image_list_tag
     gif_images = calculator.gif_images
+    now_rank_num = calculator.now_rank_num
 
     if job_type == "deal":
         global result_image_tag
@@ -3198,14 +3199,13 @@ def change_rank_type2(in_type):
     global result_image_on1,result_image_on2,result_image_on3,rank_buf1,rank_buf2,rank_buf3, rank_type_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
-    global now_rank_num
     global rank_wep_name1,rank_wep_name2,rank_wep_name3
     global res_wep_img,rank_wep_img1,rank_wep_img2,rank_wep_img3
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
     gif_images = calculator.gif_images
 
-    now_rank_num=0
+    calculator.now_rank_num = 0
     if in_type==1:
         rank_type_buf=1
         image_changed=result_image_on1[0]
