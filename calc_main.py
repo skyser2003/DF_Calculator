@@ -1870,7 +1870,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         result_image_tag.clear()
         result0_image_tag.clear()
         result_image_tag.extend([{}, {}, {}, {}, {}])
-        result_image_tag.extend([{}, {}, {}, {}, {}])
+        result0_image_tag.extend([{}, {}, {}, {}, {}])
         for temp_rank in range(0,5):
             try:
                 rank_dam[temp_rank]=str(int(100*rank1_list[temp_rank][0]))+"%";rank0_dam[temp_rank]=str(int(100*rank0_list[temp_rank][0]))+"%";
