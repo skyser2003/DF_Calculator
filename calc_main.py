@@ -92,6 +92,10 @@ class Calculator:
         self.res_wep_img = {}
         self.rank_setting: List[int] = []
         self.rank0_setting: List[int] = []
+        self.deal_rank_wep_name: List[List[int]] = [[], []]
+        self.buff_rank_wep_name: List[List[int]] = [[], [], []]
+        self.deal_rank_wep_img: List[List[int]] = [[], []]
+        self.buff_rank_wep_img: List[List[int]] = [[], [], []]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1798,12 +1802,11 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                    '31400850','31400950','31401050','31401150','32401240','32401340','32401440']
 
     ele_change_toggle=0
-    global rank_wep_name,rank0_wep_name
-
     rank_setting = calculator.rank_setting = [0, 0, 0, 0, 0]
+    rank0_setting = calculator.rank0_setting = [0, 0, 0, 0, 0]
+    rank_wep_name = calculator.deal_rank_wep_name[0] = [0, 0, 0, 0, 0]
+    rank0_wep_name = calculator.deal_rank_wep_name[1] = [0, 0, 0, 0, 0]
 
-    rank0_setting = calculator.rank0_setting = [0,0,0,0,0]
-    rank_wep_name=[0,0,0,0,0];rank0_wep_name=[0,0,0,0,0]
     rank_ult=[0,0,0,0,0];rank0_ult=[0,0,0,0,0]
     if job_type=='deal': ########################### 딜러 ###########################
 
@@ -1812,7 +1815,10 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg,rank_dam_nolv,rank_dam_tagk_nolv
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg,rank0_dam_nolv,rank0_dam_tagk_nolv
         global res_cool_what,cool_eff_text
-        global rank_wep_img,rank0_wep_img
+
+        rank_wep_img = calculator.deal_rank_wep_img[0]
+        rank0_wep_img = calculator.deal_rank_wep_img[1]
+
         cool_check=req_cool.get()[0]
         if cool_check=='O':
             cool_eff_check=1
@@ -1837,7 +1843,12 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank_dam_tagk_noele=[0,0,0,0,0];rank0_dam_tagk_noele=[0,0,0,0,0]
         rank_dam_onlyequ=[0,0,0,0,0];rank0_dam_onlyequ=[0,0,0,0,0]
         rss=[0,0,0,0,0];rss0=[0,0,0,0,0]
-        rank_wep_img=[0,0,0,0,0];rank0_wep_img=[0,0,0,0,0]
+
+        rank_wep_img.clear()
+        rank0_wep_img.clear()
+        rank_wep_img.extend([0, 0, 0, 0, 0])
+        rank0_wep_img.extend([0, 0, 0, 0, 0])
+
         result_image_gif=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];result0_image_gif=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
         result_image_gif_tg=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];result0_image_gif_tg=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
         result_siroco_gif=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]];result0_siroco_gif=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
@@ -2187,8 +2198,12 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag,rank_inv1,rank_inv2,rank_inv3
         global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
-        global rank_neo_buf1,rank_neo_buf2,rank_neo_buf3,rank_wep_name1,rank_wep_name2,rank_wep_name3
-        global rank_wep_img1,rank_wep_img2,rank_wep_img3
+        global rank_neo_buf1,rank_neo_buf2,rank_neo_buf3
+
+        rank_wep_img1 = calculator.buff_rank_wep_img[0]
+        rank_wep_img2 = calculator.buff_rank_wep_img[1]
+        rank_wep_img3 = calculator.buff_rank_wep_img[2]
+
         rank_type_buf=3
         rank_setting1=[0,0,0,0,0]
         rank_setting2=[0,0,0,0,0]
@@ -2223,12 +2238,19 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank_neo_buf1=[0,0,0,0,0]
         rank_neo_buf2=[0,0,0,0,0]
         rank_neo_buf3=[0,0,0,0,0]
-        rank_wep_name1=[0,0,0,0,0]
-        rank_wep_name2=[0,0,0,0,0]
-        rank_wep_name3=[0,0,0,0,0]
-        rank_wep_img1=[0,0,0,0,0]
-        rank_wep_img2=[0,0,0,0,0]
-        rank_wep_img3=[0,0,0,0,0]
+
+        rank_wep_name1 = calculator.buff_rank_wep_name[0] = [0, 0, 0, 0, 0]
+        rank_wep_name2 = calculator.buff_rank_wep_name[1] = [0, 0, 0, 0, 0]
+        rank_wep_name3 = calculator.buff_rank_wep_name[2] = [0, 0, 0, 0, 0]
+
+        rank_wep_img1.clear()
+        rank_wep_img2.clear()
+        rank_wep_img3.clear()
+
+        rank_wep_img1.extend([0, 0, 0, 0, 0])
+        rank_wep_img2.extend([0, 0, 0, 0, 0])
+        rank_wep_img3.extend([0, 0, 0, 0, 0])
+
         ## rank_setting[rank]=rank_list[a][rank][b][c]
         ## a: 0=축복,1=크오,2=합계
         ## b: 0=계수,1=스펙or증가량
@@ -2765,10 +2787,12 @@ def change_groggy2(ele_skill):
     global rank0_dam_tagk_noele,rank0_dam_tagk,rank0_stat_tagk,rank0_stat_tagk2
     global tagkgum_exist,tagk_tg
     global groggy_bt,tg_groggy_img2,tg_groggy_img1
-    global rank_wep_name,rank0_wep_name
+
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
     gif_images = calculator.gif_images
+    rank_wep_name = calculator.deal_rank_wep_name[0]
+    rank0_wep_name = calculator.deal_rank_wep_name[1]
 
     calculator.now_rank_num = 0
     if tagkgum_exist==1:
@@ -2883,10 +2907,12 @@ def change_tagk(ele_skill):
     global res_dam, rank_dam_tagk, rank_dam, rank_dam_tagk_noele, rank_dam_noele
     global rank0_stat_tagk, rank0_stat, rank0_stat_tagk2, rank0_stat2
     global rank0_dam_tagk, rank0_dam, rank0_dam_tagk_noele, rank0_dam_noele
-    global rank_wep_name,rank0_wep_name
     global res_dam_list
     global tg_groggy
+
     canvas_res = calculator.canvas_res
+    rank_wep_name = calculator.deal_rank_wep_name[0]
+    rank0_wep_name = calculator.deal_rank_wep_name[1]
 
     now = calculator.now_rank_num
     tagkgum_img=calculator.get_photo_image('ext_img/tagk_um.png')
@@ -2973,11 +2999,11 @@ def change_rank2(now,job_type,ele_skill):
         global rank0_stat,rank0_stat2,rank0_stat3,result0_image_on,rank0_dam_noele, rank0_inv
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg
         global tg_groggy
-        global rank_wep_name,rank0_wep_name
+
         try:
             if tg_groggy==0:
                 image_changed=result_image_on[now]
-                c_rank_wep=rank_wep_name
+                c_rank_wep = calculator.deal_rank_wep_name[0]
                 if c_rank_wep[now]=="(도)태극천제검" and tagkgum_exist==1 and tagk_tg==1:
                     c_rank_dam=rank_dam_tagk
                     c_rank_stat=rank_stat_tagk
@@ -3000,7 +3026,7 @@ def change_rank2(now,job_type,ele_skill):
 
             elif tg_groggy==1:
                 image_changed=result0_image_on[now]
-                c_rank_wep=rank0_wep_name
+                c_rank_wep = calculator.deal_rank_wep_name[1]
                 if c_rank_wep[now]=="(도)태극천제검" and tagkgum_exist==1 and tagk_tg==1:
                     c_rank_dam=rank0_dam_tagk
                     c_rank_stat=rank0_stat_tagk
@@ -3038,7 +3064,11 @@ def change_rank2(now,job_type,ele_skill):
         global result_image_on1,result_image_on2,result_image_on3,rank_buf1,rank_buf2,rank_buf3, rank_type_buf, res_buf, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3
         global result_image_gif1,result_image_gif1_tg,result_image_gif2,result_image_gif2_tg,result_image_gif3,result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
-        global rank_wep_name1,rank_wep_name2,rank_wep_name3
+
+        rank_wep_name1 = calculator.buff_rank_wep_name[0]
+        rank_wep_name2 = calculator.buff_rank_wep_name[1]
+        rank_wep_name3 = calculator.buff_rank_wep_name[2]
+
         try:
             if rank_type_buf==1:
                 image_changed=result_image_on1[now]
@@ -3068,7 +3098,7 @@ def change_rank2(now,job_type,ele_skill):
                 siroco_gif_changed_tg=result_siroco_gif3_tg
                 c_rank_wep=rank_wep_name3
             canvas_res.itemconfig(res_buf,text=rank_changed)
-            canvas_res.itemconfig(res_buf_ex1,text=rank_buf_ex_changed[now][0])
+            canvas_res.itemconfig(res_buf_ex1,text=rank_buf_ex_changed[now][0]) # TODO: non-existing setting causes error
             canvas_res.itemconfig(res_buf_ex2,text=rank_buf_ex_changed[now][1])
             canvas_res.itemconfig(res_buf_ex3,text=rank_buf_ex_changed[now][2])
             global buf_jingak_exist,buf_jingak_tg,buf_jingak,buf_jingak_img2
@@ -3205,11 +3235,16 @@ def change_rank_type2(in_type):
     global result_image_on1,result_image_on2,result_image_on3,rank_buf1,rank_buf2,rank_buf3, rank_type_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
-    global rank_wep_name1,rank_wep_name2,rank_wep_name3
-    global rank_wep_img1,rank_wep_img2,rank_wep_img3
+
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
     gif_images = calculator.gif_images
+    rank_wep_name1 = calculator.buff_rank_wep_name[0]
+    rank_wep_name2 = calculator.buff_rank_wep_name[1]
+    rank_wep_name3 = calculator.buff_rank_wep_name[2]
+    rank_wep_img1 = calculator.buff_rank_wep_img[0]
+    rank_wep_img2 = calculator.buff_rank_wep_img[1]
+    rank_wep_img3 = calculator.buff_rank_wep_img[2]
 
     calculator.now_rank_num = 0
     if in_type==1:
