@@ -98,6 +98,7 @@ class Calculator:
         self.buff_rank_wep_img: List[List[int]] = [[], [], []]
         self.deal_result_image_on: List[List[Dict[str, PhotoImage]]] = [[], []]
         self.buff_result_image_on: List[List[Dict[str, PhotoImage]]] = [[], [], []]
+        self.deal_result_image_tag: List[List[Dict[str, str]]] = [[], []]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1811,8 +1812,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
     rank_ult=[0,0,0,0,0];rank0_ult=[0,0,0,0,0]
     if job_type=='deal': ########################### 딜러 ###########################
-        global result_image_tag,rank_dam,rank_stat,rank_stat2,rank_stat3,req_cool,res_dam,res_stat,res_stat2, res_stat3, rank_dam_tagk,rank_dam_noele, res_ele, rank_inv, res_inv, rank_dam_tagk_noele
-        global result0_image_tag,rank0_dam,rank0_stat,rank0_stat2,rank0_stat3,rank0_dam_tagk,rank0_dam_noele,rank0_inv,rank0_dam_tagk_noele
+        global rank_dam,rank_stat,rank_stat2,rank_stat3,req_cool,res_dam,res_stat,res_stat2, res_stat3, rank_dam_tagk,rank_dam_noele, res_ele, rank_inv, res_inv, rank_dam_tagk_noele
+        global rank0_dam,rank0_stat,rank0_stat2,rank0_stat3,rank0_dam_tagk,rank0_dam_noele,rank0_inv,rank0_dam_tagk_noele
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg,rank_dam_nolv,rank_dam_tagk_nolv
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg,rank0_dam_nolv,rank0_dam_tagk_nolv
         global res_cool_what,cool_eff_text
@@ -1822,6 +1823,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
         rank_wep_img = calculator.deal_rank_wep_img[0]
         rank0_wep_img = calculator.deal_rank_wep_img[1]
+
+        result_image_tag = calculator.deal_result_image_tag[0]
+        result0_image_tag = calculator.deal_result_image_tag[1]
 
         cool_check=req_cool.get()[0]
         if cool_check=='O':
@@ -1861,8 +1865,10 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         result0_image_on.clear()
         result_image_on.extend([{}, {}, {}, {}, {}])
         result0_image_on.extend([{}, {}, {}, {}, {}])
-        result_image_tag=[{},{},{},{},{}]
-        result0_image_tag=[{},{},{},{},{}]
+        result_image_tag.clear()
+        result0_image_tag.clear()
+        result_image_tag.extend([{}, {}, {}, {}, {}])
+        result_image_tag.extend([{}, {}, {}, {}, {}])
         for temp_rank in range(0,5):
             try:
                 rank_dam[temp_rank]=str(int(100*rank1_list[temp_rank][0]))+"%";rank0_dam[temp_rank]=str(int(100*rank0_list[temp_rank][0]))+"%";
@@ -3164,15 +3170,15 @@ def change_rank2(now,job_type,ele_skill):
 
 ## 에픽 이미지 세트옵션 보이기 전환
 def show_set_name(job_type):
-    global result_image_tag,result0_image_tag
     canvas_res = calculator.canvas_res
     image_list = calculator.image_list
     image_list_tag = calculator.image_list_tag
     gif_images = calculator.gif_images
     now_rank_num = calculator.now_rank_num
+    result_image_tag = calculator.deal_result_image_tag[0]
+    result0_image_tag = calculator.deal_result_image_tag[1]
 
     if job_type == "deal":
-        global result_image_tag
         if tg_groggy==0:
             temp_image_tag=result_image_tag
         elif tg_groggy==1:
