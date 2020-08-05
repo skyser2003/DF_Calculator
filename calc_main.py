@@ -115,6 +115,7 @@ class Calculator:
         self.res_ele: Text = None
         self.deal_rank_inv: List[List[int]] = [[], []]
         self.buff_rank_inv: List[List[int]] = [[], [], []]
+        self.res_inv: Text = None
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1828,7 +1829,6 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
     rank_ult=[0,0,0,0,0];rank0_ult=[0,0,0,0,0]
     if job_type=='deal': ########################### 딜러 ###########################
-        global res_inv
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg
         global res_cool_what,cool_eff_text
@@ -2178,7 +2178,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         calculator.res_stat = canvas_res.create_text(50,293,text=rank_stat[0],fill='white')
         calculator.res_stat2 = canvas_res.create_text(163,263,text=rank_stat2[0],fill='white',anchor='w')
         calculator.res_stat3 = canvas_res.create_text(145+24,361,text=rank_stat3[0],fill='white')
-        res_inv=canvas_res.create_text(122,174,text=rank_inv[0],font=guide_font,fill='white')
+        calculator.res_inv = canvas_res.create_text(122,174,text=rank_inv[0],font=guide_font,fill='white')
 
         gif_images = calculator.gif_images
 
@@ -2859,7 +2859,7 @@ def change_groggy(ele_skill):
     threading.Timer(0.07, change_groggy2,args=(ele_skill,)).start()
     threading.Timer(0, time_delayy).start()
 def change_groggy2(ele_skill):
-    global res_inv,res_cool_what
+    global res_cool_what
     global tg_groggy,groggy,res_cool_what,cool_eff_text
     global result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
     global rank_stat_tagk,rank_stat_tagk2
@@ -2941,7 +2941,7 @@ def change_groggy2(ele_skill):
     canvas_res.itemconfig(res_stat,text=change_stat[0])
     canvas_res.itemconfig(res_stat2,text=change_stat2[0])
     canvas_res.itemconfig(res_stat3,text=change_stat3[0])
-    canvas_res.itemconfig(res_inv,text=change_inv[0])
+    canvas_res.itemconfig(calculator.res_inv,text=change_inv[0])
     canvas_res.itemconfig(gif_images["11"],image=image_changed[0]['11'])
     canvas_res.itemconfig(gif_images["12"],image=image_changed[0]['12'])
     canvas_res.itemconfig(gif_images["13"],image=image_changed[0]['13'])
@@ -3104,7 +3104,6 @@ def change_rank2(now,job_type,ele_skill):
     calculator.now_rank_num = now
     if job_type =='deal':
         global tagk_tg, tagkgum, tagkgum_exist, rank_stat_tagk, rank_stat_tagk2
-        global res_inv
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg
         global tg_groggy
@@ -3186,7 +3185,7 @@ def change_rank2(now,job_type,ele_skill):
             canvas_res.itemconfig(res_stat,text=c_rank_stat[now])
             canvas_res.itemconfig(res_stat2,text=c_rank_stat2[now])
             canvas_res.itemconfig(res_stat3,text=c_rank_stat3[now])
-            canvas_res.itemconfig(res_inv,text=c_rank_inv[now])
+            canvas_res.itemconfig(calculator.res_inv,text=c_rank_inv[now])
             if ele_skill !=0:
                 canvas_res.itemconfig(calculator.res_ele,text="자속강X="+str(c_rank_dam_noele[now])+"%")
             show_result_dealer()
