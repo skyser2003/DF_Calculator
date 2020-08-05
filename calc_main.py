@@ -2391,6 +2391,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         res_buf_ex2=canvas_res.create_text(183,261,text=rank_buf_ex3[0][1],font=small_font,fill='white')
         res_buf_ex3=canvas_res.create_text(183,318,text=rank_buf_ex3[0][2],font=small_font,fill='white')
 
+        gif_images = calculator.gif_images
+
         gif_images["11"]=canvas_res.create_image(57,52,image=result_image_on3[0]['11'])
         gif_images["12"]=canvas_res.create_image(27,82,image=result_image_on3[0]['12'])
         gif_images["13"]=canvas_res.create_image(27,52,image=result_image_on3[0]['13'])
