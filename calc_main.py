@@ -99,6 +99,7 @@ class Calculator:
         self.deal_result_image_on: List[List[Dict[str, PhotoImage]]] = [[], []]
         self.buff_result_image_on: List[List[Dict[str, PhotoImage]]] = [[], [], []]
         self.deal_result_image_tag: List[List[Dict[str, str]]] = [[], []]
+        self.rank_dam: List[List[int]] = [[], []]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1812,8 +1813,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
     rank_ult=[0,0,0,0,0];rank0_ult=[0,0,0,0,0]
     if job_type=='deal': ########################### 딜러 ###########################
-        global rank_dam,rank_stat,rank_stat2,rank_stat3,req_cool,res_dam,res_stat,res_stat2, res_stat3, rank_dam_tagk,rank_dam_noele, res_ele, rank_inv, res_inv, rank_dam_tagk_noele
-        global rank0_dam,rank0_stat,rank0_stat2,rank0_stat3,rank0_dam_tagk,rank0_dam_noele,rank0_inv,rank0_dam_tagk_noele
+        global rank_stat,rank_stat2,rank_stat3,req_cool,res_dam,res_stat,res_stat2, res_stat3, rank_dam_tagk,rank_dam_noele, res_ele, rank_inv, res_inv, rank_dam_tagk_noele
+        global rank0_stat,rank0_stat2,rank0_stat3,rank0_dam_tagk,rank0_dam_noele,rank0_inv,rank0_dam_tagk_noele
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg,rank_dam_nolv,rank_dam_tagk_nolv
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg,rank0_dam_nolv,rank0_dam_tagk_nolv
         global res_cool_what,cool_eff_text
@@ -1842,7 +1843,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank0_list=rank_list[1]
         rank1_list=rank_list[0]
 
-        rank_dam=[0,0,0,0,0];rank0_dam=[0,0,0,0,0]
+        rank_dam = calculator.rank_dam[0] = [0, 0, 0, 0, 0]
+        rank0_dam = calculator.rank_dam[1] = [0, 0, 0, 0, 0]
         rank_dam_tagk=[0,0,0,0,0];rank0_dam_tagk=[0,0,0,0,0]
         rank_dam_nolv=[0,0,0,0,0];rank0_dam_nolv=[0,0,0,0,0]
         rank_dam_noele=[0,0,0,0,0];rank0_dam_noele=[0,0,0,0,0]
@@ -2807,9 +2809,9 @@ def change_groggy(ele_skill):
 def change_groggy2(ele_skill):
     global res_dam,res_stat,res_stat2,res_stat3,res_inv,res_cool_what
     global tg_groggy,groggy,res_cool_what,cool_eff_text
-    global rank_dam_noele,rank_dam,rank_stat,rank_stat2,rank_stat3,rank_inv,result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
+    global rank_dam_noele,rank_stat,rank_stat2,rank_stat3,rank_inv,result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
     global rank_dam_tagk_noele,rank_dam_tagk,rank_stat_tagk,rank_stat_tagk2
-    global rank0_dam_noele,rank0_dam,rank0_stat,rank0_stat2,rank0_stat3,rank0_inv,result0_image_gif_tg,result0_image_gif,result0_siroco_gif_tg,result0_siroco_gif
+    global rank0_dam_noele,rank0_stat,rank0_stat2,rank0_stat3,rank0_inv,result0_image_gif_tg,result0_image_gif,result0_siroco_gif_tg,result0_siroco_gif
     global rank0_dam_tagk_noele,rank0_dam_tagk,rank0_stat_tagk,rank0_stat_tagk2
     global tagkgum_exist,tagk_tg
     global groggy_bt,tg_groggy_img2,tg_groggy_img1
@@ -2830,10 +2832,10 @@ def change_groggy2(ele_skill):
         cool_what='지속딜(쿨감O)'
         image_changed = calculator.deal_result_image_on[1]
         change_dam_noele=rank0_dam_noele
-        change_dam=rank0_dam
+        change_dam = calculator.rank_dam[1]
         change_stat=rank0_stat
         change_stat2=rank0_stat2
-        rank_changed=rank0_dam
+        rank_changed = calculator.rank_dam[1]
         change_stat3=rank0_stat3
         change_inv=rank0_inv
         image_gif_changed_tg=result0_image_gif_tg
@@ -2850,10 +2852,10 @@ def change_groggy2(ele_skill):
         cool_what='그로기'+cool_eff_text
         image_changed = calculator.deal_result_image_on[0]
         change_dam_noele=rank_dam_noele
-        change_dam=rank_dam
+        change_dam = calculator.rank_dam[0]
         change_stat=rank_stat
         change_stat2=rank_stat2
-        rank_changed=rank_dam
+        rank_changed = calculator.rank_dam[0]
         change_stat3=rank_stat3
         change_inv=rank_inv
         image_gif_changed_tg=result_image_gif_tg
@@ -2931,15 +2933,17 @@ def change_groggy2(ele_skill):
 def change_tagk(ele_skill):
     global tagk_tg, tagkgum
     global res_stat,res_stat2,rank_stat_tagk, rank_stat, rank_stat_tagk2, rank_stat2
-    global res_dam, rank_dam_tagk, rank_dam, rank_dam_tagk_noele, rank_dam_noele
+    global res_dam, rank_dam_tagk, rank_dam_tagk_noele, rank_dam_noele
     global rank0_stat_tagk, rank0_stat, rank0_stat_tagk2, rank0_stat2
-    global rank0_dam_tagk, rank0_dam, rank0_dam_tagk_noele, rank0_dam_noele
+    global rank0_dam_tagk, rank0_dam_tagk_noele, rank0_dam_noele
     global res_dam_list
     global tg_groggy
 
     canvas_res = calculator.canvas_res
     rank_wep_name = calculator.deal_rank_wep_name[0]
     rank0_wep_name = calculator.deal_rank_wep_name[1]
+    rank_dam = calculator.rank_dam[0]
+    rank0_dam = calculator.rank_dam[1]
 
     now = calculator.now_rank_num
     tagkgum_img=calculator.get_photo_image('ext_img/tagk_um.png')
@@ -3017,6 +3021,8 @@ def change_rank2(now,job_type,ele_skill):
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
     gif_images = calculator.gif_images
+    rank_dam = calculator.rank_dam[0]
+    rank0_dam = calculator.rank_dam[1]
 
     calculator.now_rank_num = now
     if job_type =='deal':
