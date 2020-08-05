@@ -90,6 +90,8 @@ class Calculator:
         self.now_rank_num = 0
         self.res_wep = None
         self.res_wep_img = {}
+        self.rank_setting: List[int] = []
+        self.rank0_setting: List[int] = []
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1796,9 +1798,11 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                    '31400850','31400950','31401050','31401150','32401240','32401340','32401440']
 
     ele_change_toggle=0
-    global rank_setting,rank0_setting
     global rank_wep_name,rank0_wep_name
-    rank_setting=[0,0,0,0,0];rank0_setting=[0,0,0,0,0]
+
+    rank_setting = calculator.rank_setting = [0, 0, 0, 0, 0]
+
+    rank0_setting = calculator.rank0_setting = [0,0,0,0,0]
     rank_wep_name=[0,0,0,0,0];rank0_wep_name=[0,0,0,0,0]
     rank_ult=[0,0,0,0,0];rank0_ult=[0,0,0,0,0]
     if job_type=='deal': ########################### 딜러 ###########################
