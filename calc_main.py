@@ -112,6 +112,7 @@ class Calculator:
         self.rank_dam_noele: List[List[int]] = [[], []]
         self.rank_dam_tagk_nolv: List[List[int]] = [[], []]
         self.rank_dam_tagk_noele: List[List[int]] = [[], []]
+        self.res_ele: Text = None
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1825,7 +1826,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
     rank_ult=[0,0,0,0,0];rank0_ult=[0,0,0,0,0]
     if job_type=='deal': ########################### 딜러 ###########################
-        global res_ele, rank_inv, res_inv
+        global rank_inv, res_inv
         global rank0_inv
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg
@@ -2169,7 +2170,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         calculator.res_wep = canvas_res.create_text(12,22,text=rank_wep_name[0],font=guide_font,fill='white',anchor='w')
         if int(ele_skill) != 0:
             ele_change_toggle=1
-            res_ele=canvas_res.create_text(122,149,text="자속강X="+str(rank_dam_noele[0])+"%",fill='white',font=small_font)
+            calculator.res_ele = canvas_res.create_text(122,149,text="자속강X="+str(rank_dam_noele[0])+"%",fill='white',font=small_font)
 
         calculator.res_dam = canvas_res.create_text(122,130,text=rank_dam[0],font=mid_font,fill='white')
         calculator.res_stat = canvas_res.create_text(50,293,text=rank_stat[0],fill='white')
@@ -2931,7 +2932,7 @@ def change_groggy2(ele_skill):
     canvas_res.itemconfig(calculator.res_wep,text=wep_changed[0],fill="white")
     canvas_res.itemconfig(res_cool_what,text=cool_what)
     if int(ele_skill) != 0:
-        canvas_res.itemconfig(res_ele,text="자속강X="+str(change_dam_noele[0])+"%")
+        canvas_res.itemconfig(calculator.res_ele,text="자속강X="+str(change_dam_noele[0])+"%")
     canvas_res.itemconfig(res_dam,text=change_dam[0])
     canvas_res.itemconfig(res_stat,text=change_stat[0])
     canvas_res.itemconfig(res_stat2,text=change_stat2[0])
@@ -3048,7 +3049,7 @@ def change_tagk(ele_skill):
             canvas_res.itemconfig(res_stat,text=c_rank_stat_tagk[now])
             canvas_res.itemconfig(res_stat2,text=c_rank_stat_tagk2[now])
             if ele_skill !=0:
-                canvas_res.itemconfig(res_ele,text="자속강X="+str(c_rank_dam_tagk_noele[now])+"%")
+                canvas_res.itemconfig(calculator.res_ele,text="자속강X="+str(c_rank_dam_tagk_noele[now])+"%")
             canvas_res.itemconfig(calculator.res_wep,fill='red')
 
         elif tagk_tg==1:
@@ -3056,7 +3057,7 @@ def change_tagk(ele_skill):
             canvas_res.itemconfig(res_stat,text=c_rank_stat[now])
             canvas_res.itemconfig(res_stat2,text=c_rank_stat2[now])
             if ele_skill !=0:
-                canvas_res.itemconfig(res_ele,text="자속강X="+str(c_rank_dam_noele[now])+"%")
+                canvas_res.itemconfig(calculator.res_ele,text="자속강X="+str(c_rank_dam_noele[now])+"%")
             canvas_res.itemconfig(calculator.res_wep,fill='white')
     if tagk_tg==0:
         tagk_tg=1
@@ -3099,7 +3100,7 @@ def change_rank2(now,job_type,ele_skill):
     calculator.now_rank_num = now
     if job_type =='deal':
         global tagk_tg, tagkgum, tagkgum_exist, rank_stat_tagk, rank_stat_tagk2
-        global res_ele, rank_inv, res_inv
+        global rank_inv, res_inv
         global result_image_gif, result_image_gif_tg,result_siroco_gif,result_siroco_gif_tg
         global rank0_inv
         global result0_image_gif, result0_image_gif_tg,result0_siroco_gif,result0_siroco_gif_tg
@@ -3181,7 +3182,7 @@ def change_rank2(now,job_type,ele_skill):
             canvas_res.itemconfig(res_stat3,text=c_rank_stat3[now])
             canvas_res.itemconfig(res_inv,text=c_rank_inv[now])
             if ele_skill !=0:
-                canvas_res.itemconfig(res_ele,text="자속강X="+str(c_rank_dam_noele[now])+"%")
+                canvas_res.itemconfig(calculator.res_ele,text="자속강X="+str(c_rank_dam_noele[now])+"%")
             show_result_dealer()
         except KeyError as error:
             c=1
