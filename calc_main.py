@@ -2444,7 +2444,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                 cn1=0
                 cn6=5
                 temp_buf=canvas_res.create_text(358,34+78*j,text=rank_buf3[j],font=mid_font,fill='white')
-                calculator.res_wep_img[j](canvas_res.create_image(304,36+78*j,image=rank_wep_img3[j]))
+                calculator.res_wep_img.append(canvas_res.create_image(304,36+78*j,image=rank_wep_img3[j]))
                 res_buf_list[j]=temp_buf
             except KeyError as error:
                 cn1=0
