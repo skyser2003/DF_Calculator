@@ -123,6 +123,8 @@ class Calculator:
         self.res_cool_what: Text = None
         self.cool_eff_text = ""
         self.rank_list: List[List[Tuple[float, List[str]]]] = [[], []]
+        self.tagkgum_exist = 0
+        self.tagk_tg = 0
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2034,14 +2036,13 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         # 0추스탯 1추공 2증 3크 4추
         # 6모 7공 8스탯 9속강 10지속 11스증 12특수
         # 13공속 14크확 / 15 특수액티브 / 16~19 패시브 /20 그로기포함/21 2각캐특수액티브 /22~27 액티브레벨링
-        global tagkgum_exist,tagk_tg
-        tagkgum_exist=0
-        tagk_tg=0
+        calculator.tagkgum_exist = 0
+        calculator.tagk_tg = 0
 
         if rank_wep_name.count("(도)태극천제검")!=0: #태극검 하드 코딩
             global  tagkgum,tagkgum_img
-            tagkgum_exist=1
-            tagk_tg=0
+            calculator.tagkgum_exist = 1
+            calculator.tagk_tg = 0
 
             tagkgum=tkinter.Button(result_window,command=lambda:change_tagk(ele_skill,),image=tagkgum_img,bg=dark_main,borderwidth=0,activebackground=dark_main)
             tagkgum.place(x=182,y=7)
@@ -2872,7 +2873,6 @@ def change_groggy2(ele_skill):
     global tg_groggy,groggy
     global rank_stat_tagk,rank_stat_tagk2
     global rank0_rank0_stat_tagk,rank0_stat_tagk2
-    global tagkgum_exist,tagk_tg
     global groggy_bt,tg_groggy_img2,tg_groggy_img1
 
     result_window = calculator.result_window
@@ -2904,10 +2904,10 @@ def change_groggy2(ele_skill):
     result0_siroco_gif_tg = calculator.result_siroco_gif_tg[1]
 
     calculator.now_rank_num = 0
-    if tagkgum_exist==1:
+    if calculator.tagkgum_exist == 1:
         global  tagkgum,tagkgum_img
         tagkgum["image"]=tagkgum_img
-        tagk_tg=0
+        calculator.tagk_tg = 0
     if tg_groggy==0:
         groggy_bt["image"]=tg_groggy_img2
         cool_what = f"지속딜{calculator.cool_eff_text}"
@@ -3012,7 +3012,7 @@ def change_groggy2(ele_skill):
 
 ##태극검 음양 전환
 def change_tagk(ele_skill):
-    global tagk_tg, tagkgum
+    global tagkgum
     global rank_stat_tagk, rank_stat_tagk2
     global rank0_stat_tagk, rank0_stat_tagk2
     global res_dam_list
@@ -3063,7 +3063,7 @@ def change_tagk(ele_skill):
         c_rank_dam=rank0_dam
         c_rank_wep_name=rank0_wep_name
     if c_rank_wep_name[calculator.now_rank_num] == "(도)태극천제검":
-        if tagk_tg==0:
+        if calculator.tagk_tg == 0:
             canvas_res.itemconfig(res_dam,text=c_rank_dam_tagk[now])
             canvas_res.itemconfig(res_stat,text=c_rank_stat_tagk[now])
             canvas_res.itemconfig(res_stat2,text=c_rank_stat_tagk2[now])
@@ -3071,15 +3071,15 @@ def change_tagk(ele_skill):
                 canvas_res.itemconfig(calculator.res_ele,text="자속강X="+str(c_rank_dam_tagk_noele[now])+"%")
             canvas_res.itemconfig(calculator.res_wep,fill='red')
 
-        elif tagk_tg==1:
+        elif calculator.tagk_tg == 1:
             canvas_res.itemconfig(res_dam,text=c_rank_dam[now])
             canvas_res.itemconfig(res_stat,text=c_rank_stat[now])
             canvas_res.itemconfig(res_stat2,text=c_rank_stat2[now])
             if ele_skill !=0:
                 canvas_res.itemconfig(calculator.res_ele,text="자속강X="+str(c_rank_dam_noele[now])+"%")
             canvas_res.itemconfig(calculator.res_wep,fill='white')
-    if tagk_tg==0:
-        tagk_tg=1
+    if calculator.tagk_tg == 0:
+        calculator.tagk_tg = 1
         tagkgum['image']=tagkgum_img2
         tagkgum.image=tagkgum_img2
         for i in range(0,5):
@@ -3088,8 +3088,8 @@ def change_tagk(ele_skill):
                     canvas_res.itemconfig(res_dam_list[i],text=c_rank_dam_tagk[i],fill='red')
             except:
                 pass
-    elif tagk_tg==1:
-        tagk_tg=0
+    elif calculator.tagk_tg == 1:
+        calculator.tagk_tg = 0
         tagkgum['image']=tagkgum_img
         tagkgum.image=tagkgum_img
         for i in range(0,5):
@@ -3118,7 +3118,7 @@ def change_rank2(now,job_type,ele_skill):
 
     calculator.now_rank_num = now
     if job_type =='deal':
-        global tagk_tg, tagkgum, tagkgum_exist, rank_stat_tagk, rank_stat_tagk2
+        global tagkgum, rank_stat_tagk, rank_stat_tagk2
         global tg_groggy
 
         res_dam = calculator.res_dam
@@ -3155,6 +3155,9 @@ def change_rank2(now,job_type,ele_skill):
         result0_siroco_gif = calculator.result_siroco_gif[1]
         result_siroco_gif_tg = calculator.result_siroco_gif_tg[0]
         result0_siroco_gif_tg = calculator.result_siroco_gif_tg[1]
+
+        tagkgum_exist = calculator.tagkgum_exist
+        tagk_tg = calculator.tagk_tg
 
         try:
             if tg_groggy==0:
