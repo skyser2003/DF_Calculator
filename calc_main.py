@@ -44,6 +44,7 @@ class Calculator:
         self.photo_images = []
         self.all_list_list_num = 0  # 계산 전체 경우의 수
         self.a_num_all = 0
+        self.equip_list = {}
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -418,12 +419,25 @@ def calc(mode):
 
     ## 외부모듈: 경우의 수 만들기
     result_all_equ_list=make_all_equ_list(select_item,select_perfect.get())
-    list11=result_all_equ_list[0][0];list11_0=result_all_equ_list[0][1];list11_1=result_all_equ_list[0][2]
-    list12=result_all_equ_list[0][3];list13=result_all_equ_list[0][4];list14=result_all_equ_list[0][5];list15=result_all_equ_list[0][6]
-    list21=result_all_equ_list[0][7];list21_0=result_all_equ_list[0][8];list21_1=result_all_equ_list[0][9]
-    list22=result_all_equ_list[0][10];list23=result_all_equ_list[0][11]
-    list31=result_all_equ_list[0][12];list32=result_all_equ_list[0][13]
-    list33=result_all_equ_list[0][14];list33_0=result_all_equ_list[0][15];list33_1=result_all_equ_list[0][16]
+    equip_list = calculator.equip_list
+
+    equip_list["11"] = result_all_equ_list[0][0]
+    equip_list["11_0"] = result_all_equ_list[0][1]
+    equip_list["11_1"] = result_all_equ_list[0][2]
+    equip_list["12"] = result_all_equ_list[0][3]
+    equip_list["13"] = result_all_equ_list[0][4]
+    equip_list["14"] = result_all_equ_list[0][5]
+    equip_list["15"] = result_all_equ_list[0][6]
+    equip_list["21"] = result_all_equ_list[0][7]
+    equip_list["21_0"] = result_all_equ_list[0][8]
+    equip_list["21_1"] = result_all_equ_list[0][9]
+    equip_list["22"] = result_all_equ_list[0][10]
+    equip_list["23"] = result_all_equ_list[0][11]
+    equip_list["31"] = result_all_equ_list[0][12]
+    equip_list["32"] = result_all_equ_list[0][13]
+    equip_list["33"] = result_all_equ_list[0][14]
+    equip_list["33_0"] = result_all_equ_list[0][15]
+    equip_list["33_1"] = result_all_equ_list[0][16]
 
     set_num_dict=result_all_equ_list[1][0] ##전부
     set_num_dict1=result_all_equ_list[1][1] ##에픽만
@@ -466,14 +480,13 @@ def calc(mode):
     know_dict={}
     ##단품산물
     for know_one in know_list:
+        equip_part = know_one[0:2]
+
         if select_item[f"tg{know_one}"] == 1:
-            eval('list{}.append(str({}))'.format(know_one[0:2],know_one))
-            if know_one[0:2] =='11':
-                eval('list{}_0.append(str({}))'.format(know_one[0:2],know_one))
-            if know_one[0:2] =='21':
-                eval('list{}_0.append(str({}))'.format(know_one[0:2],know_one))
-            if know_one[0:2] =='33':
-                eval('list{}_0.append(str({}))'.format(know_one[0:2],know_one))
+            equip_list[equip_part].append(know_one)
+
+            if equip_part in ["11", "21", "33"]:
+                equip_list[f"{equip_part}_0"].append(equip_part)
 
     list41=[];list42=[];list43=[]
     ##시로코: 융합
@@ -720,16 +733,16 @@ def calc(mode):
                     active_bang5_0.append(str(i+100))
                 if set_num_dict2.get(str(i+100))==5:
                     active_bang5_1.append(str(i+100))
-                if list13.count('1'+str(i+300)+'0')==1:
-                    if list14.count('1'+str(i+400)+'0')==1:
+                if equip_list["13"].count('1'+str(i+300)+'0')==1:
+                    if equip_list["14"].count('1'+str(i+400)+'0')==1:
                         active_bang2_0.append(str(i+100))
-                        if list11_0.count('1'+str(i+100)+'0')==1:
+                        if equip_list["11_0"].count('1'+str(i+100)+'0')==1:
                             active_bang3_1_0.append(str(i+100))
-                        if list11_1.count('1'+str(i+100)+'1')==1:
+                        if equip_list["11_1"].count('1'+str(i+100)+'1')==1:
                             active_bang3_1_1.append(str(i+100))
-                        if list12.count('1'+str(i+200)+'0')==1:
+                        if equip_list["12"].count('1'+str(i+200)+'0')==1:
                             active_bang3_2.append(str(i+100))
-                        if list15.count('1'+str(i+500)+'0')==1:
+                        if equip_list["15"].count('1'+str(i+500)+'0')==1:
                             active_bang3_3.append(str(i+100))
             else:
                 if set_num_dict1.get(str(i+100))==3:
@@ -755,18 +768,18 @@ def calc(mode):
                     elif i < 36:
                         active_sin3_1.append(str(i+100))
         for i in range(24,36):
-            if list32.count('3'+str(i+200)+'0')==1:
-                if list21_0.count('2'+str(i+100)+'0')==1:
+            if equip_list["32"].count('3'+str(i+200)+'0')==1:
+                if equip_list["21_0"].count('2'+str(i+100)+'0')==1:
                     active_ha2_0.append(str(i+100))
-                if list21_1.count('2'+str(i+100)+'1')==1:
+                if equip_list["21_1"].count('2'+str(i+100)+'1')==1:
                     active_ha2_1.append(str(i+100))
-            elif list23.count('2'+str(i+300)+'0')==1:
-                if list33_0.count('3'+str(i+300)+'0')==1:
+            elif equip_list["23"].count('2'+str(i+300)+'0')==1:
+                if equip_list["33_0"].count('3'+str(i+300)+'0')==1:
                     active_sin2_0.append(str(i+100))
-                if list33_1.count('3'+str(i+300)+'1')==1:
+                if equip_list["33_1"].count('3'+str(i+300)+'1')==1:
                     active_sin2_1.append(str(i+100))
-            elif list22.count('2'+str(i+200)+'0')==1:
-                if list31.count('3'+str(i+100)+'0')==1:
+            elif equip_list["22"].count('2'+str(i+200)+'0')==1:
+                if equip_list["31"].count('3'+str(i+100)+'0')==1:
                     active_sang2.append(str(i+100))
 
 
@@ -798,25 +811,25 @@ def calc(mode):
             temp_bang_on=[0,0,0,0,0]
             temp_bang_on1=[0,0,0,0,0]
             temp_bang_on2=[0,0,0,0,0]
-            if list11.count('1'+str(100+i)+'0')!=0:
+            if equip_list["11"].count('1'+str(100+i)+'0') != 0:
                 temp_bang_on[0]=1
                 temp_bang_on1[0]=1
-            if list11.count('1'+str(100+i)+'1')!=0:
+            if equip_list["11"].count('1'+str(100+i)+'1')!=0:
                 temp_bang_on[0]=1
                 temp_bang_on2[0]=1
-            if list12.count('1'+str(200+i)+'0')!=0:
+            if equip_list["12"].count('1'+str(200+i)+'0')!=0:
                 temp_bang_on[1]=1
                 temp_bang_on1[1]=1
                 temp_bang_on2[1]=1
-            if list13.count('1'+str(300+i)+'0')!=0:
+            if equip_list["13"].count('1'+str(300+i)+'0')!=0:
                 temp_bang_on[2]=1
                 temp_bang_on1[2]=1
                 temp_bang_on2[2]=1
-            if list14.count('1'+str(400+i)+'0')!=0:
+            if equip_list["14"].count('1'+str(400+i)+'0')!=0:
                 temp_bang_on[3]=1
                 temp_bang_on1[3]=1
                 temp_bang_on2[3]=1
-            if list15.count('1'+str(500+i)+'0')!=0:
+            if equip_list["15"].count('1'+str(500+i)+'0')!=0:
                 temp_bang_on[4]=1
                 temp_bang_on1[4]=1
                 temp_bang_on2[4]=1
@@ -968,7 +981,7 @@ def calc(mode):
 
         if select_perfect.get() == '메타몽풀셋모드':
             showsta(text='메타몽 계산중(오래걸릴수 있음)')
-            evert_list=list11+list12+list13+list14+list15+list21+list22+list23+list31+list32+list33
+            evert_list=equip_list["11"]+equip_list["12"]+equip_list["13"]+equip_list["14"]+equip_list["15"]+equip_list["21"]+equip_list["22"]+equip_list["23"]+equip_list["31"]+equip_list["32"]+equip_list["33"]
             result_metamong=calc_fullset.meta_ful(set_num_dict,evert_list,bang_on_dict,list40_0)
             if result_metamong[2]!=0:
                 all_list_list.append(result_metamong)
@@ -993,35 +1006,35 @@ def calc(mode):
             df11='11470';df12='12470';df13='13470';df14='14470';df15='15470'
             df21='21480';df22='22480';df23='23480';df31='31490';df32='32490';df33='33490'
         if legend_on_tg.get()==1:
-            if len(list11_0)==0 or len(list12)==0 or len(list13)==0 or len(list14)==0 or len(list15)==0 or max(set_max_list1) < 3:
-                list11.append(df11);list12.append(df12);list13.append(df13);list14.append(df14);list15.append(df15);list11_0.append(df11)
-            if len(list21_0)==0 or len(list22)==0 or len(list23)==0 or max(set_max_list2) < 3:
-                list21.append(df21);list22.append(df22);list23.append(df23);list21_0.append(df21)
-            if len(list31)==0 or len(list32)==0 or len(list33_0)==0 or max(set_max_list3) < 3:
-                list31.append(df31);list32.append(df32);list33.append(df33);list33_0.append(df33)
+            if len(equip_list["11_0"])==0 or len(equip_list["12"])==0 or len(equip_list["13"])==0 or len(equip_list["14"])==0 or len(equip_list["15"])==0 or max(set_max_list1) < 3:
+                equip_list["11"].append(df11);equip_list["12"].append(df12);equip_list["13"].append(df13);equip_list["14"].append(df14);equip_list["15"].append(df15);equip_list["11_0"].append(df11)
+            if len(equip_list["21_0"])==0 or len(equip_list["22"])==0 or len(equip_list["23"])==0 or max(set_max_list2) < 3:
+                equip_list["21"].append(df21);equip_list["22"].append(df22);equip_list["23"].append(df23);equip_list["21_0"].append(df21)
+            if len(equip_list["31"])==0 or len(equip_list["32"])==0 or len(equip_list["33_0"])==0 or max(set_max_list3) < 3:
+                equip_list["31"].append(df31);equip_list["32"].append(df32);equip_list["33"].append(df33);equip_list["33_0"].append(df33)
 
-        if len(list11_0)==0:
-            list11.append(df11);list11_0.append(df11)
-        if len(list12)==0:
-            list12.append(df12)
-        if len(list13)==0:
-            list13.append(df13)
-        if len(list14)==0:
-            list14.append(df14)
-        if len(list15)==0:
-            list15.append(df15)
-        if len(list21_0)==0:
-            list21.append(df21);list21_0.append(df21)
-        if len(list22)==0:
-            list22.append(df22)
-        if len(list23)==0:
-            list23.append(df23)
-        if len(list31)==0:
-            list31.append(df31)
-        if len(list32)==0:
-            list32.append(df32)
-        if len(list33_0)==0:
-            list33.append(df33);list33_0.append(df33)
+        if len(equip_list["11_0"])==0:
+            equip_list["11"].append(df11);equip_list["11_0"].append(df11)
+        if len(equip_list["12"])==0:
+            equip_list["12"].append(df12)
+        if len(equip_list["13"])==0:
+            equip_list["13"].append(df13)
+        if len(equip_list["14"])==0:
+            equip_list["14"].append(df14)
+        if len(equip_list["15"])==0:
+            equip_list["15"].append(df15)
+        if len(equip_list["21_0"])==0:
+            equip_list["21"].append(df21);equip_list["21_0"].append(df21)
+        if len(equip_list["22"])==0:
+            equip_list["22"].append(df22)
+        if len(equip_list["23"])==0:
+            equip_list["23"].append(df23)
+        if len(equip_list["31"])==0:
+            equip_list["31"].append(df31)
+        if len(equip_list["32"])==0:
+            equip_list["32"].append(df32)
+        if len(equip_list["33_0"])==0:
+            equip_list["33"].append(df33);equip_list["33_0"].append(df33)
 
 
 
@@ -1041,25 +1054,25 @@ def calc(mode):
         for i in know_set_list: ##경우1:산물 하나
             if select_item['tg'+i]==1:
                 if int(i[4:6]) <6:
-                    items0=[['99990'],['99990'],['99990'],['99990'],['99990'],list21_0,[i],list23,list31,list32,list33_0,list40_0]
+                    items0=[['99990'],['99990'],['99990'],['99990'],['99990'],equip_list["21_0"],[i],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
                     items1=[]
-                    items2=[['99990'],['99990'],['99990'],['99990'],['99990'],list21_1,[i],list23,list31,list32,list33_0,list40_0]
-                    items3=[['99990'],['99990'],['99990'],['99990'],['99990'],list21_0,[i],list23,list31,list32,list33_1,list40_0]
+                    items2=[['99990'],['99990'],['99990'],['99990'],['99990'],equip_list["21_1"],[i],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
+                    items3=[['99990'],['99990'],['99990'],['99990'],['99990'],equip_list["21_0"],[i],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_1"],list40_0]
                 elif int(i[4:6])==6:
-                    items0=[list11_0,list12,list13,list14,list15,[i],list22,list23,['99990'],['99990'],['99990'],list40_0]
-                    items1=[list11_1,list12,list13,list14,list15,[i],list22,list23,['99990'],['99990'],['99990'],list40_0]
+                    items0=[equip_list["11_0"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],[i],equip_list["22"],equip_list["23"],['99990'],['99990'],['99990'],list40_0]
+                    items1=[equip_list["11_1"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],[i],equip_list["22"],equip_list["23"],['99990'],['99990'],['99990'],list40_0]
                     items2=[]
                     items3=[]
                 elif int(i[4:6]) <12:
-                    items0=[['99990'],['99990'],['99990'],['99990'],['99990'],list21_0,list22,list23,[i],list32,list33_0,list40_0]
+                    items0=[['99990'],['99990'],['99990'],['99990'],['99990'],equip_list["21_0"],equip_list["22"],equip_list["23"],[i],equip_list["32"],equip_list["33_0"],list40_0]
                     items1=[]
-                    items2=[['99990'],['99990'],['99990'],['99990'],['99990'],list21_1,list22,list23,[i],list32,list33_0,list40_0]
-                    items3=[['99990'],['99990'],['99990'],['99990'],['99990'],list21_0,list22,list23,[i],list32,list33_1,list40_0]
+                    items2=[['99990'],['99990'],['99990'],['99990'],['99990'],equip_list["21_1"],equip_list["22"],equip_list["23"],[i],equip_list["32"],equip_list["33_0"],list40_0]
+                    items3=[['99990'],['99990'],['99990'],['99990'],['99990'],equip_list["21_0"],equip_list["22"],equip_list["23"],[i],equip_list["32"],equip_list["33_1"],list40_0]
                 elif int(i[4:6]) <15:
-                    items0=[list11_0,list12,list13,list14,list15,list31,[i],list33_0,['99990'],['99990'],['99990'],list40_0]
-                    items1=[list11_1,list12,list13,list14,list15,list31,[i],list33_0,['99990'],['99990'],['99990'],list40_0]
+                    items0=[equip_list["11_0"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],equip_list["31"],[i],equip_list["33_0"],['99990'],['99990'],['99990'],list40_0]
+                    items1=[equip_list["11_1"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],equip_list["31"],[i],equip_list["33_0"],['99990'],['99990'],['99990'],list40_0]
                     items2=[]
-                    items3=[list11_0,list12,list13,list14,list15,list31,[i],list33_1,['99990'],['99990'],['99990'],list40_0]
+                    items3=[equip_list["11_0"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],equip_list["31"],[i],equip_list["33_1"],['99990'],['99990'],['99990'],list40_0]
                 all_list_list.append(calc_setlist.make_list(items0,items1,items2,items3))
 
         know_bang1_on=[]
@@ -1067,7 +1080,7 @@ def calc(mode):
             if select_item['tg'+i]==1:
                 know_bang1_on.append(i)
         if select_item['tg21400640']==1:  ##경우2:만유(팔찌)+방어구(목걸이)
-            items0=[['99990'],['99990'],['99990'],['99990'],['99990'],['21400640'],know_bang1_on,list23,['99990'],['99990'],['99990'],list40_0]
+            items0=[['99990'],['99990'],['99990'],['99990'],['99990'],['21400640'],know_bang1_on,equip_list["23"],['99990'],['99990'],['99990'],list40_0]
             items1=[]
             items2=[]
             items3=[]
@@ -1082,10 +1095,10 @@ def calc(mode):
             if select_item['tg'+i]==1:
                 know_bang2_on.append(i)
         if len(know_acc_list)!=0 and len(know_bang2_on)!=0:  ##경우3: 악세(법석)+방어구(보장)
-            items0=[['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],know_bang2_on,know_acc_on,list33_0,list40_0]
+            items0=[['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],know_bang2_on,know_acc_on,equip_list["33_0"],list40_0]
             items1=[]
             items2=[]
-            items3=[['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],know_bang2_on,know_acc_on,list33_1,list40_0]
+            items3=[['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],['99990'],know_bang2_on,know_acc_on,equip_list["33_1"],list40_0]
             all_list_list.append(calc_setlist.make_list(items0,items1,items2,items3))
 
         jin_sang=[]
@@ -1103,39 +1116,39 @@ def calc(mode):
         for i in know_jin_list:
             if select_item['tg'+i]==1: ##경우4: 진레전산물
                 if i[0:2]=='11': ##상의만
-                    items0=[[i],['12410'],['13410'],['14410'],['15410'],list21_0,list22,list23,list31,list32,list33_0,list40_0]
+                    items0=[[i],['12410'],['13410'],['14410'],['15410'],equip_list["21_0"],equip_list["22"],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
                     items1=[]
-                    items2=[[i],['12410'],['13410'],['14410'],['15410'],list21_1,list22,list23,list31,list32,list33_0,list40_0]
-                    items3=[[i],['12410'],['13410'],['14410'],['15410'],list21_0,list22,list23,list31,list32,list33_1,list40_0]
+                    items2=[[i],['12410'],['13410'],['14410'],['15410'],equip_list["21_1"],equip_list["22"],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
+                    items3=[[i],['12410'],['13410'],['14410'],['15410'],equip_list["21_0"],equip_list["22"],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_1"],list40_0]
                     all_list_list.append(calc_setlist.make_list(items0,items1,items2,items3))
                 if i[0:2]=='21': ##팔찌만
-                    items0=[list11_0,list12,list13,list14,list15,[i],['22420'],['23420'],list31,list32,list33_0,list40_0]
-                    items1=[list11_1,list12,list13,list14,list15,[i],['22420'],['23420'],list31,list32,list33_0,list40_0]
+                    items0=[equip_list["11_0"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],[i],['22420'],['23420'],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
+                    items1=[equip_list["11_1"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],[i],['22420'],['23420'],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
                     items2=[]
-                    items3=[list11_0,list12,list13,list14,list15,[i],['22420'],['23420'],list31,list32,list33_1,list40_0]
+                    items3=[equip_list["11_0"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],[i],['22420'],['23420'],equip_list["31"],equip_list["32"],equip_list["33_1"],list40_0]
                     all_list_list.append(calc_setlist.make_list(items0,items1,items2,items3))
                 if i[0:2]=='33': ##귀걸만
-                    items0=[list11_0,list12,list13,list14,list15,list21_0,list22,list23,['31430'],['32430'],[i],list40_0]
-                    items1=[list11_1,list12,list13,list14,list15,list21_0,list22,list23,['31430'],['32430'],[i],list40_0]
-                    items2=[list11_0,list12,list13,list14,list15,list21_1,list22,list23,['31430'],['32430'],[i],list40_0]
+                    items0=[equip_list["11_0"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],equip_list["21_0"],equip_list["22"],equip_list["23"],['31430'],['32430'],[i],list40_0]
+                    items1=[equip_list["11_1"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],equip_list["21_0"],equip_list["22"],equip_list["23"],['31430'],['32430'],[i],list40_0]
+                    items2=[equip_list["11_0"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],equip_list["21_1"],equip_list["22"],equip_list["23"],['31430'],['32430'],[i],list40_0]
                     items3=[]
                     all_list_list.append(calc_setlist.make_list(items0,items1,items2,items3))
 
         if len(jin_sang)!=0 and len(jin_pal)!=0: ##상의+팔찌
-            items0=[jin_sang,['12410'],['13410'],['14410'],['15410'],jin_pal,['22420'],['23420'],list31,list32,list33_0,list40_0]
+            items0=[jin_sang,['12410'],['13410'],['14410'],['15410'],jin_pal,['22420'],['23420'],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
             items1=[]
             items2=[]
-            items3=[jin_sang,['12410'],['13410'],['14410'],['15410'],jin_pal,['22420'],['23420'],list31,list32,list33_1,list40_0]
+            items3=[jin_sang,['12410'],['13410'],['14410'],['15410'],jin_pal,['22420'],['23420'],equip_list["31"],equip_list["32"],equip_list["33_1"],list40_0]
             all_list_list.append(calc_setlist.make_list(items0,items1,items2,items3))
         if len(jin_sang)!=0 and len(jin_gui)!=0: ##상의+귀걸
-            items0=[jin_sang,['12410'],['13410'],['14410'],['15410'],list21_0,list22,list23,['31430'],['32430'],jin_gui,list40_0]
+            items0=[jin_sang,['12410'],['13410'],['14410'],['15410'],equip_list["21_0"],equip_list["22"],equip_list["23"],['31430'],['32430'],jin_gui,list40_0]
             items1=[]
-            items2=[jin_sang,['12410'],['13410'],['14410'],['15410'],list21_1,list22,list23,['31430'],['32430'],jin_gui,list40_0]
+            items2=[jin_sang,['12410'],['13410'],['14410'],['15410'],equip_list["21_1"],equip_list["22"],equip_list["23"],['31430'],['32430'],jin_gui,list40_0]
             items3=[]
             all_list_list.append(calc_setlist.make_list(items0,items1,items2,items3))
         if len(jin_pal)!=0 and len(jin_gui)!=0: ##팔찌+귀걸
-            items0=[list11_0,list12,list13,list14,list15,jin_pal,['22420'],['23420'],['31430'],['32430'],jin_gui,list40_0]
-            items1=[list11_1,list12,list13,list14,list15,jin_pal,['22420'],['23420'],['31430'],['32430'],jin_gui,list40_0]
+            items0=[equip_list["11_0"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],jin_pal,['22420'],['23420'],['31430'],['32430'],jin_gui,list40_0]
+            items1=[equip_list["11_1"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],jin_pal,['22420'],['23420'],['31430'],['32430'],jin_gui,list40_0]
             items2=[]
             items3=[]
             all_list_list.append(calc_setlist.make_list(items0,items1,items2,items3))
@@ -1154,10 +1167,10 @@ def calc(mode):
         for i in all_list_list:
             timp_list_num=timp_list_num+int(i[2])
 
-        items0=[list11_0,list12,list13,list14,list15,list21_0,list22,list23,list31,list32,list33_0,list40_0]
-        items1=[list11_1,list12,list13,list14,list15,list21_0,list22,list23,list31,list32,list33_0,list40_0]
-        items2=[list11_0,list12,list13,list14,list15,list21_1,list22,list23,list31,list32,list33_0,list40_0]
-        items3=[list11_0,list12,list13,list14,list15,list21_0,list22,list23,list31,list32,list33_1,list40_0]
+        items0=[equip_list["11_0"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],equip_list["21_0"],equip_list["22"],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
+        items1=[equip_list["11_1"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],equip_list["21_0"],equip_list["22"],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
+        items2=[equip_list["11_0"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],equip_list["21_1"],equip_list["22"],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
+        items3=[equip_list["11_0"],equip_list["12"],equip_list["13"],equip_list["14"],equip_list["15"],equip_list["21_0"],equip_list["22"],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_1"],list40_0]
         all_list_list.append(calc_setlist.make_list(items0,items1,items2,items3))
 
     #########################################################################################################################
