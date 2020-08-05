@@ -1,4 +1,3 @@
-now_version="4.0.2"
 ver_time='200710'
 
 #-*- coding: utf-8 -*-
@@ -83,6 +82,7 @@ class Calculator:
         self.image_list_set: Dict[str, PhotoImage] = {}
         self.image_list_set2: Dict[str, PhotoImage] = {}
         self.set_name_toggle = 0
+        self.now_version = "4.0.2"
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -235,7 +235,7 @@ def update_log():
     scrollbar.pack(side=RIGHT,fill=Y)
     update_text=''
     try:
-        update_file = open(now_version+" 패치노트.txt", 'r', encoding='UTF8')
+        update_file = open(calculator.now_version + " 패치노트.txt", 'r', encoding='UTF8')
         lines = update_file.readlines()
         for line in lines:
             update_text=update_text+'\n'+line
@@ -256,10 +256,10 @@ try:
     if str(db_custom['K2'].value) != '1':
         update_log()
     print("Preset 엑셀 버전= "+str(db_custom['K1'].value))
-    print("클라이언트 버전= "+now_version)
-    if str(db_custom['K1'].value) != now_version:
+    print("클라이언트 버전= " + calculator.now_version)
+    if str(db_custom['K1'].value) != calculator.now_version:
         print("DB 업데이트")
-        db_custom['K1']=now_version
+        db_custom['K1'] = calculator.now_version
         auto_custom=1
         load_preset0.save("preset.xlsx")
         load_preset0.close()
@@ -1775,7 +1775,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     random_npc=canvas_res.create_image(313-210,370,image=random_npc_img,anchor='nw')
 
 
-    global now_version,pause_gif,stop_gif,stop_gif2
+    global pause_gif,stop_gif,stop_gif2
     global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43,wep_select,jobup_select, now_rank_num, res_wep,res_wep_img
     image_list = calculator.image_list
     image_list_wep = calculator.image_list_wep
@@ -2160,7 +2160,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         groggy_bt=tkinter.Button(result_window,command=lambda:change_groggy(ele_skill),image=tg_groggy_img1,fg='white',bg=dark_main,borderwidth=0,activebackground=dark_main)
         groggy_bt.place(x=190,y=325)
         groggy_bt.image=tg_groggy_img1
-        canvas_res.create_text(217,382,text="버전=\n"+str(now_version),fill='white', anchor='c')
+        canvas_res.create_text(217, 382, text="버전=\n" + calculator.now_version, fill='white', anchor='c')
 
         global result_cool_canvas_list
         result_cool_canvas_list=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -5462,7 +5462,7 @@ maker_image=calculator.get_photo_image('ext_img/maker.png')
 maker=tkinter.Button(self,image=maker_image, command=hamjung,borderwidth=0,bg=dark_main,activebackground=dark_main)
 def check_update(event):
     try:
-        now_version_num=int(now_version[0]+now_version[2]+now_version[4])
+        now_version_num = int(calculator.now_version[0] + calculator.now_version[2] + calculator.now_version[4])
         if event==1:
             html = urllib.request.urlopen("https://drive.google.com/open?id=1p8ZdzW_NzGKHHOtfPTuZSr1YgSEVtYCj")
             bsObject = BeautifulSoup(html, "html.parser")
@@ -5484,7 +5484,7 @@ def check_update(event):
         if event==1:
             return "-"
 net_latest_version=check_update(1)
-version=tkinter.Button(self,text='현재 '+str(now_version)+'\n최신 '+str(net_latest_version)+'\n업데이트',font=small_font, command=lambda:check_update(0))
+version=tkinter.Button(self, text='현재 '+ calculator.now_version + '\n최신 ' + str(net_latest_version) + '\n업데이트', font=small_font, command=lambda: check_update(0))
 maker.place(x=622,y=585)
 version.place(x=630-3,y=645+3)
 
