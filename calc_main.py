@@ -86,6 +86,7 @@ class Calculator:
         self.pause_gif = 0
         self.stop_gif = 0
         self.stop_gif2 = 0
+        self.gif_images = {}
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1776,7 +1777,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     random_npc=canvas_res.create_image(313-210,370,image=random_npc_img,anchor='nw')
 
 
-    global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43,wep_select,jobup_select, now_rank_num, res_wep,res_wep_img
+    global wep_select,jobup_select, now_rank_num, res_wep,res_wep_img
     image_list = calculator.image_list
     image_list_wep = calculator.image_list_wep
 
@@ -2095,20 +2096,22 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         res_stat3=canvas_res.create_text(145+24,361,text=rank_stat3[0],fill='white')
         res_inv=canvas_res.create_text(122,174,text=rank_inv[0],font=guide_font,fill='white')
 
-        res_img11=canvas_res.create_image(57,57,image=result_image_on[0]['11'])
-        res_img12=canvas_res.create_image(27,87,image=result_image_on[0]['12'])
-        res_img13=canvas_res.create_image(27,57,image=result_image_on[0]['13'])
-        res_img14=canvas_res.create_image(57,87,image=result_image_on[0]['14'])
-        res_img15=canvas_res.create_image(27,117,image=result_image_on[0]['15'])
-        res_img21=canvas_res.create_image(189,57,image=result_image_on[0]['21'])
-        res_img22=canvas_res.create_image(219,57,image=result_image_on[0]['22'])
-        res_img23=canvas_res.create_image(219,87,image=result_image_on[0]['23'])
-        res_img31=canvas_res.create_image(189,87,image=result_image_on[0]['31'])
-        res_img32=canvas_res.create_image(219,117,image=result_image_on[0]['32'])
-        res_img33=canvas_res.create_image(189,117,image=result_image_on[0]['33'])
-        res_img41=canvas_res.create_image(27,87,image=result_image_on[0]['41'])
-        res_img42=canvas_res.create_image(219,87,image=result_image_on[0]['42'])
-        res_img43=canvas_res.create_image(189,87,image=result_image_on[0]['43'])
+        gif_images = calculator.gif_images
+
+        gif_images["11"] = canvas_res.create_image(57,57,image=result_image_on[0]['11'])
+        gif_images["12"] = canvas_res.create_image(27,87,image=result_image_on[0]['12'])
+        gif_images["13"] = canvas_res.create_image(27,57,image=result_image_on[0]['13'])
+        gif_images["14"] = canvas_res.create_image(57,87,image=result_image_on[0]['14'])
+        gif_images["15"] = canvas_res.create_image(27,117,image=result_image_on[0]['15'])
+        gif_images["21"] = canvas_res.create_image(189,57,image=result_image_on[0]['21'])
+        gif_images["22"] = canvas_res.create_image(219,57,image=result_image_on[0]['22'])
+        gif_images["23"] = canvas_res.create_image(219,87,image=result_image_on[0]['23'])
+        gif_images["31"] = canvas_res.create_image(189,87,image=result_image_on[0]['31'])
+        gif_images["32"] = canvas_res.create_image(219,117,image=result_image_on[0]['32'])
+        gif_images["33"] = canvas_res.create_image(189,117,image=result_image_on[0]['33'])
+        gif_images["41"] = canvas_res.create_image(27,87,image=result_image_on[0]['41'])
+        gif_images["42"] = canvas_res.create_image(219,87,image=result_image_on[0]['42'])
+        gif_images["43"] = canvas_res.create_image(189,87,image=result_image_on[0]['43'])
 
         cn1=0
         cn4=5
@@ -2133,17 +2136,17 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                 cn4=5
         length=len(rank1_list)
         if result_image_gif_tg[0][0]==1:
-            play_gif( 0,0,0,res_img11,result_image_gif,0,1,1)
+            play_gif( 0,0,0,gif_images["11"],result_image_gif,0,1,1)
         if result_image_gif_tg[0][1]==1:
-            play_gif( 0,0,1,res_img21,result_image_gif,0,1,1)
+            play_gif( 0,0,1,gif_images["21"],result_image_gif,0,1,1)
         if result_image_gif_tg[0][2]==1:
-            play_gif( 0,0,2,res_img33,result_image_gif,0,1,1)
+            play_gif( 0,0,2,gif_images["33"],result_image_gif,0,1,1)
         if result_siroco_gif_tg[0][0]==1:
-            play_gif( 0,0,0,res_img41,result_siroco_gif,0,1,1)
+            play_gif( 0,0,0,gif_images["41"],result_siroco_gif,0,1,1)
         if result_siroco_gif_tg[0][1]==1:
-            play_gif( 0,0,1,res_img42,result_siroco_gif,0,1,1)
+            play_gif( 0,0,1,gif_images["42"],result_siroco_gif,0,1,1)
         if result_siroco_gif_tg[0][2]==1:
-            play_gif( 0,0,2,res_img43,result_siroco_gif,0,1,1)
+            play_gif( 0,0,2,gif_images["43"],result_siroco_gif,0,1,1)
 
         for i in range(0,5):
             for j in [11,21,33]:
@@ -2360,20 +2363,20 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         res_buf_ex2=canvas_res.create_text(183,261,text=rank_buf_ex3[0][1],font=small_font,fill='white')
         res_buf_ex3=canvas_res.create_text(183,318,text=rank_buf_ex3[0][2],font=small_font,fill='white')
 
-        res_img11=canvas_res.create_image(57,52,image=result_image_on3[0]['11'])
-        res_img12=canvas_res.create_image(27,82,image=result_image_on3[0]['12'])
-        res_img13=canvas_res.create_image(27,52,image=result_image_on3[0]['13'])
-        res_img14=canvas_res.create_image(57,82,image=result_image_on3[0]['14'])
-        res_img15=canvas_res.create_image(27,112,image=result_image_on3[0]['15'])
-        res_img21=canvas_res.create_image(189,52,image=result_image_on3[0]['21'])
-        res_img22=canvas_res.create_image(219,52,image=result_image_on3[0]['22'])
-        res_img23=canvas_res.create_image(219,82,image=result_image_on3[0]['23'])
-        res_img31=canvas_res.create_image(189,82,image=result_image_on3[0]['31'])
-        res_img32=canvas_res.create_image(219,112,image=result_image_on3[0]['32'])
-        res_img33=canvas_res.create_image(189,112,image=result_image_on3[0]['33'])
-        res_img41=canvas_res.create_image(27,82,image=result_image_on3[0]['41'])
-        res_img42=canvas_res.create_image(219,82,image=result_image_on3[0]['42'])
-        res_img43=canvas_res.create_image(189,82,image=result_image_on3[0]['43'])
+        gif_images["11"]=canvas_res.create_image(57,52,image=result_image_on3[0]['11'])
+        gif_images["12"]=canvas_res.create_image(27,82,image=result_image_on3[0]['12'])
+        gif_images["13"]=canvas_res.create_image(27,52,image=result_image_on3[0]['13'])
+        gif_images["14"]=canvas_res.create_image(57,82,image=result_image_on3[0]['14'])
+        gif_images["15"]=canvas_res.create_image(27,112,image=result_image_on3[0]['15'])
+        gif_images["21"]=canvas_res.create_image(189,52,image=result_image_on3[0]['21'])
+        gif_images["22"]=canvas_res.create_image(219,52,image=result_image_on3[0]['22'])
+        gif_images["23"]=canvas_res.create_image(219,82,image=result_image_on3[0]['23'])
+        gif_images["31"]=canvas_res.create_image(189,82,image=result_image_on3[0]['31'])
+        gif_images["32"]=canvas_res.create_image(219,112,image=result_image_on3[0]['32'])
+        gif_images["33"]=canvas_res.create_image(189,112,image=result_image_on3[0]['33'])
+        gif_images["41"]=canvas_res.create_image(27,82,image=result_image_on3[0]['41'])
+        gif_images["42"]=canvas_res.create_image(219,82,image=result_image_on3[0]['42'])
+        gif_images["43"]=canvas_res.create_image(189,82,image=result_image_on3[0]['43'])
         cn1=0
         cn6=5
         res_img_list={}
@@ -2406,17 +2409,17 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank_type_but2.image=type2_img
         rank_type_but3.image=type3_img
         if result_image_gif3_tg[0][0]==1:
-            play_gif( 0,0,0,res_img11,result_image_gif3,0,1,1)
+            play_gif( 0,0,0,gif_images["11"],result_image_gif3,0,1,1)
         if result_image_gif3_tg[0][1]==1:
-            play_gif( 0,0,1,res_img21,result_image_gif3,0,1,1)
+            play_gif( 0,0,1,gif_images["21"],result_image_gif3,0,1,1)
         if result_image_gif3_tg[0][2]==1:
-            play_gif( 0,0,2,res_img33,result_image_gif3,0,1,1)
+            play_gif( 0,0,2,gif_images["33"],result_image_gif3,0,1,1)
         if result_siroco_gif3_tg[0][0]==1:
-            play_gif( 0,0,0,res_img41,result_siroco_gif3,0,1,1)
+            play_gif( 0,0,0,gif_images["41"],result_siroco_gif3,0,1,1)
         if result_siroco_gif3_tg[0][1]==1:
-            play_gif( 0,0,1,res_img42,result_siroco_gif3,0,1,1)
+            play_gif( 0,0,1,gif_images["42"],result_siroco_gif3,0,1,1)
         if result_siroco_gif3_tg[0][2]==1:
-            play_gif( 0,0,2,res_img43,result_siroco_gif3,0,1,1)
+            play_gif( 0,0,2,gif_images["43"],result_siroco_gif3,0,1,1)
 
         for i in range(0,5):
             for j in [11,21,33]:
@@ -2746,7 +2749,6 @@ def change_groggy(ele_skill):
     threading.Timer(0.07, change_groggy2,args=(ele_skill,)).start()
     threading.Timer(0, time_delayy).start()
 def change_groggy2(ele_skill):
-    global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43
     global res_dam,res_stat,res_stat2,res_stat3,res_inv,res_cool_what,res_wep
     global tg_groggy,groggy,res_cool_what,cool_eff_text
     global result_image_on,rank_dam_noele,rank_dam,rank_stat,rank_stat2,rank_stat3,rank_inv,result_image_gif_tg,result_image_gif,result_siroco_gif_tg,result_siroco_gif
@@ -2758,6 +2760,7 @@ def change_groggy2(ele_skill):
     global rank_wep_name,rank0_wep_name
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
+    gif_images = calculator.gif_images
 
     now_rank_num=0
     if tagkgum_exist==1:
@@ -2812,37 +2815,37 @@ def change_groggy2(ele_skill):
     canvas_res.itemconfig(res_stat2,text=change_stat2[0])
     canvas_res.itemconfig(res_stat3,text=change_stat3[0])
     canvas_res.itemconfig(res_inv,text=change_inv[0])
-    canvas_res.itemconfig(res_img11,image=image_changed[0]['11'])
-    canvas_res.itemconfig(res_img12,image=image_changed[0]['12'])
-    canvas_res.itemconfig(res_img13,image=image_changed[0]['13'])
-    canvas_res.itemconfig(res_img14,image=image_changed[0]['14'])
-    canvas_res.itemconfig(res_img15,image=image_changed[0]['15'])
-    canvas_res.itemconfig(res_img21,image=image_changed[0]['21'])
-    canvas_res.itemconfig(res_img22,image=image_changed[0]['22'])
-    canvas_res.itemconfig(res_img23,image=image_changed[0]['23'])
-    canvas_res.itemconfig(res_img31,image=image_changed[0]['31'])
-    canvas_res.itemconfig(res_img32,image=image_changed[0]['32'])
-    canvas_res.itemconfig(res_img33,image=image_changed[0]['33'])
-    canvas_res.itemconfig(res_img41,image=image_changed[0]['41'])
-    canvas_res.itemconfig(res_img42,image=image_changed[0]['42'])
-    canvas_res.itemconfig(res_img43,image=image_changed[0]['43'])
+    canvas_res.itemconfig(gif_images["11"],image=image_changed[0]['11'])
+    canvas_res.itemconfig(gif_images["12"],image=image_changed[0]['12'])
+    canvas_res.itemconfig(gif_images["13"],image=image_changed[0]['13'])
+    canvas_res.itemconfig(gif_images["14"],image=image_changed[0]['14'])
+    canvas_res.itemconfig(gif_images["15"],image=image_changed[0]['15'])
+    canvas_res.itemconfig(gif_images["21"],image=image_changed[0]['21'])
+    canvas_res.itemconfig(gif_images["22"],image=image_changed[0]['22'])
+    canvas_res.itemconfig(gif_images["23"],image=image_changed[0]['23'])
+    canvas_res.itemconfig(gif_images["31"],image=image_changed[0]['31'])
+    canvas_res.itemconfig(gif_images["32"],image=image_changed[0]['32'])
+    canvas_res.itemconfig(gif_images["33"],image=image_changed[0]['33'])
+    canvas_res.itemconfig(gif_images["41"],image=image_changed[0]['41'])
+    canvas_res.itemconfig(gif_images["42"],image=image_changed[0]['42'])
+    canvas_res.itemconfig(gif_images["43"],image=image_changed[0]['43'])
     calculator.stop_gif = 1
     calculator.stop_gif2 = 1
     time.sleep(0.2)
     calculator.stop_gif = 0
     calculator.stop_gif2 = 0
     if image_gif_changed_tg[0][0]==1:
-        result_window.after(0,play_gif,0,0,0,res_img11,image_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,0,gif_images["11"],image_gif_changed,0,1,1)
     if image_gif_changed_tg[0][1]==1:
-        result_window.after(0,play_gif,0,0,1,res_img21,image_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,1,gif_images["21"],image_gif_changed,0,1,1)
     if image_gif_changed_tg[0][2]==1:
-        result_window.after(0,play_gif,0,0,2,res_img33,image_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,2,gif_images["33"],image_gif_changed,0,1,1)
     if siroco_gif_changed_tg[0][0]==1:
-        result_window.after(0,play_gif,0,0,0,res_img41,siroco_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,0,gif_images["41"],siroco_gif_changed,0,1,1)
     if siroco_gif_changed_tg[0][1]==1:
-        result_window.after(0,play_gif,0,0,1,res_img42,siroco_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,1,gif_images["42"],siroco_gif_changed,0,1,1)
     if siroco_gif_changed_tg[0][2]==1:
-        result_window.after(0,play_gif,0,0,2,res_img43,siroco_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,2,gif_images["43"],siroco_gif_changed,0,1,1)
     global res_dam_list, res_item_list, res_wep_img
     for j in range(0,5):
         try:
@@ -2950,9 +2953,10 @@ def change_rank_type(in_type):
 
 ## 순위 선택 변경
 def change_rank2(now,job_type,ele_skill):
-    global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num, res_wep, res_dam_list
+    global now_rank_num, res_wep, res_dam_list
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
+    gif_images = calculator.gif_images
 
     now_rank_num=now
     if job_type =='deal':
@@ -3069,40 +3073,41 @@ def change_rank2(now,job_type,ele_skill):
         except KeyError as error:
             c=1
     canvas_res.itemconfig(res_wep,text=c_rank_wep[now])
-    canvas_res.itemconfig(res_img11,image=image_changed['11'])
-    canvas_res.itemconfig(res_img12,image=image_changed['12'])
-    canvas_res.itemconfig(res_img13,image=image_changed['13'])
-    canvas_res.itemconfig(res_img14,image=image_changed['14'])
-    canvas_res.itemconfig(res_img15,image=image_changed['15'])
-    canvas_res.itemconfig(res_img21,image=image_changed['21'])
-    canvas_res.itemconfig(res_img22,image=image_changed['22'])
-    canvas_res.itemconfig(res_img23,image=image_changed['23'])
-    canvas_res.itemconfig(res_img31,image=image_changed['31'])
-    canvas_res.itemconfig(res_img32,image=image_changed['32'])
-    canvas_res.itemconfig(res_img33,image=image_changed['33'])
-    canvas_res.itemconfig(res_img41,image=image_changed['41'])
-    canvas_res.itemconfig(res_img42,image=image_changed['42'])
-    canvas_res.itemconfig(res_img43,image=image_changed['43'])
+    canvas_res.itemconfig(gif_images["11"],image=image_changed['11'])
+    canvas_res.itemconfig(gif_images["12"],image=image_changed['12'])
+    canvas_res.itemconfig(gif_images["13"],image=image_changed['13'])
+    canvas_res.itemconfig(gif_images["14"],image=image_changed['14'])
+    canvas_res.itemconfig(gif_images["15"],image=image_changed['15'])
+    canvas_res.itemconfig(gif_images["21"],image=image_changed['21'])
+    canvas_res.itemconfig(gif_images["22"],image=image_changed['22'])
+    canvas_res.itemconfig(gif_images["23"],image=image_changed['23'])
+    canvas_res.itemconfig(gif_images["31"],image=image_changed['31'])
+    canvas_res.itemconfig(gif_images["32"],image=image_changed['32'])
+    canvas_res.itemconfig(gif_images["33"],image=image_changed['33'])
+    canvas_res.itemconfig(gif_images["41"],image=image_changed['41'])
+    canvas_res.itemconfig(gif_images["42"],image=image_changed['42'])
+    canvas_res.itemconfig(gif_images["43"],image=image_changed['43'])
     if image_gif_changed_tg[now][0]==1:
-        result_window.after(0,play_gif,0,now,0,res_img11,image_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,now,0,gif_images["11"],image_gif_changed,0,1,1)
     if image_gif_changed_tg[now][1]==1:
-        result_window.after(0,play_gif,0,now,1,res_img21,image_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,now,1,gif_images["21"],image_gif_changed,0,1,1)
     if image_gif_changed_tg[now][2]==1:
-        result_window.after(0,play_gif,0,now,2,res_img33,image_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,now,2,gif_images["33"],image_gif_changed,0,1,1)
     if siroco_gif_changed_tg[now][0]==1:
-        result_window.after(0,play_gif,0,now,0,res_img41,siroco_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,now,0,gif_images["41"],siroco_gif_changed,0,1,1)
     if siroco_gif_changed_tg[now][1]==1:
-        result_window.after(0,play_gif,0,now,1,res_img42,siroco_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,now,1,gif_images["42"],siroco_gif_changed,0,1,1)
     if siroco_gif_changed_tg[now][2]==1:
-        result_window.after(0,play_gif,0,now,2,res_img43,siroco_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,now,2,gif_images["43"],siroco_gif_changed,0,1,1)
 
 ## 에픽 이미지 세트옵션 보이기 전환
 def show_set_name(job_type):
-    global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num
+    global now_rank_num
     global result_image_on, result_image_tag,result0_image_tag
     canvas_res = calculator.canvas_res
     image_list = calculator.image_list
     image_list_tag = calculator.image_list_tag
+    gif_images = calculator.gif_images
 
     if job_type == "deal":
         global result_image_tag
@@ -3113,37 +3118,37 @@ def show_set_name(job_type):
         if calculator.set_name_toggle == 0:
             calculator.set_name_toggle = 1
             calculator.pause_gif = 1
-            canvas_res.itemconfig(res_img11,image=image_list_tag[temp_image_tag[now_rank_num]['11']])
-            canvas_res.itemconfig(res_img12,image=image_list_tag[temp_image_tag[now_rank_num]['12']])
-            canvas_res.itemconfig(res_img13,image=image_list_tag[temp_image_tag[now_rank_num]['13']])
-            canvas_res.itemconfig(res_img14,image=image_list_tag[temp_image_tag[now_rank_num]['14']])
-            canvas_res.itemconfig(res_img15,image=image_list_tag[temp_image_tag[now_rank_num]['15']])
-            canvas_res.itemconfig(res_img21,image=image_list_tag[temp_image_tag[now_rank_num]['21']])
-            canvas_res.itemconfig(res_img22,image=image_list_tag[temp_image_tag[now_rank_num]['22']])
-            canvas_res.itemconfig(res_img23,image=image_list_tag[temp_image_tag[now_rank_num]['23']])
-            canvas_res.itemconfig(res_img31,image=image_list_tag[temp_image_tag[now_rank_num]['31']])
-            canvas_res.itemconfig(res_img32,image=image_list_tag[temp_image_tag[now_rank_num]['32']])
-            canvas_res.itemconfig(res_img33,image=image_list_tag[temp_image_tag[now_rank_num]['33']])
-            canvas_res.itemconfig(res_img41,image=image_list_tag[temp_image_tag[now_rank_num]['41']])
-            canvas_res.itemconfig(res_img42,image=image_list_tag[temp_image_tag[now_rank_num]['42']])
-            canvas_res.itemconfig(res_img43,image=image_list_tag[temp_image_tag[now_rank_num]['43']])
+            canvas_res.itemconfig(gif_images["11"],image=image_list_tag[temp_image_tag[now_rank_num]['11']])
+            canvas_res.itemconfig(gif_images["12"],image=image_list_tag[temp_image_tag[now_rank_num]['12']])
+            canvas_res.itemconfig(gif_images["13"],image=image_list_tag[temp_image_tag[now_rank_num]['13']])
+            canvas_res.itemconfig(gif_images["14"],image=image_list_tag[temp_image_tag[now_rank_num]['14']])
+            canvas_res.itemconfig(gif_images["15"],image=image_list_tag[temp_image_tag[now_rank_num]['15']])
+            canvas_res.itemconfig(gif_images["21"],image=image_list_tag[temp_image_tag[now_rank_num]['21']])
+            canvas_res.itemconfig(gif_images["22"],image=image_list_tag[temp_image_tag[now_rank_num]['22']])
+            canvas_res.itemconfig(gif_images["23"],image=image_list_tag[temp_image_tag[now_rank_num]['23']])
+            canvas_res.itemconfig(gif_images["31"],image=image_list_tag[temp_image_tag[now_rank_num]['31']])
+            canvas_res.itemconfig(gif_images["32"],image=image_list_tag[temp_image_tag[now_rank_num]['32']])
+            canvas_res.itemconfig(gif_images["33"],image=image_list_tag[temp_image_tag[now_rank_num]['33']])
+            canvas_res.itemconfig(gif_images["41"],image=image_list_tag[temp_image_tag[now_rank_num]['41']])
+            canvas_res.itemconfig(gif_images["42"],image=image_list_tag[temp_image_tag[now_rank_num]['42']])
+            canvas_res.itemconfig(gif_images["43"],image=image_list_tag[temp_image_tag[now_rank_num]['43']])
         elif calculator.set_name_toggle == 1:
             calculator.set_name_toggle = 0
             calculator.pause_gif = 0
-            canvas_res.itemconfig(res_img11,image=image_list[temp_image_tag[now_rank_num]['11']])
-            canvas_res.itemconfig(res_img12,image=image_list[temp_image_tag[now_rank_num]['12']])
-            canvas_res.itemconfig(res_img13,image=image_list[temp_image_tag[now_rank_num]['13']])
-            canvas_res.itemconfig(res_img14,image=image_list[temp_image_tag[now_rank_num]['14']])
-            canvas_res.itemconfig(res_img15,image=image_list[temp_image_tag[now_rank_num]['15']])
-            canvas_res.itemconfig(res_img21,image=image_list[temp_image_tag[now_rank_num]['21']])
-            canvas_res.itemconfig(res_img22,image=image_list[temp_image_tag[now_rank_num]['22']])
-            canvas_res.itemconfig(res_img23,image=image_list[temp_image_tag[now_rank_num]['23']])
-            canvas_res.itemconfig(res_img31,image=image_list[temp_image_tag[now_rank_num]['31']])
-            canvas_res.itemconfig(res_img32,image=image_list[temp_image_tag[now_rank_num]['32']])
-            canvas_res.itemconfig(res_img33,image=image_list[temp_image_tag[now_rank_num]['33']])
-            canvas_res.itemconfig(res_img41,image=image_list[temp_image_tag[now_rank_num]['41']])
-            canvas_res.itemconfig(res_img42,image=image_list[temp_image_tag[now_rank_num]['42']])
-            canvas_res.itemconfig(res_img43,image=image_list[temp_image_tag[now_rank_num]['43']])
+            canvas_res.itemconfig(gif_images["11"],image=image_list[temp_image_tag[now_rank_num]['11']])
+            canvas_res.itemconfig(gif_images["12"],image=image_list[temp_image_tag[now_rank_num]['12']])
+            canvas_res.itemconfig(gif_images["13"],image=image_list[temp_image_tag[now_rank_num]['13']])
+            canvas_res.itemconfig(gif_images["14"],image=image_list[temp_image_tag[now_rank_num]['14']])
+            canvas_res.itemconfig(gif_images["15"],image=image_list[temp_image_tag[now_rank_num]['15']])
+            canvas_res.itemconfig(gif_images["21"],image=image_list[temp_image_tag[now_rank_num]['21']])
+            canvas_res.itemconfig(gif_images["22"],image=image_list[temp_image_tag[now_rank_num]['22']])
+            canvas_res.itemconfig(gif_images["23"],image=image_list[temp_image_tag[now_rank_num]['23']])
+            canvas_res.itemconfig(gif_images["31"],image=image_list[temp_image_tag[now_rank_num]['31']])
+            canvas_res.itemconfig(gif_images["32"],image=image_list[temp_image_tag[now_rank_num]['32']])
+            canvas_res.itemconfig(gif_images["33"],image=image_list[temp_image_tag[now_rank_num]['33']])
+            canvas_res.itemconfig(gif_images["41"],image=image_list[temp_image_tag[now_rank_num]['41']])
+            canvas_res.itemconfig(gif_images["42"],image=image_list[temp_image_tag[now_rank_num]['42']])
+            canvas_res.itemconfig(gif_images["43"],image=image_list[temp_image_tag[now_rank_num]['43']])
     elif job_type == "buf":
         global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag, rank_type_buf
         if rank_type_buf==1:
@@ -3155,42 +3160,42 @@ def show_set_name(job_type):
         if calculator.set_name_toggle == 0:
             calculator.set_name_toggle = 1
             calculator.pause_gif = 1
-            canvas_res.itemconfig(res_img11,image=image_list_tag[temp_image_tag[now_rank_num]['11']])
-            canvas_res.itemconfig(res_img12,image=image_list_tag[temp_image_tag[now_rank_num]['12']])
-            canvas_res.itemconfig(res_img13,image=image_list_tag[temp_image_tag[now_rank_num]['13']])
-            canvas_res.itemconfig(res_img14,image=image_list_tag[temp_image_tag[now_rank_num]['14']])
-            canvas_res.itemconfig(res_img15,image=image_list_tag[temp_image_tag[now_rank_num]['15']])
-            canvas_res.itemconfig(res_img21,image=image_list_tag[temp_image_tag[now_rank_num]['21']])
-            canvas_res.itemconfig(res_img22,image=image_list_tag[temp_image_tag[now_rank_num]['22']])
-            canvas_res.itemconfig(res_img23,image=image_list_tag[temp_image_tag[now_rank_num]['23']])
-            canvas_res.itemconfig(res_img31,image=image_list_tag[temp_image_tag[now_rank_num]['31']])
-            canvas_res.itemconfig(res_img32,image=image_list_tag[temp_image_tag[now_rank_num]['32']])
-            canvas_res.itemconfig(res_img33,image=image_list_tag[temp_image_tag[now_rank_num]['33']])
-            canvas_res.itemconfig(res_img41,image=image_list_tag[temp_image_tag[now_rank_num]['41']])
-            canvas_res.itemconfig(res_img42,image=image_list_tag[temp_image_tag[now_rank_num]['42']])
-            canvas_res.itemconfig(res_img43,image=image_list_tag[temp_image_tag[now_rank_num]['43']])
+            canvas_res.itemconfig(gif_images["11"],image=image_list_tag[temp_image_tag[now_rank_num]['11']])
+            canvas_res.itemconfig(gif_images["12"],image=image_list_tag[temp_image_tag[now_rank_num]['12']])
+            canvas_res.itemconfig(gif_images["13"],image=image_list_tag[temp_image_tag[now_rank_num]['13']])
+            canvas_res.itemconfig(gif_images["14"],image=image_list_tag[temp_image_tag[now_rank_num]['14']])
+            canvas_res.itemconfig(gif_images["15"],image=image_list_tag[temp_image_tag[now_rank_num]['15']])
+            canvas_res.itemconfig(gif_images["21"],image=image_list_tag[temp_image_tag[now_rank_num]['21']])
+            canvas_res.itemconfig(gif_images["22"],image=image_list_tag[temp_image_tag[now_rank_num]['22']])
+            canvas_res.itemconfig(gif_images["23"],image=image_list_tag[temp_image_tag[now_rank_num]['23']])
+            canvas_res.itemconfig(gif_images["31"],image=image_list_tag[temp_image_tag[now_rank_num]['31']])
+            canvas_res.itemconfig(gif_images["32"],image=image_list_tag[temp_image_tag[now_rank_num]['32']])
+            canvas_res.itemconfig(gif_images["33"],image=image_list_tag[temp_image_tag[now_rank_num]['33']])
+            canvas_res.itemconfig(gif_images["41"],image=image_list_tag[temp_image_tag[now_rank_num]['41']])
+            canvas_res.itemconfig(gif_images["42"],image=image_list_tag[temp_image_tag[now_rank_num]['42']])
+            canvas_res.itemconfig(gif_images["43"],image=image_list_tag[temp_image_tag[now_rank_num]['43']])
         elif calculator.set_name_toggle == 1:
             calculator.set_name_toggle = 0
             calculator.pause_gif = 0
-            canvas_res.itemconfig(res_img11,image=image_list[temp_image_tag[now_rank_num]['11']])
-            canvas_res.itemconfig(res_img12,image=image_list[temp_image_tag[now_rank_num]['12']])
-            canvas_res.itemconfig(res_img13,image=image_list[temp_image_tag[now_rank_num]['13']])
-            canvas_res.itemconfig(res_img14,image=image_list[temp_image_tag[now_rank_num]['14']])
-            canvas_res.itemconfig(res_img15,image=image_list[temp_image_tag[now_rank_num]['15']])
-            canvas_res.itemconfig(res_img21,image=image_list[temp_image_tag[now_rank_num]['21']])
-            canvas_res.itemconfig(res_img22,image=image_list[temp_image_tag[now_rank_num]['22']])
-            canvas_res.itemconfig(res_img23,image=image_list[temp_image_tag[now_rank_num]['23']])
-            canvas_res.itemconfig(res_img31,image=image_list[temp_image_tag[now_rank_num]['31']])
-            canvas_res.itemconfig(res_img32,image=image_list[temp_image_tag[now_rank_num]['32']])
-            canvas_res.itemconfig(res_img33,image=image_list[temp_image_tag[now_rank_num]['33']])
-            canvas_res.itemconfig(res_img41,image=image_list[temp_image_tag[now_rank_num]['41']])
-            canvas_res.itemconfig(res_img42,image=image_list[temp_image_tag[now_rank_num]['42']])
-            canvas_res.itemconfig(res_img43,image=image_list[temp_image_tag[now_rank_num]['43']])
+            canvas_res.itemconfig(gif_images["11"],image=image_list[temp_image_tag[now_rank_num]['11']])
+            canvas_res.itemconfig(gif_images["12"],image=image_list[temp_image_tag[now_rank_num]['12']])
+            canvas_res.itemconfig(gif_images["13"],image=image_list[temp_image_tag[now_rank_num]['13']])
+            canvas_res.itemconfig(gif_images["14"],image=image_list[temp_image_tag[now_rank_num]['14']])
+            canvas_res.itemconfig(gif_images["15"],image=image_list[temp_image_tag[now_rank_num]['15']])
+            canvas_res.itemconfig(gif_images["21"],image=image_list[temp_image_tag[now_rank_num]['21']])
+            canvas_res.itemconfig(gif_images["22"],image=image_list[temp_image_tag[now_rank_num]['22']])
+            canvas_res.itemconfig(gif_images["23"],image=image_list[temp_image_tag[now_rank_num]['23']])
+            canvas_res.itemconfig(gif_images["31"],image=image_list[temp_image_tag[now_rank_num]['31']])
+            canvas_res.itemconfig(gif_images["32"],image=image_list[temp_image_tag[now_rank_num]['32']])
+            canvas_res.itemconfig(gif_images["33"],image=image_list[temp_image_tag[now_rank_num]['33']])
+            canvas_res.itemconfig(gif_images["41"],image=image_list[temp_image_tag[now_rank_num]['41']])
+            canvas_res.itemconfig(gif_images["42"],image=image_list[temp_image_tag[now_rank_num]['42']])
+            canvas_res.itemconfig(gif_images["43"],image=image_list[temp_image_tag[now_rank_num]['43']])
 
 
 ## 버퍼용 축복/1각/종합 버프력 전환
 def change_rank_type2(in_type):
-    global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43,res_wep
+    global res_wep
     global result_image_on1,result_image_on2,result_image_on3,rank_buf1,rank_buf2,rank_buf3, rank_type_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
@@ -3199,6 +3204,7 @@ def change_rank_type2(in_type):
     global res_wep_img,rank_wep_img1,rank_wep_img2,rank_wep_img3
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
+    gif_images = calculator.gif_images
 
     now_rank_num=0
     if in_type==1:
@@ -3246,20 +3252,20 @@ def change_rank_type2(in_type):
     canvas_res.itemconfig(res_buf_ex2,text=rank_buf_ex_changed[0][1])
     canvas_res.itemconfig(res_buf_ex3,text=rank_buf_ex_changed[0][2])
     canvas_res.itemconfig(res_buf,text=rank_changed[0])
-    canvas_res.itemconfig(res_img11,image=image_changed['11'])
-    canvas_res.itemconfig(res_img12,image=image_changed['12'])
-    canvas_res.itemconfig(res_img13,image=image_changed['13'])
-    canvas_res.itemconfig(res_img14,image=image_changed['14'])
-    canvas_res.itemconfig(res_img15,image=image_changed['15'])
-    canvas_res.itemconfig(res_img21,image=image_changed['21'])
-    canvas_res.itemconfig(res_img22,image=image_changed['22'])
-    canvas_res.itemconfig(res_img23,image=image_changed['23'])
-    canvas_res.itemconfig(res_img31,image=image_changed['31'])
-    canvas_res.itemconfig(res_img32,image=image_changed['32'])
-    canvas_res.itemconfig(res_img33,image=image_changed['33'])
-    canvas_res.itemconfig(res_img41,image=image_changed['41'])
-    canvas_res.itemconfig(res_img42,image=image_changed['42'])
-    canvas_res.itemconfig(res_img43,image=image_changed['43'])
+    canvas_res.itemconfig(gif_images["11"],image=image_changed['11'])
+    canvas_res.itemconfig(gif_images["12"],image=image_changed['12'])
+    canvas_res.itemconfig(gif_images["13"],image=image_changed['13'])
+    canvas_res.itemconfig(gif_images["14"],image=image_changed['14'])
+    canvas_res.itemconfig(gif_images["15"],image=image_changed['15'])
+    canvas_res.itemconfig(gif_images["21"],image=image_changed['21'])
+    canvas_res.itemconfig(gif_images["22"],image=image_changed['22'])
+    canvas_res.itemconfig(gif_images["23"],image=image_changed['23'])
+    canvas_res.itemconfig(gif_images["31"],image=image_changed['31'])
+    canvas_res.itemconfig(gif_images["32"],image=image_changed['32'])
+    canvas_res.itemconfig(gif_images["33"],image=image_changed['33'])
+    canvas_res.itemconfig(gif_images["41"],image=image_changed['41'])
+    canvas_res.itemconfig(gif_images["42"],image=image_changed['42'])
+    canvas_res.itemconfig(gif_images["43"],image=image_changed['43'])
     calculator.stop_gif = 1
     calculator.stop_gif2 = 1
     time.sleep(0.2)
@@ -3267,17 +3273,17 @@ def change_rank_type2(in_type):
     calculator.stop_gif2 = 0
 
     if image_gif_changed_tg[0][0]==1:
-        result_window.after(0,play_gif,0,0,0,res_img11,image_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,0,gif_images["11"],image_gif_changed,0,1,1)
     if image_gif_changed_tg[0][1]==1:
-        result_window.after(0,play_gif,0,0,1,res_img21,image_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,1,gif_images["21"],image_gif_changed,0,1,1)
     if image_gif_changed_tg[0][2]==1:
-        result_window.after(0,play_gif,0,0,2,res_img33,image_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,2,gif_images["33"],image_gif_changed,0,1,1)
     if siroco_gif_changed_tg[0][0]==1:
-        result_window.after(0,play_gif,0,0,0,res_img41,siroco_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,0,gif_images["41"],siroco_gif_changed,0,1,1)
     if siroco_gif_changed_tg[0][1]==1:
-        result_window.after(0,play_gif,0,0,1,res_img42,siroco_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,1,gif_images["42"],siroco_gif_changed,0,1,1)
     if siroco_gif_changed_tg[0][2]==1:
-        result_window.after(0,play_gif,0,0,2,res_img43,siroco_gif_changed,0,1,1)
+        result_window.after(0,play_gif,0,0,2,gif_images["43"],siroco_gif_changed,0,1,1)
     cn2=0
     for j in range(0,5):
             try:
