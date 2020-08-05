@@ -2708,6 +2708,7 @@ def play_gif(count_frame,now_rank,now_pc,show_res,gif_list,mode,mode2,mode3):
     #mode2:0(정지불가),1(정지가능)  > 순위 바꾸기 정지
     #mode3:0(정지불가),1(정지가능)  > 버퍼 정렬변경 정지
     result_window = calculator.result_window
+    canvas_res = calculator.canvas_res
 
     now_frame=gif_list[now_rank][now_pc][int(count_frame)]
     count_frame += 0.3
