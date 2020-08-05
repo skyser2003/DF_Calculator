@@ -82,6 +82,7 @@ class Calculator:
         self.image_list_tag: Dict[str, PhotoImage] = {}
         self.image_list_set: Dict[str, PhotoImage] = {}
         self.image_list_set2: Dict[str, PhotoImage] = {}
+        self.set_name_toggle = 0
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -1774,13 +1775,13 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     random_npc=canvas_res.create_image(313-210,370,image=random_npc_img,anchor='nw')
 
 
-    global set_name_toggle, now_version,pause_gif,stop_gif,stop_gif2
+    global now_version,pause_gif,stop_gif,stop_gif2
     global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43,wep_select,jobup_select, now_rank_num, res_wep,res_wep_img
     image_list = calculator.image_list
     image_list_wep = calculator.image_list_wep
 
     now_rank_num=0
-    set_name_toggle=0
+    calculator.set_name_toggle=0
     pause_gif=0;stop_gif=0;stop_gif2=0
     job_name=jobup_select.get()[:-4]
     job_up_name=jobup_select.get()[-4:]
@@ -3098,7 +3099,7 @@ def change_rank2(now,job_type,ele_skill):
 ## 에픽 이미지 세트옵션 보이기 전환
 def show_set_name(job_type):
     global res_img11,res_img12,res_img13,res_img14,res_img15,res_img21,res_img22,res_img23,res_img31,res_img32,res_img33,res_img41,res_img42,res_img43, now_rank_num
-    global set_name_toggle, result_image_on, result_image_tag,result0_image_tag, pause_gif
+    global result_image_on, result_image_tag,result0_image_tag, pause_gif
     canvas_res = calculator.canvas_res
     image_list = calculator.image_list
     image_list_tag = calculator.image_list_tag
@@ -3109,8 +3110,8 @@ def show_set_name(job_type):
             temp_image_tag=result_image_tag
         elif tg_groggy==1:
             temp_image_tag=result0_image_tag
-        if set_name_toggle ==0:
-            set_name_toggle=1
+        if calculator.set_name_toggle == 0:
+            calculator.set_name_toggle = 1
             pause_gif=1
             canvas_res.itemconfig(res_img11,image=image_list_tag[temp_image_tag[now_rank_num]['11']])
             canvas_res.itemconfig(res_img12,image=image_list_tag[temp_image_tag[now_rank_num]['12']])
@@ -3126,8 +3127,8 @@ def show_set_name(job_type):
             canvas_res.itemconfig(res_img41,image=image_list_tag[temp_image_tag[now_rank_num]['41']])
             canvas_res.itemconfig(res_img42,image=image_list_tag[temp_image_tag[now_rank_num]['42']])
             canvas_res.itemconfig(res_img43,image=image_list_tag[temp_image_tag[now_rank_num]['43']])
-        elif set_name_toggle ==1:
-            set_name_toggle=0
+        elif calculator.set_name_toggle == 1:
+            calculator.set_name_toggle = 0
             pause_gif=0
             canvas_res.itemconfig(res_img11,image=image_list[temp_image_tag[now_rank_num]['11']])
             canvas_res.itemconfig(res_img12,image=image_list[temp_image_tag[now_rank_num]['12']])
@@ -3151,8 +3152,8 @@ def show_set_name(job_type):
             temp_image_tag=result_image_on2_tag
         elif rank_type_buf==3:
             temp_image_tag=result_image_on3_tag
-        if set_name_toggle ==0:
-            set_name_toggle=1
+        if calculator.set_name_toggle == 0:
+            calculator.set_name_toggle = 1
             pause_gif=1
             canvas_res.itemconfig(res_img11,image=image_list_tag[temp_image_tag[now_rank_num]['11']])
             canvas_res.itemconfig(res_img12,image=image_list_tag[temp_image_tag[now_rank_num]['12']])
@@ -3168,8 +3169,8 @@ def show_set_name(job_type):
             canvas_res.itemconfig(res_img41,image=image_list_tag[temp_image_tag[now_rank_num]['41']])
             canvas_res.itemconfig(res_img42,image=image_list_tag[temp_image_tag[now_rank_num]['42']])
             canvas_res.itemconfig(res_img43,image=image_list_tag[temp_image_tag[now_rank_num]['43']])
-        elif set_name_toggle ==1:
-            set_name_toggle=0
+        elif calculator.set_name_toggle == 1:
+            calculator.set_name_toggle = 0
             pause_gif=0
             canvas_res.itemconfig(res_img11,image=image_list[temp_image_tag[now_rank_num]['11']])
             canvas_res.itemconfig(res_img12,image=image_list[temp_image_tag[now_rank_num]['12']])
