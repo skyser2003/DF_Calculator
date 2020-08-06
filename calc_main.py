@@ -131,6 +131,7 @@ class Calculator:
         self.rank_stat_tagk_yang: List[List[int]] = [[], []]
         self.res_dam_list: List[int] = []
         self.res_item_list: List[Dict[str, Image]] = []
+        self.tg_groggy = 0
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2259,9 +2260,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                 if result_siroco_gif_tg[i][temp]==1:
                     play_gif(0,i,temp,res_item_list[i][str(j)],result_siroco_gif,1,0,1)
 
-        global tg_groggy
         global groggy_bt,tg_groggy_img2,tg_groggy_img1
-        tg_groggy=0
+        calculator.tg_groggy = 0
 
         groggy_bt=tkinter.Button(result_window,command=lambda:change_groggy(ele_skill),image=tg_groggy_img1,fg='white',bg=dark_main,borderwidth=0,activebackground=dark_main)
         groggy_bt.place(x=190,y=325)
@@ -2594,7 +2594,7 @@ def show_result_dealer():
     now_rank_num = calculator.now_rank_num
 
     result_window.geometry("585x710")
-    global tg_groggy,tg_result_first
+    global tg_result_first
 
     rank0_list = calculator.rank_list[0]
     rank1_list = calculator.rank_list[1]
@@ -2606,12 +2606,12 @@ def show_result_dealer():
     font_overstrike=tkinter.font.Font(family="맑은 고딕", size=10,overstrike=1)
     font_normal=tkinter.font.Font(family="맑은 고딕", size=10)
 
-    if tg_groggy==0:
+    if calculator.tg_groggy == 0:
         now_list_list=list(rank1_list[now_rank_num][1][0])
         now_damage_groggy=rank1_list[now_rank_num][0]
         now_damage_sustain=rank1_list[now_rank_num][1][7]
         now_base_array=rank1_list[now_rank_num][1][1]
-    elif tg_groggy==1:
+    elif calculator.tg_groggy == 1:
         now_list_list=list(rank0_list[now_rank_num][1][0])
         now_damage_groggy=rank0_list[now_rank_num][1][7]
         now_damage_sustain=rank0_list[now_rank_num][0]
@@ -2878,7 +2878,7 @@ def change_groggy(ele_skill):
     threading.Timer(0.07, change_groggy2,args=(ele_skill,)).start()
     threading.Timer(0, time_delayy).start()
 def change_groggy2(ele_skill):
-    global tg_groggy,groggy
+    global groggy
     global groggy_bt,tg_groggy_img2,tg_groggy_img1
 
     result_window = calculator.result_window
@@ -2914,7 +2914,8 @@ def change_groggy2(ele_skill):
     if calculator.tagkgum_exist == 1:
         calculator.tagkgum["image"] = calculator.tagkgum_img
         calculator.tagk_tg = 0
-    if tg_groggy==0:
+
+    if calculator.tg_groggy == 0:
         groggy_bt["image"]=tg_groggy_img2
         cool_what = f"지속딜{calculator.cool_eff_text}"
         image_changed = calculator.deal_result_image_on[1]
@@ -2932,9 +2933,9 @@ def change_groggy2(ele_skill):
         wep_changed=rank0_wep_name
         wep_img_changed=calculator.deal_rank_wep_img[1]
 
-        tg_groggy=1
+        calculator.tg_groggy = 1
 
-    elif tg_groggy==1:
+    elif calculator.tg_groggy == 1:
         groggy_bt["image"]=tg_groggy_img1
         cool_what = f"그로기{calculator.cool_eff_text}"
         image_changed = calculator.deal_result_image_on[0]
@@ -2951,7 +2952,7 @@ def change_groggy2(ele_skill):
         siroco_gif_changed=result_siroco_gif
         wep_changed=rank_wep_name
         wep_img_changed=calculator.deal_rank_wep_img[0]
-        tg_groggy=0
+        calculator.tg_groggy = 0
 
     ###############
     canvas_res.itemconfig(calculator.res_wep,text=wep_changed[0],fill="white")
@@ -3018,8 +3019,6 @@ def change_groggy2(ele_skill):
 
 ##태극검 음양 전환
 def change_tagk(ele_skill):
-    global tg_groggy
-
     canvas_res = calculator.canvas_res
     rank_wep_name = calculator.deal_rank_wep_name[0]
     rank0_wep_name = calculator.deal_rank_wep_name[1]
@@ -3047,7 +3046,7 @@ def change_tagk(ele_skill):
     now = calculator.now_rank_num
     tagkgum_img=calculator.get_photo_image('ext_img/tagk_um.png')
     tagkgum_img2=calculator.get_photo_image('ext_img/tagk_ang.png')
-    if tg_groggy==0:
+    if calculator.tg_groggy == 0:
         c_rank_dam_tagk=rank_dam_tagk
         c_rank_stat_tagk=rank_stat_tagk
         c_rank_stat_tagk2=rank_stat_tagk2
@@ -3058,7 +3057,7 @@ def change_tagk(ele_skill):
         c_rank_dam_noele=rank_dam_noele
         c_rank_dam=rank_dam
         c_rank_wep_name=rank_wep_name
-    elif tg_groggy==1:
+    elif calculator.tg_groggy == 1:
         c_rank_dam_tagk=rank0_dam_tagk
         c_rank_stat_tagk=rank0_stat_tagk
         c_rank_stat_tagk2=rank0_stat_tagk2
@@ -3122,8 +3121,6 @@ def change_rank2(now,job_type,ele_skill):
 
     calculator.now_rank_num = now
     if job_type =='deal':
-        global tg_groggy
-
         res_dam = calculator.res_dam
         res_stat = calculator.res_stat
         res_stat2 = calculator.res_stat2
@@ -3163,7 +3160,7 @@ def change_rank2(now,job_type,ele_skill):
         tagk_tg = calculator.tagk_tg
 
         try:
-            if tg_groggy==0:
+            if calculator.tg_groggy == 0:
                 image_changed = calculator.deal_result_image_on[0][now]
                 c_rank_wep = calculator.deal_rank_wep_name[0]
                 if c_rank_wep[now]=="(도)태극천제검" and tagkgum_exist==1 and tagk_tg==1:
@@ -3184,9 +3181,7 @@ def change_rank2(now,job_type,ele_skill):
                 siroco_gif_changed=result_siroco_gif
                 image_gif_changed_tg=result_image_gif_tg
                 siroco_gif_changed_tg=result_siroco_gif_tg
-
-
-            elif tg_groggy==1:
+            elif calculator.tg_groggy == 1:
                 image_changed = calculator.deal_result_image_on[1][now]
                 c_rank_wep = calculator.deal_rank_wep_name[1]
                 if c_rank_wep[now]=="(도)태극천제검" and tagkgum_exist==1 and tagk_tg==1:
@@ -3314,10 +3309,11 @@ def show_set_name(job_type):
     result0_image_tag = calculator.deal_result_image_tag[1]
 
     if job_type == "deal":
-        if tg_groggy==0:
+        if calculator.tg_groggy == 0:
             temp_image_tag=result_image_tag
-        elif tg_groggy==1:
+        elif calculator.tg_groggy == 1:
             temp_image_tag=result0_image_tag
+
         if calculator.set_name_toggle == 0:
             calculator.set_name_toggle = 1
             calculator.pause_gif = 1
