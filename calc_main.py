@@ -129,6 +129,8 @@ class Calculator:
         self.tagkgum_img: PhotoImage = None
         self.rank_stat_tagk_um: List[List[int]] = [[], []]
         self.rank_stat_tagk_yang: List[List[int]] = [[], []]
+        self.res_dam_list: List[int] = []
+        self.res_item_list: List[Dict[str, Image]] = []
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2213,9 +2215,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
         cn1=0
         cn4=5
-        global res_dam_list, res_item_list
-        res_item_list=[{},{},{},{},{}]
-        res_dam_list=[0,0,0,0,0]
+
+        res_item_list = calculator.res_item_list = [{}, {}, {}, {}, {}]
+        res_dam_list = calculator.res_dam_list = [0, 0, 0, 0, 0]
         calculator.res_wep_img.clear()
 
         for j in range(0,5):
@@ -2906,6 +2908,7 @@ def change_groggy2(ele_skill):
     result0_siroco_gif = calculator.result_siroco_gif[1]
     result_siroco_gif_tg = calculator.result_siroco_gif_tg[0]
     result0_siroco_gif_tg = calculator.result_siroco_gif_tg[1]
+    res_item_list = calculator.res_item_list
 
     calculator.now_rank_num = 0
     if calculator.tagkgum_exist == 1:
@@ -2991,12 +2994,12 @@ def change_groggy2(ele_skill):
         result_window.after(0,play_gif,0,0,1,gif_images["42"],siroco_gif_changed,0,1,1)
     if siroco_gif_changed_tg[0][2]==1:
         result_window.after(0,play_gif,0,0,2,gif_images["43"],siroco_gif_changed,0,1,1)
-    global res_dam_list, res_item_list
+
     for j in range(0,5):
         try:
             for i in [11,12,13,14,15,21,22,23,31,32,33,41,42,43]:
                 canvas_res.itemconfig(res_item_list[j][str(i)],image=image_changed[j][str(i)])
-            canvas_res.itemconfig(res_dam_list[j],text=rank_changed[j],fill='white')
+            canvas_res.itemconfig(calculator.res_dam_list[j],text=rank_changed[j],fill='white')
             canvas_res.itemconfig(calculator.res_wep_img[j],image=wep_img_changed[j])
         except KeyError as error:
             pass
@@ -3015,7 +3018,6 @@ def change_groggy2(ele_skill):
 
 ##태극검 음양 전환
 def change_tagk(ele_skill):
-    global res_dam_list
     global tg_groggy
 
     canvas_res = calculator.canvas_res
@@ -3040,6 +3042,7 @@ def change_tagk(ele_skill):
     rank0_stat_tagk = calculator.rank_stat_tagk_um[1]
     rank_stat_tagk2 = calculator.rank_stat_tagk_yang[0]
     rank0_stat_tagk2 = calculator.rank_stat_tagk_yang[1]
+    res_dam_list = calculator.res_dam_list
 
     now = calculator.now_rank_num
     tagkgum_img=calculator.get_photo_image('ext_img/tagk_um.png')
@@ -3111,7 +3114,6 @@ def change_rank_type(in_type):
 
 ## 순위 선택 변경
 def change_rank2(now,job_type,ele_skill):
-    global res_dam_list
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
     gif_images = calculator.gif_images
