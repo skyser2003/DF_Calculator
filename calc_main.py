@@ -137,6 +137,7 @@ class Calculator:
         self.tg_groggy_img2: PhotoImage = None
         self.result_cool_canvas_list: List[int] = []
         self.rank_buf: List[List[int]] = [[], [], []]
+        self.rank_type_buf = 3
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2282,7 +2283,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     elif job_type=='buf': ########################### 버퍼 ###########################
         load_presetr=load_workbook("preset.xlsx", data_only=True)
         r_preset=load_presetr["custom"]
-        global rank_type_buf, res_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
+        global res_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
         global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag
         global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
@@ -2296,7 +2297,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank_wep_img2 = calculator.buff_rank_wep_img[1]
         rank_wep_img3 = calculator.buff_rank_wep_img[2]
 
-        rank_type_buf=3
+        calculator.rank_type_buf = 3
         rank_setting1=[0,0,0,0,0]
         rank_setting2=[0,0,0,0,0]
         rank_setting3=[0,0,0,0,0]
@@ -2457,6 +2458,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         if job_name=='(버프)세인트': ## 진각 전환 하드 코딩
             def change_buf_jingak():
                 global buf_jingak_tg,buf_jingak,buf_jingak_img2
+                rank_type_buf = calculator.rank_type_buf
+
                 if rank_type_buf==1:
                     c_rank0_buf=rank_neo_buf1
                     c_rank_buf=rank_buf1
@@ -3220,7 +3223,7 @@ def change_rank2(now,job_type,ele_skill):
 
 
     elif job_type =='buf':
-        global rank_type_buf, res_buf, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3
+        global res_buf, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3
         global result_image_gif1,result_image_gif1_tg,result_image_gif2,result_image_gif2_tg,result_image_gif3,result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
 
@@ -3233,6 +3236,8 @@ def change_rank2(now,job_type,ele_skill):
         result_image_on3 = calculator.buff_result_image_on[2]
 
         try:
+            rank_type_buf = calculator.rank_type_buf
+
             if rank_type_buf==1:
                 image_changed=result_image_on1[now]
                 rank_changed = calculator.rank_buf[0][now]
@@ -3351,7 +3356,9 @@ def show_set_name(job_type):
             canvas_res.itemconfig(gif_images["42"],image=image_list[temp_image_tag[now_rank_num]['42']])
             canvas_res.itemconfig(gif_images["43"],image=image_list[temp_image_tag[now_rank_num]['43']])
     elif job_type == "buf":
-        global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag, rank_type_buf
+        global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag
+        rank_type_buf = calculator.rank_type_buf
+
         if rank_type_buf==1:
             temp_image_tag=result_image_on1_tag
         elif rank_type_buf==2:
@@ -3396,7 +3403,7 @@ def show_set_name(job_type):
 
 ## 버퍼용 축복/1각/종합 버프력 전환
 def change_rank_type2(in_type):
-    global rank_type_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
+    global res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
 
@@ -3415,7 +3422,7 @@ def change_rank_type2(in_type):
 
     calculator.now_rank_num = 0
     if in_type==1:
-        rank_type_buf=1
+        calculator.rank_type_buf = 1
         image_changed=result_image_on1[0]
         image_changed_all=result_image_on1
         rank_changed = calculator.rank_buf[0]
@@ -3428,7 +3435,7 @@ def change_rank_type2(in_type):
         c_rank_wep=rank_wep_name1
         wep_img_changed=rank_wep_img1
     elif in_type==2:
-        rank_type_buf=2
+        calculator.rank_type_buf = 2
         image_changed=result_image_on2[0]
         image_changed_all=result_image_on2
         rank_changed = calculator.rank_buf[1]
@@ -3441,7 +3448,7 @@ def change_rank_type2(in_type):
         c_rank_wep=rank_wep_name2
         wep_img_changed=rank_wep_img2
     elif in_type==3:
-        rank_type_buf=3
+        calculator.rank_type_buf = 3
         image_changed=result_image_on3[0]
         image_changed_all=result_image_on3
         rank_changed = calculator.rank_buf[2]
