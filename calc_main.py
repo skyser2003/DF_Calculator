@@ -132,6 +132,7 @@ class Calculator:
         self.res_dam_list: List[int] = []
         self.res_item_list: List[Dict[str, Image]] = []
         self.tg_groggy = 0
+        self.groggy_bt: Button = None
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2260,12 +2261,11 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                 if result_siroco_gif_tg[i][temp]==1:
                     play_gif(0,i,temp,res_item_list[i][str(j)],result_siroco_gif,1,0,1)
 
-        global groggy_bt,tg_groggy_img2,tg_groggy_img1
+        global tg_groggy_img2,tg_groggy_img1
         calculator.tg_groggy = 0
 
-        groggy_bt=tkinter.Button(result_window,command=lambda:change_groggy(ele_skill),image=tg_groggy_img1,fg='white',bg=dark_main,borderwidth=0,activebackground=dark_main)
+        groggy_bt = calculator.groggy_bt = tkinter.Button(result_window,command=lambda:change_groggy(ele_skill),image=tg_groggy_img1,fg='white',bg=dark_main,borderwidth=0,activebackground=dark_main)
         groggy_bt.place(x=190,y=325)
-        groggy_bt.image=tg_groggy_img1
         canvas_res.create_text(217, 382, text="버전=\n" + calculator.now_version, fill='white', anchor='c')
 
         global result_cool_canvas_list
@@ -2879,7 +2879,7 @@ def change_groggy(ele_skill):
     threading.Timer(0, time_delayy).start()
 def change_groggy2(ele_skill):
     global groggy
-    global groggy_bt,tg_groggy_img2,tg_groggy_img1
+    global tg_groggy_img2,tg_groggy_img1
 
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
@@ -2916,7 +2916,7 @@ def change_groggy2(ele_skill):
         calculator.tagk_tg = 0
 
     if calculator.tg_groggy == 0:
-        groggy_bt["image"]=tg_groggy_img2
+        calculator.groggy_bt["image"] = tg_groggy_img2
         cool_what = f"지속딜{calculator.cool_eff_text}"
         image_changed = calculator.deal_result_image_on[1]
         change_dam_noele=rank0_dam_noele
@@ -2936,7 +2936,7 @@ def change_groggy2(ele_skill):
         calculator.tg_groggy = 1
 
     elif calculator.tg_groggy == 1:
-        groggy_bt["image"]=tg_groggy_img1
+        calculator.groggy_bt["image"] = tg_groggy_img1
         cool_what = f"그로기{calculator.cool_eff_text}"
         image_changed = calculator.deal_result_image_on[0]
         change_dam_noele=rank_dam_noele
