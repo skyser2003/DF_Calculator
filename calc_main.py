@@ -135,6 +135,7 @@ class Calculator:
         self.groggy_bt: Button = None
         self.tg_groggy_img1: PhotoImage = None
         self.tg_groggy_img2: PhotoImage = None
+        self.result_cool_canvas_list: List[int] = []
 
 
     def get_photo_image(self, file: str):
@@ -2272,8 +2273,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         groggy_bt.place(x=190,y=325)
         canvas_res.create_text(217, 382, text="버전=\n" + calculator.now_version, fill='white', anchor='c')
 
-        global result_cool_canvas_list
-        result_cool_canvas_list=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+        calculator.result_cool_canvas_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         canvas_res.create_image(210,455,image=result_upbox_img)
         canvas_res.create_image(210,606,image=result_downbox_img)
         canvas_res.create_image(59,558,image=result_sidebox_img)
@@ -2651,8 +2651,8 @@ def show_result_dealer():
     for i in range(0,18):
         cool_list[i]=-round(100-(1-cool_list1[i]/100)/(1+cool_list2[i]/100)*100,1)
 
-    global result_cool_canvas_list
-    if result_cool_canvas_list!=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]:
+    result_cool_canvas_list = calculator.result_cool_canvas_list
+    if result_cool_canvas_list != [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]:
         for i in range(0,18):
             if cool_list[i]==0: fg='gray'
             else: fg='white'
