@@ -138,6 +138,7 @@ class Calculator:
         self.result_cool_canvas_list: List[int] = []
         self.rank_buf: List[List[int]] = [[], [], []]
         self.rank_type_buf = 3
+        self.res_buf: Text = None
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2283,11 +2284,13 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     elif job_type=='buf': ########################### 버퍼 ###########################
         load_presetr=load_workbook("preset.xlsx", data_only=True)
         r_preset=load_presetr["custom"]
-        global res_buf, res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
+        global res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
         global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag
         global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
         global rank_neo_buf1,rank_neo_buf2,rank_neo_buf3
+
+        res_buf = calculator.res_buf
 
         result_image_on1 = calculator.buff_result_image_on[0]
         result_image_on2 = calculator.buff_result_image_on[1]
@@ -2486,7 +2489,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
         calculator.res_wep = canvas_res.create_text(12,22,text=rank_wep_name3[0],font=guide_font,fill='white',anchor='w')
         canvas_res.create_text(122-55,193,text=rank_inv1[0],font=small_font,fill='white',anchor="w")
-        res_buf=canvas_res.create_text(122,125,text=rank_buf3[0],font=mid_font,fill='white')
+        res_buf = calculator.res_buf = canvas_res.create_text(122,125,text=rank_buf3[0],font=mid_font,fill='white')
         res_buf_type_what=canvas_res.create_text(122,145,text="총합 기준",font=guide_font,fill='white')
         res_buf_ex1=canvas_res.create_text(64,283,text=rank_buf_ex3[0][0],font=small_font,fill='white')
         res_buf_ex2=canvas_res.create_text(183,261,text=rank_buf_ex3[0][1],font=small_font,fill='white')
@@ -3223,7 +3226,7 @@ def change_rank2(now,job_type,ele_skill):
 
 
     elif job_type =='buf':
-        global res_buf, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3
+        global res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3
         global result_image_gif1,result_image_gif1_tg,result_image_gif2,result_image_gif2_tg,result_image_gif3,result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
 
@@ -3265,14 +3268,14 @@ def change_rank2(now,job_type,ele_skill):
                 siroco_gif_changed=result_siroco_gif3
                 siroco_gif_changed_tg=result_siroco_gif3_tg
                 c_rank_wep=rank_wep_name3
-            canvas_res.itemconfig(res_buf,text=rank_changed)
+            canvas_res.itemconfig(calculator.res_buf, text=rank_changed)
             canvas_res.itemconfig(res_buf_ex1,text=rank_buf_ex_changed[now][0]) # TODO: non-existing setting causes error
             canvas_res.itemconfig(res_buf_ex2,text=rank_buf_ex_changed[now][1])
             canvas_res.itemconfig(res_buf_ex3,text=rank_buf_ex_changed[now][2])
             global buf_jingak_exist,buf_jingak_tg,buf_jingak,buf_jingak_img2
             if buf_jingak_exist==1:
                 buf_jingak["image"]=buf_jingak_img2
-                canvas_res.itemconfig(res_buf,fill='white')
+                canvas_res.itemconfig(calculator.res_buf, fill='white')
                 buf_jingak_tg=0
 
         except KeyError as error:
@@ -3465,7 +3468,7 @@ def change_rank_type2(in_type):
     canvas_res.itemconfig(res_buf_ex1,text=rank_buf_ex_changed[0][0])
     canvas_res.itemconfig(res_buf_ex2,text=rank_buf_ex_changed[0][1])
     canvas_res.itemconfig(res_buf_ex3,text=rank_buf_ex_changed[0][2])
-    canvas_res.itemconfig(res_buf,text=rank_changed[0])
+    canvas_res.itemconfig(calculator.res_buf, text=rank_changed[0])
     canvas_res.itemconfig(gif_images["11"],image=image_changed['11'])
     canvas_res.itemconfig(gif_images["12"],image=image_changed['12'])
     canvas_res.itemconfig(gif_images["13"],image=image_changed['13'])
@@ -3521,7 +3524,7 @@ def change_rank_type2(in_type):
     global buf_jingak_exist,buf_jingak_tg,buf_jingak,buf_jingak_img2
     if buf_jingak_exist==1:
         buf_jingak["image"]=buf_jingak_img2
-        canvas_res.itemconfig(res_buf,fill='white')
+        canvas_res.itemconfig(calculator.res_buf, fill='white')
         buf_jingak_tg=0
 
 
