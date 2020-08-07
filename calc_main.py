@@ -139,6 +139,8 @@ class Calculator:
         self.rank_buf: List[List[int]] = [[], [], []]
         self.rank_type_buf = 3
         self.res_buf: Text = None
+        self.res_img_list: Dict[str, Image] = {}
+        self.res_buf_list: Dict[str, Text] = {}
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2284,7 +2286,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     elif job_type=='buf': ########################### 버퍼 ###########################
         load_presetr=load_workbook("preset.xlsx", data_only=True)
         r_preset=load_presetr["custom"]
-        global res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
+        global res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
         global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag
         global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
@@ -2513,8 +2515,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         gif_images["43"]=canvas_res.create_image(189,82,image=result_image_on3[0]['43'])
         cn1=0
         cn6=5
-        res_img_list={}
-        res_buf_list={}
+        res_img_list = calculator.res_img_list = {}
+        res_buf_list = calculator.res_buf_list = {}
         calculator.res_wep_img.clear()  # TODO: memory leak?
 
         for j in range(0,5):
@@ -3406,7 +3408,7 @@ def show_set_name(job_type):
 
 ## 버퍼용 축복/1각/종합 버프력 전환
 def change_rank_type2(in_type):
-    global res_img_list, res_buf_list, res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
+    global res_buf_ex1, res_buf_ex2, res_buf_ex3, rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
 
@@ -3422,6 +3424,7 @@ def change_rank_type2(in_type):
     result_image_on1 = calculator.buff_result_image_on[0]
     result_image_on2 = calculator.buff_result_image_on[1]
     result_image_on3 = calculator.buff_result_image_on[2]
+    res_img_list = calculator.res_img_list
 
     calculator.now_rank_num = 0
     if in_type==1:
@@ -3508,7 +3511,7 @@ def change_rank_type2(in_type):
                     canvas_res.itemconfig(res_img_list[str(j)+str(i)],image=image_changed_all[j][str(i)])
                     cn2=cn2+2
                 cn2=0
-                canvas_res.itemconfig(res_buf_list[j],text=rank_changed[j],font=mid_font,fill='white')
+                canvas_res.itemconfig(calculator.res_buf_list[j],text=rank_changed[j],font=mid_font,fill='white')
                 canvas_res.itemconfig(calculator.res_wep_img[j], image=wep_img_changed[j])
             except KeyError as error:
                 c=1
