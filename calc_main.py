@@ -144,6 +144,7 @@ class Calculator:
         self.res_buf_ex: List[Text] = []
         self.rank_buf_ex: List[List[int]] = [[], [], []]
         self.res_buf_type_what: Text = None
+        self.result_image_on_tag: List[List[Dict[str, str]]] = [{}, {}, {}]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2289,7 +2290,6 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     elif job_type=='buf': ########################### 버퍼 ###########################
         load_presetr=load_workbook("preset.xlsx", data_only=True)
         r_preset=load_presetr["custom"]
-        global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag
         global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
         global rank_neo_buf1,rank_neo_buf2,rank_neo_buf3
@@ -2320,9 +2320,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         result_image_on2.extend([{}, {}, {}, {}, {}])
         result_image_on3.extend([{}, {}, {}, {}, {}])
 
-        result_image_on1_tag=[{},{},{},{},{}]
-        result_image_on2_tag=[{},{},{},{},{}]
-        result_image_on3_tag=[{},{},{},{},{}]
+        result_image_on1_tag = calculator.result_image_on_tag[0] = [{}, {}, {}, {}, {}]
+        result_image_on2_tag = calculator.result_image_on_tag[1] = [{}, {}, {}, {}, {}]
+        result_image_on3_tag = calculator.result_image_on_tag[2] = [{}, {}, {}, {}, {}]
         result_image_gif1=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
         result_image_gif2=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
         result_image_gif3=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
@@ -3368,15 +3368,11 @@ def show_set_name(job_type):
             canvas_res.itemconfig(gif_images["42"],image=image_list[temp_image_tag[now_rank_num]['42']])
             canvas_res.itemconfig(gif_images["43"],image=image_list[temp_image_tag[now_rank_num]['43']])
     elif job_type == "buf":
-        global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag
         rank_type_buf = calculator.rank_type_buf
 
-        if rank_type_buf==1:
-            temp_image_tag=result_image_on1_tag
-        elif rank_type_buf==2:
-            temp_image_tag=result_image_on2_tag
-        elif rank_type_buf==3:
-            temp_image_tag=result_image_on3_tag
+        if rank_type_buf in [1, 2, 3]:
+            temp_image_tag = calculator.result_image_on_tag[rank_type_buf - 1]
+
         if calculator.set_name_toggle == 0:
             calculator.set_name_toggle = 1
             calculator.pause_gif = 1
