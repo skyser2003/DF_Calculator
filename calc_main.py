@@ -142,6 +142,7 @@ class Calculator:
         self.res_img_list: Dict[str, Image] = {}
         self.res_buf_list: Dict[str, Text] = {}
         self.res_buf_ex: List[Text] = []
+        self.rank_buf_ex: List[List[int]] = [[], [], []]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2287,7 +2288,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     elif job_type=='buf': ########################### 버퍼 ###########################
         load_presetr=load_workbook("preset.xlsx", data_only=True)
         r_preset=load_presetr["custom"]
-        global rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
+        global res_buf_type_what
         global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag
         global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
@@ -2337,9 +2338,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank_buf1 = calculator.rank_buf[0] = [0, 0, 0, 0, 0]
         rank_buf2 = calculator.rank_buf[1] = [0, 0, 0, 0, 0]
         rank_buf3 = calculator.rank_buf[2] = [0, 0, 0, 0, 0]
-        rank_buf_ex1=[0,0,0,0,0]
-        rank_buf_ex2=[0,0,0,0,0]
-        rank_buf_ex3=[0,0,0,0,0]
+        rank_buf_ex1 = calculator.rank_buf_ex[0] = [0, 0, 0, 0, 0]
+        rank_buf_ex2 = calculator.rank_buf_ex[1] = [0, 0, 0, 0, 0]
+        rank_buf_ex3 = calculator.rank_buf_ex[2] = [0, 0, 0, 0, 0]
         rank_neo_buf1=[0,0,0,0,0]
         rank_neo_buf2=[0,0,0,0,0]
         rank_neo_buf3=[0,0,0,0,0]
@@ -3231,7 +3232,6 @@ def change_rank2(now,job_type,ele_skill):
 
 
     elif job_type =='buf':
-        global rank_buf_ex1, rank_buf_ex2, rank_buf_ex3
         global result_image_gif1,result_image_gif1_tg,result_image_gif2,result_image_gif2_tg,result_image_gif3,result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
 
@@ -3253,7 +3253,7 @@ def change_rank2(now,job_type,ele_skill):
             if rank_type_buf==1:
                 image_changed=result_image_on1[now]
                 rank_changed = calculator.rank_buf[0][now]
-                rank_buf_ex_changed=rank_buf_ex1
+                rank_buf_ex_changed = calculator.rank_buf_ex[0]
                 image_gif_changed=result_image_gif1
                 image_gif_changed_tg=result_image_gif1_tg
                 siroco_gif_changed=result_siroco_gif1
@@ -3262,7 +3262,7 @@ def change_rank2(now,job_type,ele_skill):
             elif rank_type_buf==2:
                 image_changed=result_image_on2[now]
                 rank_changed = calculator.rank_buf[1][now]
-                rank_buf_ex_changed=rank_buf_ex2
+                rank_buf_ex_changed = calculator.rank_buf_ex[1]
                 image_gif_changed=result_image_gif2
                 image_gif_changed_tg=result_image_gif2_tg
                 siroco_gif_changed=result_siroco_gif2
@@ -3271,7 +3271,7 @@ def change_rank2(now,job_type,ele_skill):
             elif rank_type_buf==3:
                 image_changed=result_image_on3[now]
                 rank_changed = calculator.rank_buf[2][now]
-                rank_buf_ex_changed=rank_buf_ex3
+                rank_buf_ex_changed = calculator.rank_buf_ex[2]
                 image_gif_changed=result_image_gif3
                 image_gif_changed_tg=result_image_gif3_tg
                 siroco_gif_changed=result_siroco_gif3
@@ -3415,7 +3415,7 @@ def show_set_name(job_type):
 
 ## 버퍼용 축복/1각/종합 버프력 전환
 def change_rank_type2(in_type):
-    global rank_buf_ex1, rank_buf_ex2, rank_buf_ex3, res_buf_type_what
+    global res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
 
@@ -3442,7 +3442,7 @@ def change_rank_type2(in_type):
         image_changed=result_image_on1[0]
         image_changed_all=result_image_on1
         rank_changed = calculator.rank_buf[0]
-        rank_buf_ex_changed=rank_buf_ex1
+        rank_buf_ex_changed = calculator.rank_buf_ex[0]
         type_changed="축복 기준"
         image_gif_changed=result_image_gif1
         image_gif_changed_tg=result_image_gif1_tg
@@ -3455,7 +3455,7 @@ def change_rank_type2(in_type):
         image_changed=result_image_on2[0]
         image_changed_all=result_image_on2
         rank_changed = calculator.rank_buf[1]
-        rank_buf_ex_changed=rank_buf_ex2
+        rank_buf_ex_changed = calculator.rank_buf_ex[1]
         type_changed="1각 기준"
         image_gif_changed=result_image_gif2
         image_gif_changed_tg=result_image_gif2_tg
@@ -3468,7 +3468,7 @@ def change_rank_type2(in_type):
         image_changed=result_image_on3[0]
         image_changed_all=result_image_on3
         rank_changed = calculator.rank_buf[2]
-        rank_buf_ex_changed=rank_buf_ex3
+        rank_buf_ex_changed = calculator.rank_buf_ex[2]
         type_changed="총합 기준"
         image_gif_changed=result_image_gif3
         image_gif_changed_tg=result_image_gif3_tg
