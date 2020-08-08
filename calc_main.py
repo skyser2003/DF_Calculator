@@ -143,6 +143,7 @@ class Calculator:
         self.res_buf_list: Dict[str, Text] = {}
         self.res_buf_ex: List[Text] = []
         self.rank_buf_ex: List[List[int]] = [[], [], []]
+        self.res_buf_type_what: Text = None
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2288,7 +2289,6 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     elif job_type=='buf': ########################### 버퍼 ###########################
         load_presetr=load_workbook("preset.xlsx", data_only=True)
         r_preset=load_presetr["custom"]
-        global res_buf_type_what
         global result_image_on1_tag,result_image_on2_tag,result_image_on3_tag
         global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
@@ -2494,7 +2494,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         calculator.res_wep = canvas_res.create_text(12,22,text=rank_wep_name3[0],font=guide_font,fill='white',anchor='w')
         canvas_res.create_text(122-55,193,text=rank_inv1[0],font=small_font,fill='white',anchor="w")
         res_buf = calculator.res_buf = canvas_res.create_text(122,125,text=rank_buf3[0],font=mid_font,fill='white')
-        res_buf_type_what=canvas_res.create_text(122,145,text="총합 기준",font=guide_font,fill='white')
+        calculator.res_buf_type_what = canvas_res.create_text(122,145,text="총합 기준",font=guide_font,fill='white')
         calculator.res_buf_ex = [
             canvas_res.create_text(64, 283, text=rank_buf_ex3[0][0], font=small_font, fill='white'),
             canvas_res.create_text(183, 261, text=rank_buf_ex3[0][1], font=small_font, fill='white'),
@@ -3415,7 +3415,6 @@ def show_set_name(job_type):
 
 ## 버퍼용 축복/1각/종합 버프력 전환
 def change_rank_type2(in_type):
-    global res_buf_type_what
     global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
 
@@ -3477,7 +3476,7 @@ def change_rank_type2(in_type):
         c_rank_wep=rank_wep_name3
         wep_img_changed=rank_wep_img3
     canvas_res.itemconfig(calculator.res_wep, text=c_rank_wep[0])
-    canvas_res.itemconfig(res_buf_type_what,text=type_changed)
+    canvas_res.itemconfig(calculator.res_buf_type_what, text=type_changed)
     canvas_res.itemconfig(res_buf_ex1,text=rank_buf_ex_changed[0][0])
     canvas_res.itemconfig(res_buf_ex2,text=rank_buf_ex_changed[0][1])
     canvas_res.itemconfig(res_buf_ex3,text=rank_buf_ex_changed[0][2])
