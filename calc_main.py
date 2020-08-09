@@ -446,6 +446,10 @@ def calc(mode):
         aria_fix=0.25
         aria_dif=0
 
+    calculator.count_num = 0
+    calculator.count_all = 0
+    calculator.show_number = 0
+
     #진각/2각에 따른 실마리, 쿨감 효율 차이
     if jobup_select.get()[-4:] == "(진각)":
         silmari=0
@@ -802,7 +806,6 @@ def calc(mode):
         inv4_val=""
 
 
-    all_list_num=0
     calculator.all_list_list_num = 0
     all_list_list=[]
 
