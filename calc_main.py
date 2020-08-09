@@ -155,6 +155,7 @@ class Calculator:
         self.buf_jingak: Button = None
         self.auto_saved = 0  # 클라이언트 업데이트 시 preset 업데이트 변수
         self.save_name_list: List[str] = []  # 프리셋 이름 리스트
+        self.selected_weapon_img_list: List[PhotoImage] = []
 
         ## GUI 메인
         self.window = tkinter.Tk()
@@ -4876,7 +4877,6 @@ tkinter.Button(calculator.window,command=guide_speed,image=select_speed_img,bord
 reset_img=calculator.get_photo_image("ext_img/reset.png")
 tkinter.Button(calculator.window,command=reset,image=reset_img,borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main).place(x=302+180+17+135,y=476-435)
 
-wep_img_list=[]
 wep_list=[]
 for i in range(0,75):
     wep_list.append(name_one[str(i+111001)][1])
@@ -4892,8 +4892,8 @@ def wep_job_selected2(event):
     wep_select["values"]=list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])
     wep_select.set(list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])[0])
 
+
 def wep_list_select():
-    global wep_img_list
     wep_name_list = calculator.wep_name_list
 
     if wep_name_list.count(wep_select.get())!=0:
@@ -4902,35 +4902,43 @@ def wep_list_select():
 
     if len(wep_name_list)!=10:
         wep_name_list.append(wep_select.get())
-        wep_img_list.append(calculator.image_list_wep[wep_select.get()])
+        calculator.selected_weapon_img_list.append(calculator.image_list_wep[wep_select.get()])
         calculator.change_weapon_list_num_text(len(wep_name_list))
-        wep_img_list_refresh()
+        wep_img_list_refresh(calculator.selected_weapon_img_list)
     else:
         tkinter.messagebox.showerror('에러',"무기는 최대 10가지만 선택 가능합니다")
         return
+
+
 def wep_list_reset():
-    global wep_img_list
     wep_name_list = calculator.wep_name_list
 
     wep_name_list.clear()
     calculator.change_weapon_list_num_text(len(wep_name_list))
-    wep_img_list=[]
-    wep_img_list_refresh()
-def wep_img_list_refresh():
+
+    calculator.selected_weapon_img_list.clear()
+    wep_img_list_refresh(calculator.selected_weapon_img_list)
+
+
+def wep_img_list_refresh(weapon_img_list: List[PhotoImage]):
     global wep_select_img,image_item_void
-    for i in range(0,10):
-        try: wep_select_img[i].configure(image=wep_img_list[i])
-        except: wep_select_img[i].configure(image=image_item_void)
+
+    for i in range(0, 10):
+        try:
+            wep_select_img[i].configure(image=weapon_img_list[i])
+        except:
+            wep_select_img[i].configure(image=image_item_void)
+
+
 def sync_wep_list():
-    global wep_img_list
     wep_name_list = calculator.wep_name_list
 
-    wep_img_list=[]
+    calculator.selected_weapon_img_list.clear()
     for wep_name in wep_name_list:
-        wep_img_list.append(calculator.image_list_wep[wep_name])
-    calculator.change_weapon_list_num_text(len(wep_name_list))
-    wep_img_list_refresh()
+        calculator.selected_weapon_img_list.append(calculator.image_list_wep[wep_name])
 
+    calculator.change_weapon_list_num_text(len(wep_name_list))
+    wep_img_list_refresh(calculator.selected_weapon_img_list)
 
 
 wep_image=calculator.get_photo_image("ext_img/wep.png")
