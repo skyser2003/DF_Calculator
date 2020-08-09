@@ -158,6 +158,15 @@ class Calculator:
         self.selected_weapon_img_list: List[PhotoImage] = []
         self.selected_weapon_label_list: List[Label] = []
 
+        # 지혜의 산물
+        self.know_list = ["13390150", "22390240", "23390450", "33390750", "21390340", "31390540", "32390650",
+                          "11390850", "12390950", "13391050", "14391150", "15391250"]
+        self.know_set_list = ["22400150", "22400250", "22400350", "22400450", "22400550", "21400640", "31400750",
+                              "31400850", "31400950", "31401050", "31401150", "32401240", "32401340", "32401440"]
+        self.know_jin_list = ["11410100", "11410110", "11410120", "11410130", "11410140", "11410150", "21420100",
+                              "21420110", "21420120", "21420130", "21420140", "21420150","33430100", "33430110",
+                              "33430120", "33430130", "33430140", "33430150"]
+
         ## GUI 메인
         self.window = tkinter.Tk()
 
@@ -745,6 +754,9 @@ class Calculator:
     def change_selected_weapon_img(self, index: int, img: PhotoImage):
         self.selected_weapon_label_list[index].configure(image=img)
 
+    def get_all_knowledge_equipment_list(self):
+        return self.know_list + self.know_set_list + self.know_jin_list
+
     @staticmethod
     def place_center(toplevel, move_x):
         toplevel.update_idletasks()
@@ -1143,7 +1155,7 @@ def calc(mode):
 
     know_dict={}
     ##단품산물
-    for know_one in know_list:
+    for know_one in calculator.know_list:
         equip_part = know_one[0:2]
 
         if select_item[f"tg{know_one}"] == 1:
@@ -1703,16 +1715,11 @@ def calc(mode):
 
     ##세트산물 계산##
     #########################################################################################################################
-        know_set_list=['22400150','22400250','22400350','22400450','22400550','21400640','31400750',
-                       '31400850','31400950','31401050','31401150','32401240','32401340','32401440']
         know_bang1_list=['22400150','22400250','22400350','22400450','22400550']
         know_bang2_list=['31400750','31400850','31400950','31401050','31401150']
         know_acc_list=['32401240','32401340','32401440']
-        know_jin_list=['11410100','11410110','11410120','11410130','11410140','11410150',
-                       '21420100','21420110','21420120','21420130','21420140','21420150',
-                       '33430100','33430110','33430120','33430130','33430140','33430150']
 
-        for i in know_set_list: ##경우1:산물 하나
+        for i in calculator.know_set_list: ##경우1:산물 하나
             if select_item['tg'+i]==1:
                 if int(i[4:6]) <6:
                     items0=[['99990'],['99990'],['99990'],['99990'],['99990'],equip_list["21_0"],[i],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
@@ -1765,8 +1772,8 @@ def calc(mode):
         jin_sang=[]
         jin_pal=[]
         jin_gui=[]
-        for i in know_jin_list:
-            if select_item['tg'+i]==1:
+        for i in calculator.know_jin_list:
+            if select_item[f"tg{i}"] == 1:
                 if i[0:2]=='11':
                     jin_sang.append(i)
                 elif i[0:2]=='21':
@@ -1774,7 +1781,7 @@ def calc(mode):
                 elif i[0:2]=='33':
                     jin_gui.append(i)
 
-        for i in know_jin_list:
+        for i in calculator.know_jin_list:
             if select_item['tg'+i]==1: ##경우4: 진레전산물
                 if i[0:2]=='11': ##상의만
                     items0=[[i],['12410'],['13410'],['14410'],['15410'],equip_list["21_0"],equip_list["22"],equip_list["23"],equip_list["31"],equip_list["32"],equip_list["33_0"],list40_0]
@@ -2417,8 +2424,6 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     canvas_res.create_text(122,50,text="<직업>",font=calculator.guide_font,fill='white')
     canvas_res.create_text(122,70,text=job_name,font=calculator.guide_font,fill='white')
     canvas_res.create_text(122,87,text=job_up_name,font=calculator.guide_font,fill='white')
-    know_set_list=['22400150','22400250','22400350','22400450','22400550','21400640','31400750',
-                   '31400850','31400950','31401050','31401150','32401240','32401340','32401440']
 
     ele_change_toggle=0
     rank_setting = calculator.rank_setting = [0, 0, 0, 0, 0]
@@ -2588,7 +2593,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         for i in range(0,5):
             try:
                 for j in rank_setting[i]:
-                    for k in know_set_list:
+                    for k in calculator.know_set_list:
                         if j==k:
                             if int(j[4:6])<12 and int(j[4:6])!=6:
                                 result_image_on[i]['11']=image_list['n11'+j[4:6]];result_image_tag[i]['11']='n11'+j[4:6]
@@ -2605,7 +2610,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                                 result_image_on[i]['22']=image_list['n22'+j[4:6]];result_image_tag[i]['22']='n22'+j[4:6]
                                 result_image_on[i]['23']=image_list['n23'+j[4:6]];result_image_tag[i]['23']='n23'+j[4:6]
                 for j in rank0_setting[i]:
-                    for k in know_set_list:
+                    for k in calculator.know_set_list:
                         if j==k:
                             if int(j[4:6])<12 and int(j[4:6])!=6:
                                 result0_image_on[i]['11']=image_list['n11'+j[4:6]];result0_image_tag[i]['11']='n11'+j[4:6]
@@ -4355,13 +4360,6 @@ def update_thread2():
 
 ## 선택한 모든 장비 체크 초기화
 def reset():
-    know_list2=['13390150','22390240','23390450','33390750','21390340','31390540','32390650',
-                '11390850','12390950','13391050','14391150','15391250']
-    know_set_list=['22400150','22400250','22400350','22400450','22400550','21400640','31400750',
-                   '31400850','31400950','31401050','31401150','32401240','32401340','32401440']
-    know_jin_list=['11410100','11410110','11410120','11410130','11410140','11410150',
-                   '21420100','21420110','21420120','21420130','21420140','21420150',
-                   '33430100','33430110','33430120','33430130','33430140','33430150']
     for j in [1000,2000,3000,4000]:
         if j==1000:
             end_range=536
@@ -4376,8 +4374,10 @@ def reset():
                 select_item['tg{}1'.format(i)]=0
             except KeyError as error:
                 passss=1
-    for i in know_list2+know_set_list+know_jin_list:
-        select_item['tg{}'.format(i)]=0
+
+    for i in calculator.get_all_knowledge_equipment_list():
+        select_item[f"tg{i}"] = 0
+
     check_equipment()
     wep_list_reset()
     for i in range(101,156):
@@ -4407,13 +4407,6 @@ def click_equipment(code):
 def check_equipment():
     global select_item
 
-    know_list2=['13390150','22390240','23390450','33390750','21390340','31390540','32390650',
-                '11390850','12390950','13391050','14391150','15391250']
-    know_set_list=['22400150','22400250','22400350','22400450','22400550','21400640','31400750',
-                   '31400850','31400950','31401050','31401150','32401240','32401340','32401440']
-    know_jin_list=['11410100','11410110','11410120','11410130','11410140','11410150',
-                   '21420100','21420110','21420120','21420130','21420140','21420150',
-                   '33430100','33430110','33430120','33430130','33430140','33430150']
     for i in range(11010,43551):
         try:
             str_i = str(i)
@@ -4423,7 +4416,8 @@ def check_equipment():
                 equip_buttons[str_i]['image'] = calculator.image_list[str_i]
         except:
             pass
-    for i in know_list2+know_set_list+know_jin_list:
+
+    for i in calculator.get_all_knowledge_equipment_list():
         try:
             str_i = str(i)
             if select_item[f"tg{i}"]==0:
@@ -4820,14 +4814,6 @@ def show_profile(name,server):
 
 
 ## GUI ############################################################################################################################
-know_list=['13390150','22390240','23390450','33390750','21390340','31390540','32390650',
-           '11390850','12390950','13391050','14391150','15391250']
-know_set_list=['22400150','22400250','22400350','22400450','22400550','21400640','31400750',
-               '31400850','31400950','31401050','31401150','32401240','32401340','32401440']
-know_jin_list=['11410100','11410110','11410120','11410130','11410140','11410150',
-               '21420100','21420110','21420120','21420130','21420140','21420150',
-               '33430100','33430110','33430120','33430130','33430140','33430150']
-
 file_list = os.listdir("image")
 for i in file_list:
     if i[-3:]!='gif':
@@ -5201,11 +5187,6 @@ equip_buttons["43550"].place(x=710 + 10 + 71 + 62, y=445 + 120 + 95)
 
 
 ##지혜의 산물
-know_set_list=['22400150','22400250','22400350','22400450','22400550','21400640','31400750',
-               '31400850','31400950','31401050','31401150','32401240','32401340','32401440']
-know_jin_list=['11410100','11410110','11410120','11410130','11410140','11410150',
-               '21420100','21420110','21420120','21420130','21420140','21420150',
-               '33430100','33430110','33430120','33430130','33430140','33430150']
 select_item['tg13390150']=0;select_item['tg22400150']=0;select_item['tg31400850']=0
 select_item['tg22390240']=0;select_item['tg22400250']=0;select_item['tg31400950']=0
 select_item['tg23390450']=0;select_item['tg22400350']=0;select_item['tg31401050']=0
@@ -5238,8 +5219,8 @@ def know_epic():
     know_window.resizable(False, False)
     know_window.configure(bg=calculator.dark_main)
     know_image_list={}
-    for i in know_list+know_set_list+know_jin_list:
-        if select_item['tg'+i]==0:
+    for i in calculator.get_all_knowledge_equipment_list():
+        if select_item[f"tg{i}"] == 0:
             know_image_list[i] = calculator.image_list2[i]
         else:
             know_image_list[i] = calculator.image_list[i]
