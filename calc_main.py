@@ -471,6 +471,124 @@ class Calculator:
         except PermissionError as error:
             tkinter.messagebox.showerror("에러", "엑셀을 닫고 다시 시도해주세요.")
 
+    # preset 리스트 이름 변경
+    def change_list_name(self):
+        try:
+            self.change_window.destroy()
+        except:
+            pass
+
+        self.change_window = tkinter.Toplevel(self.window)
+
+        change_window = self.change_window
+        change_window.geometry("390x320+750+200")
+        tkinter.Label(change_window, text="1번슬롯").place(x=20, y=10)
+        tkinter.Label(change_window, text="2번슬롯").place(x=20, y=35)
+        tkinter.Label(change_window, text="3번슬롯").place(x=20, y=60)
+        tkinter.Label(change_window, text="4번슬롯").place(x=20, y=85)
+        tkinter.Label(change_window, text="5번슬롯").place(x=20, y=110)
+        tkinter.Label(change_window, text="6번슬롯").place(x=20, y=135)
+        tkinter.Label(change_window, text="7번슬롯").place(x=20, y=160)
+        tkinter.Label(change_window, text="8번슬롯").place(x=20, y=185)
+        tkinter.Label(change_window, text="9번슬롯").place(x=20, y=210)
+        tkinter.Label(change_window, text="10번슬롯").place(x=20, y=235)
+        tkinter.Label(change_window, text="11번슬롯").place(x=220, y=10)
+        tkinter.Label(change_window, text="12번슬롯").place(x=220, y=35)
+        tkinter.Label(change_window, text="13번슬롯").place(x=220, y=60)
+        tkinter.Label(change_window, text="14번슬롯").place(x=220, y=85)
+        tkinter.Label(change_window, text="15번슬롯").place(x=220, y=110)
+        tkinter.Label(change_window, text="16번슬롯").place(x=220, y=135)
+        tkinter.Label(change_window, text="17번슬롯").place(x=220, y=160)
+        tkinter.Label(change_window, text="18번슬롯").place(x=220, y=185)
+        tkinter.Label(change_window, text="19번슬롯").place(x=220, y=210)
+        tkinter.Label(change_window, text="20번슬롯").place(x=220, y=235)
+        entry1 = tkinter.Entry(change_window, width=10)
+        entry1.place(x=95, y=12)
+        entry1.insert(END, self.save_name_list[0])
+        entry2 = tkinter.Entry(change_window, width=10)
+        entry2.place(x=95, y=37)
+        entry2.insert(END, self.save_name_list[1])
+        entry3 = tkinter.Entry(change_window, width=10)
+        entry3.place(x=95, y=62)
+        entry3.insert(END, self.save_name_list[2])
+        entry4 = tkinter.Entry(change_window, width=10)
+        entry4.place(x=95, y=87)
+        entry4.insert(END, self.save_name_list[3])
+        entry5 = tkinter.Entry(change_window, width=10)
+        entry5.place(x=95, y=112)
+        entry5.insert(END, self.save_name_list[4])
+        entry6 = tkinter.Entry(change_window, width=10)
+        entry6.place(x=95, y=137)
+        entry6.insert(END, self.save_name_list[5])
+        entry7 = tkinter.Entry(change_window, width=10)
+        entry7.place(x=95, y=162)
+        entry7.insert(END, self.save_name_list[6])
+        entry8 = tkinter.Entry(change_window, width=10)
+        entry8.place(x=95, y=187)
+        entry8.insert(END, self.save_name_list[7])
+        entry9 = tkinter.Entry(change_window, width=10)
+        entry9.place(x=95, y=212)
+        entry9.insert(END, self.save_name_list[8])
+        entry10 = tkinter.Entry(change_window, width=10)
+        entry10.place(x=95, y=237)
+        entry10.insert(END, self.save_name_list[9])
+
+        entry11 = tkinter.Entry(change_window, width=10)
+        entry11.place(x=295, y=12)
+        entry11.insert(END, self.save_name_list[10])
+        entry12 = tkinter.Entry(change_window, width=10)
+        entry12.place(x=295, y=37)
+        entry12.insert(END, self.save_name_list[11])
+        entry13 = tkinter.Entry(change_window, width=10)
+        entry13.place(x=295, y=62)
+        entry13.insert(END, self.save_name_list[12])
+        entry14 = tkinter.Entry(change_window, width=10)
+        entry14.place(x=295, y=87)
+        entry14.insert(END, self.save_name_list[13])
+        entry15 = tkinter.Entry(change_window, width=10)
+        entry15.place(x=295, y=112)
+        entry15.insert(END, self.save_name_list[14])
+        entry16 = tkinter.Entry(change_window, width=10)
+        entry16.place(x=295, y=137)
+        entry16.insert(END, self.save_name_list[15])
+        entry17 = tkinter.Entry(change_window, width=10)
+        entry17.place(x=295, y=162)
+        entry17.insert(END, self.save_name_list[16])
+        entry18 = tkinter.Entry(change_window, width=10)
+        entry18.place(x=295, y=187)
+        entry18.insert(END, self.save_name_list[17])
+        entry19 = tkinter.Entry(change_window, width=10)
+        entry19.place(x=295, y=212)
+        entry19.insert(END, self.save_name_list[18])
+        entry20 = tkinter.Entry(change_window, width=10)
+        entry20.place(x=295, y=237)
+        entry20.insert(END, self.save_name_list[19])
+
+        tkinter.Button(change_window, text="저장", font=self.mid_font, command=lambda: self.change_savelist(
+            [entry1.get(), entry2.get(), entry3.get(), entry4.get(), entry5.get(),
+             entry6.get(), entry7.get(), entry8.get(), entry9.get(), entry10.get(),
+             entry11.get(), entry12.get(), entry13.get(), entry14.get(), entry15.get(),
+             entry16.get(), entry17.get(), entry18.get(), entry19.get(), entry20.get()])).place(x=170, y=270)
+
+    def change_savelist(self, changed_savelist_name: List[str]):
+        try:
+            load_preset5 = load_workbook("preset.xlsx", data_only=True)
+            db_custom2 = load_preset5["custom"]
+
+            for i in range(1, 21):
+                db_custom2.cell(i, 5).value = changed_savelist_name[i - 1]
+
+            self.save_name_list.clear()
+            self.save_name_list.extend(changed_savelist_name)
+            load_preset5.save("preset.xlsx")
+            load_preset5.close()
+            save_select.set(self.save_name_list[0])
+            save_select['values'] = self.save_name_list
+            self.change_window.destroy()
+            tkinter.messagebox.showinfo("알림", "저장 완료")
+        except PermissionError as error:
+            tkinter.messagebox.showerror("에러", "엑셀을 닫고 다시 시도해주세요.")
+
     @staticmethod
     def place_center(toplevel, move_x):
         toplevel.update_idletasks()
@@ -3982,113 +4100,6 @@ def save_checklist():
     except PermissionError as error:
         tkinter.messagebox.showerror("에러","엑셀을 닫고 다시 시도해주세요.")
 
-## preset 리스트 이름 변경
-def change_list_name():
-    global change_window
-    try:
-        change_window.destroy()
-    except:
-        pass
-
-    change_window = tkinter.Toplevel(calculator.window)
-    change_window.geometry("390x320+750+200")
-    tkinter.Label(change_window,text="1번슬롯").place(x=20,y=10)
-    tkinter.Label(change_window,text="2번슬롯").place(x=20,y=35)
-    tkinter.Label(change_window,text="3번슬롯").place(x=20,y=60)
-    tkinter.Label(change_window,text="4번슬롯").place(x=20,y=85)
-    tkinter.Label(change_window,text="5번슬롯").place(x=20,y=110)
-    tkinter.Label(change_window,text="6번슬롯").place(x=20,y=135)
-    tkinter.Label(change_window,text="7번슬롯").place(x=20,y=160)
-    tkinter.Label(change_window,text="8번슬롯").place(x=20,y=185)
-    tkinter.Label(change_window,text="9번슬롯").place(x=20,y=210)
-    tkinter.Label(change_window,text="10번슬롯").place(x=20,y=235)
-    tkinter.Label(change_window,text="11번슬롯").place(x=220,y=10)
-    tkinter.Label(change_window,text="12번슬롯").place(x=220,y=35)
-    tkinter.Label(change_window,text="13번슬롯").place(x=220,y=60)
-    tkinter.Label(change_window,text="14번슬롯").place(x=220,y=85)
-    tkinter.Label(change_window,text="15번슬롯").place(x=220,y=110)
-    tkinter.Label(change_window,text="16번슬롯").place(x=220,y=135)
-    tkinter.Label(change_window,text="17번슬롯").place(x=220,y=160)
-    tkinter.Label(change_window,text="18번슬롯").place(x=220,y=185)
-    tkinter.Label(change_window,text="19번슬롯").place(x=220,y=210)
-    tkinter.Label(change_window,text="20번슬롯").place(x=220,y=235)
-    entry1=tkinter.Entry(change_window,width=10);entry1.place(x=95,y=12);entry1.insert(END,calculator.save_name_list[0])
-    entry2=tkinter.Entry(change_window,width=10);entry2.place(x=95,y=37);entry2.insert(END,calculator.save_name_list[1])
-    entry3=tkinter.Entry(change_window,width=10);entry3.place(x=95,y=62);entry3.insert(END,calculator.save_name_list[2])
-    entry4=tkinter.Entry(change_window,width=10);entry4.place(x=95,y=87);entry4.insert(END,calculator.save_name_list[3])
-    entry5=tkinter.Entry(change_window,width=10);entry5.place(x=95,y=112);entry5.insert(END,calculator.save_name_list[4])
-    entry6=tkinter.Entry(change_window,width=10);entry6.place(x=95,y=137);entry6.insert(END,calculator.save_name_list[5])
-    entry7=tkinter.Entry(change_window,width=10);entry7.place(x=95,y=162);entry7.insert(END,calculator.save_name_list[6])
-    entry8=tkinter.Entry(change_window,width=10);entry8.place(x=95,y=187);entry8.insert(END,calculator.save_name_list[7])
-    entry9=tkinter.Entry(change_window,width=10);entry9.place(x=95,y=212);entry9.insert(END,calculator.save_name_list[8])
-    entry10=tkinter.Entry(change_window,width=10);entry10.place(x=95,y=237);entry10.insert(END,calculator.save_name_list[9])
-
-    entry11=tkinter.Entry(change_window,width=10);entry11.place(x=295,y=12);entry11.insert(END,calculator.save_name_list[10])
-    entry12=tkinter.Entry(change_window,width=10);entry12.place(x=295,y=37);entry12.insert(END,calculator.save_name_list[11])
-    entry13=tkinter.Entry(change_window,width=10);entry13.place(x=295,y=62);entry13.insert(END,calculator.save_name_list[12])
-    entry14=tkinter.Entry(change_window,width=10);entry14.place(x=295,y=87);entry14.insert(END,calculator.save_name_list[13])
-    entry15=tkinter.Entry(change_window,width=10);entry15.place(x=295,y=112);entry15.insert(END,calculator.save_name_list[14])
-    entry16=tkinter.Entry(change_window,width=10);entry16.place(x=295,y=137);entry16.insert(END,calculator.save_name_list[15])
-    entry17=tkinter.Entry(change_window,width=10);entry17.place(x=295,y=162);entry17.insert(END,calculator.save_name_list[16])
-    entry18=tkinter.Entry(change_window,width=10);entry18.place(x=295,y=187);entry18.insert(END,calculator.save_name_list[17])
-    entry19=tkinter.Entry(change_window,width=10);entry19.place(x=295,y=212);entry19.insert(END,calculator.save_name_list[18])
-    entry20=tkinter.Entry(change_window,width=10);entry20.place(x=295,y=237);entry20.insert(END,calculator.save_name_list[19])
-
-    tkinter.Button(change_window,text="저장",font=calculator.mid_font,command=lambda:change_savelist([entry1.get(),entry2.get(),entry3.get(),entry4.get(),entry5.get(),
-                                                                                         entry6.get(),entry7.get(),entry8.get(),entry9.get(),entry10.get(),
-                                                                                         entry11.get(),entry12.get(),entry13.get(),entry14.get(),entry15.get(),
-                                                                                         entry16.get(),entry17.get(),entry18.get(),entry19.get(),entry20.get()])).place(x=170,y=270)
-def change_savelist(changed_savelist_name):
-    in_list=changed_savelist_name
-    try:
-        load_preset5=load_workbook("preset.xlsx", data_only=True)
-        db_custom2=load_preset5["custom"]
-
-        for i in range(1,21):
-            db_custom2.cell(i,5).value=in_list[i-1]
-
-        calculator.save_name_list.clear()
-        calculator.save_name_list.extend(in_list)
-        load_preset5.save("preset.xlsx")
-        load_preset5.close()
-        save_select.set(calculator.save_name_list[0])
-        save_select['values'] = calculator.save_name_list
-        change_window.destroy()
-        tkinter.messagebox.showinfo("알림","저장 완료")
-    except PermissionError as error:
-        tkinter.messagebox.showerror("에러","엑셀을 닫고 다시 시도해주세요.")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -5021,7 +5032,7 @@ load_img=calculator.get_photo_image("ext_img/LOAD.png")
 load=tkinter.Button(calculator.window,image=load_img,borderwidth=0,activebackground=calculator.dark_main,command=load_checklist,bg=calculator.dark_sub)
 load.place(x=435+165,y=440-100)
 change_name_img=calculator.get_photo_image("ext_img/name_change.png")
-change_list_but=tkinter.Button(calculator.window,image=change_name_img,borderwidth=0,activebackground=calculator.dark_main,command=change_list_name,bg=calculator.dark_sub)
+change_list_but=tkinter.Button(calculator.window,image=change_name_img,borderwidth=0,activebackground=calculator.dark_main,command=calculator.change_list_name,bg=calculator.dark_sub)
 change_list_but.place(x=435+165,y=405-100)
 
 show_count=tkinter.Label(calculator.window,font=calculator.guide_font,fg="white",bg=calculator.dark_sub)
