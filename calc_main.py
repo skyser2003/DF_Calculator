@@ -153,6 +153,7 @@ class Calculator:
         self.buf_jingak_exist = 0
         self.buf_jingak_tg = 0
         self.buf_jingak: Button = None
+        self.auto_saved = 0  # 클라이언트 업데이트 시 preset 업데이트 변수
 
         ## GUI 메인
         self.window = tkinter.Tk()
@@ -219,7 +220,6 @@ def capture_screen(toplevel):
 
 
 
-auto_saved=0 #클라이언트 업데이트 시 preset 업데이트 변수
 save_name_list=[] #프리셋 이름 리스트
 save_select=0 #세이브 드롭다운 리스트 변수 임시
 all_list_num=0 #해당 사이클 당시 경우의 수
@@ -3723,14 +3723,13 @@ def costum(auto):
                                     ele1.get(),ele2.get(),ele3.get(),ele4.get(),ele5.get(),ele6.get(),aria_up.get(),cool_con2.get())
     tkinter.Button(custom_window,text="저장하기",font=calculator.mid_font,command=save_command,bg="lightyellow").place(x=190,y=295)
     if auto==1:
-        global auto_saved
-        auto_saved=1
+        calculator.auto_saved = 1
         save_custom(ele_type.get(),cool_con.get(),cus1.get(),cus2.get(),cus3.get(),cus4.get(),
                     cus6.get(),cus7.get(),cus8.get(),cus9.get(),cus10.get(),cus11.get(),cus12.get(),
                     c_stat.get(),b_stat.get(),b_style_lvl.get(),c_style_lvl.get(),b_plt.get(),b_cri.get(),
                     ele1.get(),ele2.get(),ele3.get(),ele4.get(),ele5.get(),ele6.get(),aria_up.get(),cool_con2.get())
         print('자동저장')
-        auto_saved=0
+        calculator.auto_saved = 0
         auto=0
 
 ## 통합 커스텀 저장
@@ -3795,8 +3794,7 @@ def save_custom(ele_type,cool_con,cus1,cus2,cus3,cus4,cus6,cus7,cus8,cus9,cus10,
         load_excel3.save("DATA.xlsx")
         load_excel3.close()
         custom_window.destroy()
-        global auto_saved
-        if auto_saved!=1:
+        if calculator.auto_saved != 1:
             tkinter.messagebox.showinfo("알림","저장 완료")
     except PermissionError as error:
         tkinter.messagebox.showerror("에러","엑셀을 닫고 다시 시도해주세요.")
