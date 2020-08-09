@@ -116,10 +116,10 @@ class Calculator:
         self.deal_rank_inv: List[List[int]] = [[], []]
         self.buff_rank_inv: List[List[int]] = [[], [], []]
         self.res_inv: Text = None
-        self.deal_result_image_gif: List[List[List[int]]] = [[[]], [[]]]
-        self.deal_result_image_gif_tg: List[List[List[int]]] = [[[]], [[]]]
-        self.deal_result_siroco_gif: List[List[List[int]]] = [[[]], [[]]]
-        self.deal_result_siroco_gif_tg: List[List[List[int]]] = [[[]], [[]]]
+        self.deal_result_image_gif: List[List[List[int]]] = [[], []]
+        self.deal_result_image_gif_tg: List[List[List[int]]] = [[], []]
+        self.deal_result_siroco_gif: List[List[List[int]]] = [[], []]
+        self.deal_result_siroco_gif_tg: List[List[List[int]]] = [[], []]
         self.res_cool_what: Text = None
         self.cool_eff_text = ""
         self.rank_list: List[List[Tuple[float, List[str]]]] = [[], []]
@@ -144,9 +144,9 @@ class Calculator:
         self.res_buf_ex: List[Text] = []
         self.rank_buf_ex: List[List[int]] = [[], [], []]
         self.res_buf_type_what: Text = None
-        self.result_image_on_tag: List[List[Dict[str, str]]] = [{}, {}, {}]
-        self.buff_result_image_gif: List[List[List[int]]] = [[[], [], []], [[], [], []], [[], [], []]]
-        self.buff_result_image_gif_tg: List[List[List[int]]] = [[[], [], []], [[], [], []], [[], [], []]]
+        self.result_image_on_tag: List[List[Dict[str, str]]] = [[], [], []]
+        self.buff_result_image_gif: List[List[List[int]]] = [[], [], []]
+        self.buff_result_image_gif_tg: List[List[List[int]]] = [[], [], []]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
