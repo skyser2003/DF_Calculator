@@ -178,6 +178,11 @@ class Calculator:
         bg_wall.place(x=-2, y=0)
         window.configure(bg=self.dark_main)
 
+        self.buf_jingak_img: List[PhotoImage] = [
+            self.get_photo_image("ext_img/buf_jin_1.png"),
+            self.get_photo_image("ext_img/buf_jin_2.png")
+        ]
+
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
         self.photo_images.append(photo_image)
@@ -1816,8 +1821,6 @@ def calc_thread():
 
 calculator.tg_groggy_img1 = calculator.get_photo_image('ext_img/groggy_swi1.png')
 calculator.tg_groggy_img2 = calculator.get_photo_image('ext_img/groggy_swi2.png')
-buf_jingak_img2=calculator.get_photo_image('ext_img/buf_jin_2.png')
-buf_jingak_img1=calculator.get_photo_image('ext_img/buf_jin_1.png')
 type1_img=calculator.get_photo_image('ext_img/type_bless.png')
 type2_img=calculator.get_photo_image('ext_img/type_crux.png')
 type3_img=calculator.get_photo_image('ext_img/type_all.png')
@@ -2471,12 +2474,11 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
             except IndexError as error:
                 pass
 
-        global buf_jingak_img2
         calculator.buf_jingak_exist = 0
         calculator.buf_jingak_tg = 0
+
         if job_name=='(버프)세인트': ## 진각 전환 하드 코딩
             def change_buf_jingak():
-                global buf_jingak_img2
                 rank_type_buf = calculator.rank_type_buf
 
                 if rank_type_buf==1:
@@ -2489,18 +2491,18 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                     c_rank0_buf=rank_neo_buf3
                     c_rank_buf=rank_buf3
                 if calculator.buf_jingak_tg == 0:
-                    calculator.buf_jingak["image"] = buf_jingak_img1
+                    calculator.buf_jingak["image"] = calculator.buf_jingak_img[0]
                     canvas_res.itemconfig(res_buf,text=c_rank0_buf[calculator.now_rank_num],fill='gray')
                     calculator.buf_jingak_tg = 1
                 elif calculator.buf_jingak_tg == 1:
-                    calculator.buf_jingak["image"] = buf_jingak_img2
+                    calculator.buf_jingak["image"] = calculator.buf_jingak_img[1]
                     canvas_res.itemconfig(res_buf,text=c_rank_buf[calculator.now_rank_num],fill='white')
                     calculator.buf_jingak_tg = 0
 
             calculator.buf_jingak_exist = 1
-            buf_jingak = calculator.buf_jingak = tkinter.Button(result_window,command=change_buf_jingak,image=buf_jingak_img2,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main)
+            buf_jingak = calculator.buf_jingak = tkinter.Button(result_window,command=change_buf_jingak,image=calculator.buf_jingak_img[1],bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main)
             buf_jingak.place(x=172,y=7)
-            buf_jingak.image=buf_jingak_img2
+            buf_jingak.image=calculator.buf_jingak_img[1]
             buf_jingak.command=change_buf_jingak
 
         calculator.res_wep = canvas_res.create_text(12,22,text=rank_wep_name3[0],font=calculator.guide_font,fill='white',anchor='w')
@@ -3303,9 +3305,9 @@ def change_rank2(now,job_type,ele_skill):
             canvas_res.itemconfig(res_buf_ex1,text=rank_buf_ex_changed[now][0]) # TODO: non-existing setting causes error
             canvas_res.itemconfig(res_buf_ex2,text=rank_buf_ex_changed[now][1])
             canvas_res.itemconfig(res_buf_ex3,text=rank_buf_ex_changed[now][2])
-            global buf_jingak_img2
+
             if calculator.buf_jingak_exist == 1:
-                calculator.buf_jingak["image"] = buf_jingak_img2
+                calculator.buf_jingak["image"] = calculator.buf_jingak_img[1]
                 canvas_res.itemconfig(calculator.res_buf, fill='white')
                 calculator.buf_jingak_tg = 0
 
@@ -3562,9 +3564,9 @@ def change_rank_type2(in_type):
             temp=j-41
             if siroco_gif_changed_tg[i][temp]==1:
                 result_window.after(0,play_gif,0,i,temp,res_img_list[str(i)+str(j)],siroco_gif_changed,1,0,1)
-    global buf_jingak_img2
+
     if calculator.buf_jingak_exist == 1:
-        calculator.buf_jingak["image"] = buf_jingak_img2
+        calculator.buf_jingak["image"] = calculator.buf_jingak_img[1]
         canvas_res.itemconfig(calculator.res_buf, fill='white')
         calculator.buf_jingak_tg = 0
 
