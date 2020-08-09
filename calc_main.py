@@ -156,6 +156,7 @@ class Calculator:
         self.auto_saved = 0  # 클라이언트 업데이트 시 preset 업데이트 변수
         self.save_name_list: List[str] = []  # 프리셋 이름 리스트
         self.selected_weapon_img_list: List[PhotoImage] = []
+        self.selected_weapon_label_list: List[Label] = []
 
         ## GUI 메인
         self.window = tkinter.Tk()
@@ -190,6 +191,7 @@ class Calculator:
         self.total_count_label: Label = None
         self.calc_state_label: Label = None
         self.weapon_list_num_label: Label = None
+        self.void_weapon_img: PhotoImage = None
 
         self.init_ui()
 
@@ -718,6 +720,14 @@ class Calculator:
                                                    text="무기 수=" + "0 / 10", anchor='c')
         self.weapon_list_num_label.place(x=365, y=67)
 
+        for i in range(0, 10):
+            weapon_label = tkinter.Label(self.window, bg=self.dark_sub, bd=0)
+            weapon_label.place(x=32 + 31 * i, y=65)
+            
+            self.selected_weapon_label_list.append(weapon_label)
+
+        self.void_weapon_img = self.get_photo_image("ext_img/00000.png")
+
     def change_state_text(self, text: str):
         self.calc_state_label.configure(text=text)
 
@@ -731,6 +741,9 @@ class Calculator:
     def change_weapon_list_num_text(self, weapon_num: int):
         text = f"무기 수={weapon_num} / 10"
         self.weapon_list_num_label.configure(text=text)
+
+    def change_selected_weapon_img(self, index: int, img: PhotoImage):
+        self.selected_weapon_label_list[index].configure(image=img)
 
     @staticmethod
     def place_center(toplevel, move_x):
@@ -4845,7 +4858,6 @@ calculator.image_list_tag['99990']=calculator.get_photo_image("image/99990.png")
 file_list_wep = os.listdir("image_wep")
 for i in file_list_wep:
     calculator.image_list_wep[calc_list_wep.wep_image_filename.get(i[:-4])] = calculator.get_photo_image("image_wep/{}".format(i))
-image_item_void=calculator.get_photo_image("ext_img/00000.png")
 
 sever_list=['카인','디레지에','바칼','힐더','안톤','카시야스','프레이','시로코']
 tkinter.Label(calculator.window,font=calculator.mid_font,fg="white",bg=calculator.dark_sub, text="<딜러 프로필 생성기>").place(x=301,y=401)
@@ -4921,13 +4933,11 @@ def wep_list_reset():
 
 
 def wep_img_list_refresh(weapon_img_list: List[PhotoImage]):
-    global wep_select_img,image_item_void
-
     for i in range(0, 10):
         try:
-            wep_select_img[i].configure(image=weapon_img_list[i])
+            calculator.change_selected_weapon_img(i, weapon_img_list[i])
         except:
-            wep_select_img[i].configure(image=image_item_void)
+            calculator.change_selected_weapon_img(i, calculator.void_weapon_img)
 
 
 def sync_wep_list():
@@ -4967,10 +4977,6 @@ wep_select_bt=tkinter.Button(calculator.window,image=wep_select_image,fg="white"
 wep_select_bt.place(x=350,y=10)
 wep_select_bt=tkinter.Button(calculator.window,image=wep_reset_image,fg="white",borderwidth=0,activebackground=calculator.dark_main,command=wep_list_reset,bg=calculator.dark_main)
 wep_select_bt.place(x=440,y=10)
-wep_select_img=[0,0,0,0,0,0,0,0,0,0]
-for i in range(0,10):
-    wep_select_img[i]=tkinter.Label(calculator.window,bg=calculator.dark_sub,bd=0)
-    wep_select_img[i].place(x=32+31*i,y=65)
 
 def job_type_selected(event):
     jobup_select["values"]=list(calc_list_job.DNF_job_list[jobtype_select.get()])
