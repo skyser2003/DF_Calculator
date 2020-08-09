@@ -730,8 +730,8 @@ def update_log():
 try:
     if str(db_custom['K2'].value) != '1':
         update_log()
-    print("Preset 엑셀 버전= "+str(db_custom['K1'].value))
-    print("클라이언트 버전= " + calculator.now_version)
+    print(f"Preset 엑셀 버전 = {db_custom['K1'].value}")
+    print(f"클라이언트 버전 = {calculator.now_version}")
     if str(db_custom['K1'].value) != calculator.now_version:
         print("DB 업데이트")
         db_custom['K1'] = calculator.now_version
@@ -5797,7 +5797,7 @@ def check_update(event):
             for meta in bsObject.head.find_all('meta'):
                 if meta.get('content').count('zip')==1:
                     net_version=str(meta.get('content'))[-9:-4]
-                    print('최신 업데이트 버전='+net_version)
+                    print(f"최신 업데이트 버전 = {net_version}")
             return net_version
         if event==0:
             net_version=net_latest_version
