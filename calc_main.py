@@ -154,6 +154,7 @@ class Calculator:
         self.buf_jingak_tg = 0
         self.buf_jingak: Button = None
         self.auto_saved = 0  # 클라이언트 업데이트 시 preset 업데이트 변수
+        self.save_name_list: List[str] = []  # 프리셋 이름 리스트
 
         ## GUI 메인
         self.window = tkinter.Tk()
@@ -220,7 +221,6 @@ def capture_screen(toplevel):
 
 
 
-save_name_list=[] #프리셋 이름 리스트
 save_select=0 #세이브 드롭다운 리스트 변수 임시
 all_list_num=0 #해당 사이클 당시 경우의 수
 
@@ -287,9 +287,8 @@ for row in level_db.rows:
     opt_leveling[level_db.cell(jk,1).value]=row_value_cut ## DB 불러오기 ##
     jk=jk+1
 
-save_name_list=[]
 for i in range(1,21):
-    save_name_list.append(db_custom.cell(i,5).value)
+    calculator.save_name_list.append(db_custom.cell(i, 5).value)
 
 auto_custom=0 #클라이언트 업데이트 시 preset 업데이트 여부
 ########## 버전 최초 구동 프리셋 업데이트 ###########
@@ -3803,7 +3802,7 @@ def save_custom(ele_type,cool_con,cus1,cus2,cus3,cus4,cus6,cus7,cus8,cus9,cus10,
 def load_checklist():
     ask_msg1=tkinter.messagebox.askquestion('확인',"저장된 내역을 불러오겠습니까?")
     for snum in range(0,20):
-        if save_select.get() == save_name_list[snum]:
+        if save_select.get() == calculator.save_name_list[snum]:
             ssnum1=snum
     if ask_msg1 == 'yes':
         load_preset3=load_workbook("preset.xlsx")
@@ -3889,7 +3888,7 @@ def load_checklist():
 def save_checklist():
     ask_msg2=tkinter.messagebox.askquestion('확인',"저장하시겠습니까?")
     for snum in range(0,20):
-        if save_select.get() == save_name_list[snum]:
+        if save_select.get() == calculator.save_name_list[snum]:
             ssnum2=snum
     try:
         if ask_msg2 == 'yes':
@@ -3964,27 +3963,27 @@ def change_list_name():
     tkinter.Label(change_window,text="18번슬롯").place(x=220,y=185)
     tkinter.Label(change_window,text="19번슬롯").place(x=220,y=210)
     tkinter.Label(change_window,text="20번슬롯").place(x=220,y=235)
-    entry1=tkinter.Entry(change_window,width=10);entry1.place(x=95,y=12);entry1.insert(END,save_name_list[0])
-    entry2=tkinter.Entry(change_window,width=10);entry2.place(x=95,y=37);entry2.insert(END,save_name_list[1])
-    entry3=tkinter.Entry(change_window,width=10);entry3.place(x=95,y=62);entry3.insert(END,save_name_list[2])
-    entry4=tkinter.Entry(change_window,width=10);entry4.place(x=95,y=87);entry4.insert(END,save_name_list[3])
-    entry5=tkinter.Entry(change_window,width=10);entry5.place(x=95,y=112);entry5.insert(END,save_name_list[4])
-    entry6=tkinter.Entry(change_window,width=10);entry6.place(x=95,y=137);entry6.insert(END,save_name_list[5])
-    entry7=tkinter.Entry(change_window,width=10);entry7.place(x=95,y=162);entry7.insert(END,save_name_list[6])
-    entry8=tkinter.Entry(change_window,width=10);entry8.place(x=95,y=187);entry8.insert(END,save_name_list[7])
-    entry9=tkinter.Entry(change_window,width=10);entry9.place(x=95,y=212);entry9.insert(END,save_name_list[8])
-    entry10=tkinter.Entry(change_window,width=10);entry10.place(x=95,y=237);entry10.insert(END,save_name_list[9])
+    entry1=tkinter.Entry(change_window,width=10);entry1.place(x=95,y=12);entry1.insert(END,calculator.save_name_list[0])
+    entry2=tkinter.Entry(change_window,width=10);entry2.place(x=95,y=37);entry2.insert(END,calculator.save_name_list[1])
+    entry3=tkinter.Entry(change_window,width=10);entry3.place(x=95,y=62);entry3.insert(END,calculator.save_name_list[2])
+    entry4=tkinter.Entry(change_window,width=10);entry4.place(x=95,y=87);entry4.insert(END,calculator.save_name_list[3])
+    entry5=tkinter.Entry(change_window,width=10);entry5.place(x=95,y=112);entry5.insert(END,calculator.save_name_list[4])
+    entry6=tkinter.Entry(change_window,width=10);entry6.place(x=95,y=137);entry6.insert(END,calculator.save_name_list[5])
+    entry7=tkinter.Entry(change_window,width=10);entry7.place(x=95,y=162);entry7.insert(END,calculator.save_name_list[6])
+    entry8=tkinter.Entry(change_window,width=10);entry8.place(x=95,y=187);entry8.insert(END,calculator.save_name_list[7])
+    entry9=tkinter.Entry(change_window,width=10);entry9.place(x=95,y=212);entry9.insert(END,calculator.save_name_list[8])
+    entry10=tkinter.Entry(change_window,width=10);entry10.place(x=95,y=237);entry10.insert(END,calculator.save_name_list[9])
 
-    entry11=tkinter.Entry(change_window,width=10);entry11.place(x=295,y=12);entry11.insert(END,save_name_list[10])
-    entry12=tkinter.Entry(change_window,width=10);entry12.place(x=295,y=37);entry12.insert(END,save_name_list[11])
-    entry13=tkinter.Entry(change_window,width=10);entry13.place(x=295,y=62);entry13.insert(END,save_name_list[12])
-    entry14=tkinter.Entry(change_window,width=10);entry14.place(x=295,y=87);entry14.insert(END,save_name_list[13])
-    entry15=tkinter.Entry(change_window,width=10);entry15.place(x=295,y=112);entry15.insert(END,save_name_list[14])
-    entry16=tkinter.Entry(change_window,width=10);entry16.place(x=295,y=137);entry16.insert(END,save_name_list[15])
-    entry17=tkinter.Entry(change_window,width=10);entry17.place(x=295,y=162);entry17.insert(END,save_name_list[16])
-    entry18=tkinter.Entry(change_window,width=10);entry18.place(x=295,y=187);entry18.insert(END,save_name_list[17])
-    entry19=tkinter.Entry(change_window,width=10);entry19.place(x=295,y=212);entry19.insert(END,save_name_list[18])
-    entry20=tkinter.Entry(change_window,width=10);entry20.place(x=295,y=237);entry20.insert(END,save_name_list[19])
+    entry11=tkinter.Entry(change_window,width=10);entry11.place(x=295,y=12);entry11.insert(END,calculator.save_name_list[10])
+    entry12=tkinter.Entry(change_window,width=10);entry12.place(x=295,y=37);entry12.insert(END,calculator.save_name_list[11])
+    entry13=tkinter.Entry(change_window,width=10);entry13.place(x=295,y=62);entry13.insert(END,calculator.save_name_list[12])
+    entry14=tkinter.Entry(change_window,width=10);entry14.place(x=295,y=87);entry14.insert(END,calculator.save_name_list[13])
+    entry15=tkinter.Entry(change_window,width=10);entry15.place(x=295,y=112);entry15.insert(END,calculator.save_name_list[14])
+    entry16=tkinter.Entry(change_window,width=10);entry16.place(x=295,y=137);entry16.insert(END,calculator.save_name_list[15])
+    entry17=tkinter.Entry(change_window,width=10);entry17.place(x=295,y=162);entry17.insert(END,calculator.save_name_list[16])
+    entry18=tkinter.Entry(change_window,width=10);entry18.place(x=295,y=187);entry18.insert(END,calculator.save_name_list[17])
+    entry19=tkinter.Entry(change_window,width=10);entry19.place(x=295,y=212);entry19.insert(END,calculator.save_name_list[18])
+    entry20=tkinter.Entry(change_window,width=10);entry20.place(x=295,y=237);entry20.insert(END,calculator.save_name_list[19])
 
     tkinter.Button(change_window,text="저장",font=calculator.mid_font,command=lambda:change_savelist([entry1.get(),entry2.get(),entry3.get(),entry4.get(),entry5.get(),
                                                                                          entry6.get(),entry7.get(),entry8.get(),entry9.get(),entry10.get(),
@@ -3998,12 +3997,13 @@ def change_savelist(changed_savelist_name):
 
         for i in range(1,21):
             db_custom2.cell(i,5).value=in_list[i-1]
-        global save_name_list
-        save_name_list=in_list
+
+        calculator.save_name_list.clear()
+        calculator.save_name_list.extend(in_list)
         load_preset5.save("preset.xlsx")
         load_preset5.close()
-        save_select.set(save_name_list[0])
-        save_select['values']=save_name_list
+        save_select.set(calculator.save_name_list[0])
+        save_select['values'] = calculator.save_name_list
         change_window.destroy()
         tkinter.messagebox.showinfo("알림","저장 완료")
     except PermissionError as error:
@@ -4962,8 +4962,9 @@ custom_img=calculator.get_photo_image("ext_img/custom.png")
 select_custom2=tkinter.Button(calculator.window,image=custom_img,borderwidth=0,activebackground=calculator.dark_main,command=lambda:costum(0),bg=calculator.dark_sub)
 select_custom2.place(x=435+165,y=340-100)
 
-save_select=tkinter.ttk.Combobox(calculator.window,width=8,values=save_name_list)
-save_select.place(x=345+165,y=410-100);save_select.set(save_name_list[0])
+save_select = tkinter.ttk.Combobox(calculator.window, width=8, values=calculator.save_name_list)
+save_select.place(x=345+165, y=410-100)
+save_select.set(calculator.save_name_list[0])
 save_img=calculator.get_photo_image("ext_img/SAVE.png")
 save=tkinter.Button(calculator.window,image=save_img,borderwidth=0,activebackground=calculator.dark_main,command=save_checklist,bg=calculator.dark_sub)
 save.place(x=345+165,y=440-100)
