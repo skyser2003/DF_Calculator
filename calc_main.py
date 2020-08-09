@@ -188,6 +188,7 @@ class Calculator:
         self.case_count_label: Label = None
         self.total_count_label: Label = None
         self.calc_state_label: Label = None
+        self.weapon_list_num_label: Label = None
 
         self.init_ui()
 
@@ -712,6 +713,10 @@ class Calculator:
                                    bg=self.dark_sub)
         self.calc_state_label.place(x=700, y=125 - 12)
 
+        self.weapon_list_num_label = tkinter.Label(self.window, font=self.guide_font, bg=self.dark_main, fg='white',
+                                                   text="무기 수=" + "0 / 10", anchor='c')
+        self.weapon_list_num_label.place(x=365, y=67)
+
     def change_state_text(self, text: str):
         self.calc_state_label.configure(text=text)
 
@@ -721,6 +726,10 @@ class Calculator:
     def change_total_count_text(self, text: str, color: str):
         self.total_count_label.configure(text=text)
         self.total_count_label["fg"] = color
+
+    def change_weapon_list_num_text(self, weapon_num: int):
+        text = f"무기 수={weapon_num} / 10"
+        self.weapon_list_num_label.configure(text=text)
 
     @staticmethod
     def place_center(toplevel, move_x):
@@ -4884,7 +4893,7 @@ def wep_job_selected2(event):
     wep_select.set(list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])[0])
 
 def wep_list_select():
-    global wep_list_num,wep_img_list
+    global wep_img_list
     wep_name_list = calculator.wep_name_list
 
     if wep_name_list.count(wep_select.get())!=0:
@@ -4894,17 +4903,17 @@ def wep_list_select():
     if len(wep_name_list)!=10:
         wep_name_list.append(wep_select.get())
         wep_img_list.append(calculator.image_list_wep[wep_select.get()])
-        wep_list_num.configure(text="무기 수="+str(len(wep_name_list))+" / 10")
+        calculator.change_weapon_list_num_text(len(wep_name_list))
         wep_img_list_refresh()
     else:
         tkinter.messagebox.showerror('에러',"무기는 최대 10가지만 선택 가능합니다")
         return
 def wep_list_reset():
-    global wep_list_num,wep_img_list
+    global wep_img_list
     wep_name_list = calculator.wep_name_list
 
     wep_name_list.clear()
-    wep_list_num.configure(text="무기 수="+str(len(wep_name_list))+" / 10")
+    calculator.change_weapon_list_num_text(len(wep_name_list))
     wep_img_list=[]
     wep_img_list_refresh()
 def wep_img_list_refresh():
@@ -4913,13 +4922,13 @@ def wep_img_list_refresh():
         try: wep_select_img[i].configure(image=wep_img_list[i])
         except: wep_select_img[i].configure(image=image_item_void)
 def sync_wep_list():
-    global wep_list_num,wep_img_list
+    global wep_img_list
     wep_name_list = calculator.wep_name_list
 
     wep_img_list=[]
     for wep_name in wep_name_list:
         wep_img_list.append(calculator.image_list_wep[wep_name])
-    wep_list_num.configure(text="무기 수="+str(len(wep_name_list))+" / 10")
+    calculator.change_weapon_list_num_text(len(wep_name_list))
     wep_img_list_refresh()
 
 
@@ -4950,8 +4959,6 @@ wep_select_bt=tkinter.Button(calculator.window,image=wep_select_image,fg="white"
 wep_select_bt.place(x=350,y=10)
 wep_select_bt=tkinter.Button(calculator.window,image=wep_reset_image,fg="white",borderwidth=0,activebackground=calculator.dark_main,command=wep_list_reset,bg=calculator.dark_main)
 wep_select_bt.place(x=440,y=10)
-wep_list_num=tkinter.Label(calculator.window,font=calculator.guide_font,bg=calculator.dark_main,fg='white',text="무기 수="+"0 / 10",anchor='c')
-wep_list_num.place(x=365,y=67)
 wep_select_img=[0,0,0,0,0,0,0,0,0,0]
 for i in range(0,10):
     wep_select_img[i]=tkinter.Label(calculator.window,bg=calculator.dark_sub,bd=0)
