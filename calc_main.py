@@ -75,7 +75,7 @@ class Calculator:
         self.creature_calced = ""
         self.default_base_equip = 0  # 레전더리(0), 차원 레전더리(1), 초오광(2)
         self.exit_calc = 0  # 계산 종료 판정
-        self.image_list_wep = {}
+        self.image_list_wep: Dict[str, PhotoImage] = {}
         self.image_list: Dict[str, PhotoImage] = {}
         self.image_list2: Dict[str, PhotoImage] = {}
         self.image_list_tag: Dict[str, PhotoImage] = {}
