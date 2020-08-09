@@ -116,10 +116,10 @@ class Calculator:
         self.deal_rank_inv: List[List[int]] = [[], []]
         self.buff_rank_inv: List[List[int]] = [[], [], []]
         self.res_inv: Text = None
-        self.deal_result_image_gif: List[List[int]] = [[], []]
-        self.deal_result_image_gif_tg: List[List[int]] = [[], []]
-        self.deal_result_siroco_gif: List[List[int]] =[[], []]
-        self.deal_result_siroco_gif_tg: List[List[int]] =[[], []]
+        self.deal_result_image_gif: List[List[List[int]]] = [[[]], [[]]]
+        self.deal_result_image_gif_tg: List[List[List[int]]] = [[[]], [[]]]
+        self.deal_result_siroco_gif: List[List[List[int]]] = [[[]], [[]]]
+        self.deal_result_siroco_gif_tg: List[List[List[int]]] = [[[]], [[]]]
         self.res_cool_what: Text = None
         self.cool_eff_text = ""
         self.rank_list: List[List[Tuple[float, List[str]]]] = [[], []]
