@@ -191,6 +191,286 @@ class Calculator:
 
         return photo_image
 
+    # 통합 커스텀 설정창
+    def create_custom_window(self, auto: int):
+        try:
+            self.custom_window.destroy()
+        except:
+            pass
+
+        self.custom_window = tkinter.Toplevel(self.window)
+        custom_window = self.custom_window
+        custom_window.attributes("-topmost", True)
+        custom_window.geometry("620x400+750+20")
+
+        load_preset = load_workbook("preset.xlsx", data_only=True)
+        db_preset = load_preset["custom"]
+
+        tkinter.Label(custom_window, text="<쿨감보정>", font=self.mid_font).place(x=100, y=10)
+        tkinter.Label(custom_window, text="그로기   =          %", font=self.guide_font).place(x=160,
+                                                                                                  y=50)  ##Y11/Z11
+        cool_con = tkinter.Entry(custom_window, width=5)
+        cool_con.place(x=230, y=52)
+        cool_con.insert(END, db_preset['B2'].value)
+        tkinter.Label(custom_window, text="지속딜   =          %", font=self.guide_font).place(x=10, y=50)  ##Y11/Z11
+        cool_con2 = tkinter.Entry(custom_window, width=5)
+        cool_con2.place(x=80, y=52)
+        cool_con2.insert(END, db_preset['B20'].value)
+
+        tkinter.Label(custom_window, text="<딜러장비>", font=self.mid_font).place(x=100, y=85)
+        tkinter.Label(custom_window, text="% 입력창은 그만큼 %딜증가로 환산한다는 뜻", fg="Red").place(x=30, y=120)
+        tkinter.Label(custom_window, text="선택벨트=  자동", font=self.guide_font).place(x=160, y=155)  ##O164
+        cus1 = tkinter.Entry(custom_window, width=5)
+        cus1.insert(END, 0)
+        tkinter.Label(custom_window, text="선택신발=          %", font=self.guide_font).place(x=160, y=185)  ##O180
+        cus2 = tkinter.Entry(custom_window, width=5)
+        cus2.place(x=230, y=187)
+        cus2.insert(END, db_preset['B4'].value)
+        tkinter.Label(custom_window, text="베테랑=", font=self.guide_font).place(x=160, y=215)  ##G276
+        lvl_list = ['전설↓', '영웅↑']
+        cus3 = tkinter.ttk.Combobox(custom_window, width=5, values=lvl_list)
+        cus3.place(x=230, y=217)
+        cus3.set(db_preset['B12'].value)
+        tkinter.Label(custom_window, text="먼동강화=          강", font=self.guide_font).place(x=160, y=245)
+        lvl_list = [10, 11, 12, 13]
+        cus4 = tkinter.ttk.Combobox(custom_window, width=2, values=lvl_list)
+        cus4.place(x=230, y=247)
+        cus4.set(db_preset['B13'].value)
+
+        tkinter.Label(custom_window, text="흐름상의=          %", font=self.guide_font).place(x=10, y=155)  ##O100
+        cus6 = tkinter.Entry(custom_window, width=5)
+        cus6.place(x=80, y=157)
+        cus6.insert(END, db_preset['B5'].value)
+        tkinter.Label(custom_window, text="흐름하의=          %", font=self.guide_font).place(x=10, y=185)  ##O127
+        cus7 = tkinter.Entry(custom_window, width=5)
+        cus7.place(x=80, y=187)
+        cus7.insert(END, db_preset['B6'].value)
+        tkinter.Label(custom_window, text="흐름어깨=          %", font=self.guide_font).place(x=10, y=215)  ##O147
+        cus8 = tkinter.Entry(custom_window, width=5)
+        cus8.place(x=80, y=217)
+        cus8.insert(END, db_preset['B7'].value)
+        tkinter.Label(custom_window, text="흐름벨트=          %", font=self.guide_font).place(x=10, y=245)  ##O163
+        cus9 = tkinter.Entry(custom_window, width=5)
+        cus9.place(x=80, y=247)
+        cus9.insert(END, db_preset['B8'].value)
+        tkinter.Label(custom_window, text="흐름신발=          %", font=self.guide_font).place(x=10, y=275)  ##O179
+        cus10 = tkinter.Entry(custom_window, width=5)
+        cus10.place(x=80, y=277)
+        cus10.insert(END, db_preset['B9'].value)
+        tkinter.Label(custom_window, text="흐름2셋=           %", font=self.guide_font).place(x=10, y=305)  ##O295
+        cus11 = tkinter.Entry(custom_window, width=5)
+        cus11.place(x=80, y=307)
+        cus11.insert(END, db_preset['B10'].value)
+        tkinter.Label(custom_window, text="흐름3셋=           %", font=self.guide_font).place(x=10,
+                                                                                                 y=335)  ##O296,O297
+        cus12 = tkinter.Entry(custom_window, width=5)
+        cus12.place(x=80, y=337)
+        cus12.insert(END, db_preset['B11'].value)
+
+        tkinter.Label(custom_window, text="<버퍼설정>", font=self.mid_font, fg='blue').place(x=410, y=5)
+        tkinter.Label(custom_window, text="노증폭/극마부/극찬작 기준 스탯에서\n자신의 스탯이 얼마나 가감되는지 기입", fg="Red").place(x=350, y=33)
+        tkinter.Label(custom_window, text="1각스탯+          ", font=self.guide_font).place(x=320, y=80)  ##
+        c_stat = tkinter.Entry(custom_window, width=7)
+        c_stat.place(x=390, y=82)
+        c_stat.insert(END, db_preset['H1'].value)
+        tkinter.Label(custom_window, text="축복스탯+          ", font=self.guide_font).place(x=470, y=80)  ##
+        b_stat = tkinter.Entry(custom_window, width=7)
+        b_stat.place(x=540, y=82)
+        b_stat.insert(END, db_preset['H6'].value)
+        three = [0, 1, 2, 3]
+        two = [0, 1, 2]
+        tkinter.Label(custom_window, text="축복칭호=", font=self.guide_font).place(x=320, y=110)
+        b_style_lvl = tkinter.ttk.Combobox(custom_window, width=5, values=three)
+        b_style_lvl.place(x=390, y=112)  ##
+        b_style_lvl.set(db_preset['H2'].value)
+        tkinter.Label(custom_window, text="1각칭호=", font=self.guide_font).place(x=470, y=110)
+        c_style_lvl = tkinter.ttk.Combobox(custom_window, width=5, values=two)
+        c_style_lvl.place(x=540, y=112)  ##
+        c_style_lvl.set(db_preset['H3'].value)
+        tkinter.Label(custom_window, text="축복플티=", font=self.guide_font).place(x=320, y=140)
+        b_plt = tkinter.ttk.Combobox(custom_window, width=5, values=two)
+        b_plt.place(x=390, y=142)  ##
+        b_plt.set(db_preset['H4'].value)
+        tkinter.Label(custom_window, text="축복클쳐=", font=self.guide_font).place(x=470, y=140)
+        b_cri = tkinter.ttk.Combobox(custom_window, width=5, values=[0, 1])
+        b_cri.place(x=540, y=142)  ##
+        b_cri.set(db_preset['H5'].value)
+        aria_value = ['항상증폭', '템에따라', '항상미증폭']
+        tkinter.Label(custom_window, text="아리아/퍼펫 증폭율 여부=", font=self.guide_font).place(x=320, y=170)
+        aria_up = tkinter.ttk.Combobox(custom_window, values=aria_value, width=10)
+        aria_up.place(x=540 - 55, y=170)
+        aria_up.set(db_preset['H7'].value)
+
+        tkinter.Label(custom_window, text="<딜러속강>", font=self.mid_font).place(x=410, y=175 + 70)
+        tkinter.Label(custom_window, text="주속성=", font=self.guide_font).place(x=320, y=210 + 70)
+        ele_list = ['화', '수', '명', '암']
+        ele_type = tkinter.ttk.Combobox(custom_window, width=5, values=ele_list)
+        ele_type.place(x=390, y=212 + 70)  ##
+        ele_type.set(db_preset['B1'].value)
+        tkinter.Label(custom_window, text="마부총합=", font=self.guide_font).place(x=470, y=210 + 70)
+        ele1 = tkinter.Entry(custom_window, width=7)
+        ele1.place(x=540, y=212 + 70)  ##
+        ele1.insert(END, db_preset['B14'].value)
+        tkinter.Label(custom_window, text="오라속강=", font=self.guide_font).place(x=470, y=240 + 70)
+        ele2 = tkinter.Entry(custom_window, width=7)
+        ele2.place(x=540, y=242 + 70)  ##
+        ele2.insert(END, db_preset['B15'].value)
+        tkinter.Label(custom_window, text=" 젬 속강=", font=self.guide_font).place(x=470, y=270 + 70)
+        ele3 = tkinter.Entry(custom_window, width=7)
+        ele3.place(x=540, y=272 + 70)  ##
+        ele3.insert(END, db_preset['B16'].value)
+        # tkinter.Label(custom_window,text="스킬속강= 자동",font=self.guide_font).place(x=320,y=210+70)
+        ele4 = tkinter.Entry(custom_window, width=7)  ##ele4.place(x=390,y=212) ## 자속강 비활성화
+        ele4.insert(END, db_preset['B17'].value)
+        tkinter.Label(custom_window, text=" 몹 속저=", font=self.guide_font).place(x=320, y=240 + 70)
+        ele5 = tkinter.Entry(custom_window, width=7)
+        ele5.place(x=390, y=242 + 70)  ##
+        ele5.insert(END, db_preset['B18'].value)
+        tkinter.Label(custom_window, text="버퍼속깎=", font=self.guide_font).place(x=320, y=270 + 70)
+        ele6 = tkinter.Entry(custom_window, width=7)
+        ele6.place(x=390, y=272 + 70)  ##
+        ele6.insert(END, db_preset['B19'].value)
+        tkinter.Label(custom_window, font=self.guide_font, fg="red",
+                      text="반드시 메인창 SAVE 버튼을 눌러야 세이브 슬롯에 저장됩니다").place(x=143, y=370)
+
+        load_preset.close()
+        save_command = lambda: self.save_custom(ele_type.get(), cool_con.get(), cus1.get(), cus2.get(), cus3.get(),
+                                           cus4.get(),
+                                           cus6.get(), cus7.get(), cus8.get(), cus9.get(), cus10.get(), cus11.get(),
+                                           cus12.get(),
+                                           c_stat.get(), b_stat.get(), b_style_lvl.get(), c_style_lvl.get(),
+                                           b_plt.get(), b_cri.get(),
+                                           ele1.get(), ele2.get(), ele3.get(), ele4.get(), ele5.get(), ele6.get(),
+                                           aria_up.get(), cool_con2.get())
+        tkinter.Button(custom_window, text="저장하기", font=self.mid_font, command=save_command,
+                       bg="lightyellow").place(x=190, y=295)
+        if auto == 1:
+            self.auto_saved = 1
+            self.save_custom(ele_type.get(), cool_con.get(), cus1.get(), cus2.get(), cus3.get(), cus4.get(),
+                        cus6.get(), cus7.get(), cus8.get(), cus9.get(), cus10.get(), cus11.get(), cus12.get(),
+                        c_stat.get(), b_stat.get(), b_style_lvl.get(), c_style_lvl.get(), b_plt.get(), b_cri.get(),
+                        ele1.get(), ele2.get(), ele3.get(), ele4.get(), ele5.get(), ele6.get(), aria_up.get(),
+                        cool_con2.get())
+            print('자동저장')
+            self.auto_saved = 0
+
+    # 통합 커스텀 저장
+    def save_custom(self, ele_type, cool_con, cus1, cus2, cus3, cus4, cus6, cus7, cus8, cus9, cus10, cus11, cus12, c_stat,
+                    b_stat, b_style_lvl, c_style_lvl, b_plt, b_cri, ele1, ele2, ele3, ele4, ele5, ele6, aria_up,
+                    cool_con2):
+        try:
+            load_excel3 = load_workbook("DATA.xlsx")
+            load_preset1 = load_workbook("preset.xlsx")
+            db_custom1 = load_preset1["custom"]
+            db_save_one = load_excel3["one"]
+            db_save_set = load_excel3["set"]
+
+            db_custom1['B1'] = ele_type
+            if ele_type == '화':
+                db_save_one['L181'] = 0
+                db_save_one['L165'] = 0
+                db_save_one['L149'] = 24
+                db_save_one['L129'] = 0
+                db_save_one['L429'] = 0
+                db_save_one['L430'] = 0
+                db_save_one['L431'] = 20
+                db_save_one['L433'] = 0
+            elif ele_type == '수':
+                db_save_one['L181'] = 0
+                db_save_one['L165'] = 24
+                db_save_one['L149'] = 0
+                db_save_one['L129'] = 0
+                db_save_one['L429'] = 20
+                db_save_one['L430'] = 0
+                db_save_one['L431'] = 0
+                db_save_one['L433'] = 0
+            elif ele_type == '명':
+                db_save_one['L181'] = 24
+                db_save_one['L165'] = 0
+                db_save_one['L149'] = 0
+                db_save_one['L129'] = 0
+                db_save_one['L429'] = 0
+                db_save_one['L430'] = 20
+                db_save_one['L431'] = 0
+                db_save_one['L433'] = 0
+            elif ele_type == '암':
+                db_save_one['L181'] = 0
+                db_save_one['L165'] = 0
+                db_save_one['L149'] = 0
+                db_save_one['L129'] = 24
+                db_save_one['L429'] = 0
+                db_save_one['L430'] = 0
+                db_save_one['L431'] = 0
+                db_save_one['L433'] = 20
+
+            db_custom1['B3'] = float(cus1)
+            db_save_one['O164'] = float(cus1)
+            db_custom1['B4'] = float(cus2)
+            db_save_one['O180'] = float(cus2)
+            db_custom1['B5'] = float(cus6)
+            db_save_one['O100'] = float(cus6)
+            db_save_one['O101'] = float(cus6)
+            db_custom1['B6'] = float(cus7)
+            db_save_one['O127'] = float(cus7)
+            db_custom1['B7'] = float(cus8)
+            db_save_one['O147'] = float(cus8)
+            db_custom1['B8'] = float(cus9)
+            db_save_one['O163'] = float(cus9)
+            db_custom1['B9'] = float(cus10)
+            db_save_one['O179'] = float(cus10)
+            db_custom1['B10'] = float(cus11)
+            db_save_one['O295'] = float(cus11)
+            db_custom1['B11'] = float(cus12)
+            db_save_one['O296'] = float(cus12)
+            db_save_one['O297'] = float(cus12)
+            db_custom1['B12'] = cus3
+            db_custom1['B2'] = cool_con
+            db_custom1['B20'] = cool_con2
+            if cus3 == '전설↓':
+                db_save_one['J86'] = 34
+                db_save_one['F120'] = 34
+                db_save_one['N140'] = 34
+                db_save_one['L156'] = 68
+                db_save_one['K172'] = 34
+                db_save_one['G276'] = 40
+            else:
+                db_save_one['J86'] = 35
+                db_save_one['F120'] = 35
+                db_save_one['N140'] = 35
+                db_save_one['L156'] = 72
+                db_save_one['K172'] = 35
+                db_save_one['G276'] = 41
+            db_custom1['B13'] = cus4
+            db_save_one['N189'] = int(cus4) + 4
+            db_save_one['N190'] = int(cus4) + 4
+            db_save_one['K205'] = int(cus4) + 4
+            db_save_one['E214'] = int(cus4) + 4
+
+            db_custom1['H1'] = c_stat
+            db_custom1['H6'] = b_stat
+            db_custom1['H2'] = b_style_lvl
+            db_custom1['H3'] = c_style_lvl
+            db_custom1['H4'] = b_plt
+            db_custom1['H5'] = b_cri
+            db_custom1['H7'] = aria_up
+
+            db_custom1['B14'] = ele1
+            db_custom1['B15'] = ele2
+            db_custom1['B16'] = ele3
+            db_custom1['B17'] = ele4
+            db_custom1['B18'] = ele5
+            db_custom1['B19'] = ele6
+
+            load_preset1.save("preset.xlsx")
+            load_preset1.close()
+            load_excel3.save("DATA.xlsx")
+            load_excel3.close()
+            self.custom_window.destroy()
+            if self.auto_saved != 1:
+                tkinter.messagebox.showinfo("알림", "저장 완료")
+        except PermissionError as error:
+            tkinter.messagebox.showerror("에러", "엑셀을 닫고 다시 시도해주세요.")
+
     @staticmethod
     def place_center(toplevel, move_x):
         toplevel.update_idletasks()
@@ -3567,237 +3847,6 @@ def change_rank_type2(in_type):
         calculator.buf_jingak_tg = 0
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 통합 커스텀 설정창
-def costum(auto):
-    global custom_window
-    try:
-        custom_window.destroy()
-    except:
-        pass
-
-    custom_window=tkinter.Toplevel(calculator.window)
-    custom_window.attributes("-topmost", True)
-    custom_window.geometry("620x400+750+20")
-
-    load_preset=load_workbook("preset.xlsx",data_only=True)
-    db_preset=load_preset["custom"]
-
-    tkinter.Label(custom_window,text="<쿨감보정>",font=calculator.mid_font).place(x=100,y=10)
-    tkinter.Label(custom_window,text="그로기   =          %",font=calculator.guide_font).place(x=160,y=50) ##Y11/Z11
-    cool_con=tkinter.Entry(custom_window,width=5);cool_con.place(x=230,y=52)
-    cool_con.insert(END,db_preset['B2'].value)
-    tkinter.Label(custom_window,text="지속딜   =          %",font=calculator.guide_font).place(x=10,y=50) ##Y11/Z11
-    cool_con2=tkinter.Entry(custom_window,width=5);cool_con2.place(x=80,y=52)
-    cool_con2.insert(END,db_preset['B20'].value)
-
-    tkinter.Label(custom_window,text="<딜러장비>",font=calculator.mid_font).place(x=100,y=85)
-    tkinter.Label(custom_window,text="% 입력창은 그만큼 %딜증가로 환산한다는 뜻",fg="Red").place(x=30,y=120)
-    tkinter.Label(custom_window,text="선택벨트=  자동",font=calculator.guide_font).place(x=160,y=155) ##O164
-    cus1=tkinter.Entry(custom_window,width=5)
-    cus1.insert(END,0)
-    tkinter.Label(custom_window,text="선택신발=          %",font=calculator.guide_font).place(x=160,y=185) ##O180
-    cus2=tkinter.Entry(custom_window,width=5);cus2.place(x=230,y=187)
-    cus2.insert(END,db_preset['B4'].value)
-    tkinter.Label(custom_window,text="베테랑=",font=calculator.guide_font).place(x=160,y=215) ##G276
-    lvl_list=['전설↓','영웅↑']
-    cus3=tkinter.ttk.Combobox(custom_window,width=5,values=lvl_list); cus3.place(x=230,y=217)
-    cus3.set(db_preset['B12'].value)
-    tkinter.Label(custom_window,text="먼동강화=          강",font=calculator.guide_font).place(x=160,y=245)
-    lvl_list=[10,11,12,13]
-    cus4=tkinter.ttk.Combobox(custom_window,width=2,values=lvl_list); cus4.place(x=230,y=247)
-    cus4.set(db_preset['B13'].value)
-
-
-    tkinter.Label(custom_window,text="흐름상의=          %",font=calculator.guide_font).place(x=10,y=155) ##O100
-    cus6=tkinter.Entry(custom_window,width=5);cus6.place(x=80,y=157)
-    cus6.insert(END,db_preset['B5'].value)
-    tkinter.Label(custom_window,text="흐름하의=          %",font=calculator.guide_font).place(x=10,y=185) ##O127
-    cus7=tkinter.Entry(custom_window,width=5);cus7.place(x=80,y=187)
-    cus7.insert(END,db_preset['B6'].value)
-    tkinter.Label(custom_window,text="흐름어깨=          %",font=calculator.guide_font).place(x=10,y=215) ##O147
-    cus8=tkinter.Entry(custom_window,width=5);cus8.place(x=80,y=217)
-    cus8.insert(END,db_preset['B7'].value)
-    tkinter.Label(custom_window,text="흐름벨트=          %",font=calculator.guide_font).place(x=10,y=245) ##O163
-    cus9=tkinter.Entry(custom_window,width=5);cus9.place(x=80,y=247)
-    cus9.insert(END,db_preset['B8'].value)
-    tkinter.Label(custom_window,text="흐름신발=          %",font=calculator.guide_font).place(x=10,y=275) ##O179
-    cus10=tkinter.Entry(custom_window,width=5);cus10.place(x=80,y=277)
-    cus10.insert(END,db_preset['B9'].value)
-    tkinter.Label(custom_window,text="흐름2셋=           %",font=calculator.guide_font).place(x=10,y=305) ##O295
-    cus11=tkinter.Entry(custom_window,width=5);cus11.place(x=80,y=307)
-    cus11.insert(END,db_preset['B10'].value)
-    tkinter.Label(custom_window,text="흐름3셋=           %",font=calculator.guide_font).place(x=10,y=335) ##O296,O297
-    cus12=tkinter.Entry(custom_window,width=5);cus12.place(x=80,y=337)
-    cus12.insert(END,db_preset['B11'].value)
-
-    tkinter.Label(custom_window,text="<버퍼설정>",font=calculator.mid_font,fg='blue').place(x=410,y=5)
-    tkinter.Label(custom_window,text="노증폭/극마부/극찬작 기준 스탯에서\n자신의 스탯이 얼마나 가감되는지 기입",fg="Red").place(x=350,y=33)
-    tkinter.Label(custom_window,text="1각스탯+          ",font=calculator.guide_font).place(x=320,y=80) ##
-    c_stat=tkinter.Entry(custom_window,width=7);c_stat.place(x=390,y=82)
-    c_stat.insert(END,db_preset['H1'].value)
-    tkinter.Label(custom_window,text="축복스탯+          ",font=calculator.guide_font).place(x=470,y=80) ##
-    b_stat=tkinter.Entry(custom_window,width=7);b_stat.place(x=540,y=82)
-    b_stat.insert(END,db_preset['H6'].value)
-    three=[0,1,2,3];two=[0,1,2]
-    tkinter.Label(custom_window,text="축복칭호=",font=calculator.guide_font).place(x=320,y=110)
-    b_style_lvl=tkinter.ttk.Combobox(custom_window,width=5,values=three); b_style_lvl.place(x=390,y=112) ##
-    b_style_lvl.set(db_preset['H2'].value)
-    tkinter.Label(custom_window,text="1각칭호=",font=calculator.guide_font).place(x=470,y=110)
-    c_style_lvl=tkinter.ttk.Combobox(custom_window,width=5,values=two); c_style_lvl.place(x=540,y=112) ##
-    c_style_lvl.set(db_preset['H3'].value)
-    tkinter.Label(custom_window,text="축복플티=",font=calculator.guide_font).place(x=320,y=140)
-    b_plt=tkinter.ttk.Combobox(custom_window,width=5,values=two); b_plt.place(x=390,y=142) ##
-    b_plt.set(db_preset['H4'].value)
-    tkinter.Label(custom_window,text="축복클쳐=",font=calculator.guide_font).place(x=470,y=140)
-    b_cri=tkinter.ttk.Combobox(custom_window,width=5,values=[0,1]); b_cri.place(x=540,y=142) ##
-    b_cri.set(db_preset['H5'].value)
-    aria_value=['항상증폭','템에따라','항상미증폭']
-    tkinter.Label(custom_window,text="아리아/퍼펫 증폭율 여부=",font=calculator.guide_font).place(x=320,y=170)
-    aria_up=tkinter.ttk.Combobox(custom_window,values=aria_value,width=10);aria_up.place(x=540-55,y=170)
-    aria_up.set(db_preset['H7'].value)
-
-
-    tkinter.Label(custom_window,text="<딜러속강>",font=calculator.mid_font).place(x=410,y=175+70)
-    tkinter.Label(custom_window,text="주속성=",font=calculator.guide_font).place(x=320,y=210+70)
-    ele_list=['화','수','명','암']
-    ele_type=tkinter.ttk.Combobox(custom_window,width=5,values=ele_list); ele_type.place(x=390,y=212+70) ##
-    ele_type.set(db_preset['B1'].value)
-    tkinter.Label(custom_window,text="마부총합=",font=calculator.guide_font).place(x=470,y=210+70)
-    ele1=tkinter.Entry(custom_window,width=7); ele1.place(x=540,y=212+70) ##
-    ele1.insert(END,db_preset['B14'].value)
-    tkinter.Label(custom_window,text="오라속강=",font=calculator.guide_font).place(x=470,y=240+70)
-    ele2=tkinter.Entry(custom_window,width=7); ele2.place(x=540,y=242+70) ##
-    ele2.insert(END,db_preset['B15'].value)
-    tkinter.Label(custom_window,text=" 젬 속강=",font=calculator.guide_font).place(x=470,y=270+70)
-    ele3=tkinter.Entry(custom_window,width=7); ele3.place(x=540,y=272+70) ##
-    ele3.insert(END,db_preset['B16'].value)
-    #tkinter.Label(custom_window,text="스킬속강= 자동",font=calculator.guide_font).place(x=320,y=210+70)
-    ele4=tkinter.Entry(custom_window,width=7); ##ele4.place(x=390,y=212) ## 자속강 비활성화
-    ele4.insert(END,db_preset['B17'].value)
-    tkinter.Label(custom_window,text=" 몹 속저=",font=calculator.guide_font).place(x=320,y=240+70)
-    ele5=tkinter.Entry(custom_window,width=7); ele5.place(x=390,y=242+70) ##
-    ele5.insert(END,db_preset['B18'].value)
-    tkinter.Label(custom_window,text="버퍼속깎=",font=calculator.guide_font).place(x=320,y=270+70)
-    ele6=tkinter.Entry(custom_window,width=7); ele6.place(x=390,y=272+70) ##
-    ele6.insert(END,db_preset['B19'].value)
-    tkinter.Label(custom_window,font=calculator.guide_font,fg="red",text="반드시 메인창 SAVE 버튼을 눌러야 세이브 슬롯에 저장됩니다").place(x=143,y=370)
-
-    load_preset.close()
-    save_command=lambda:save_custom(ele_type.get(),cool_con.get(),cus1.get(),cus2.get(),cus3.get(),cus4.get(),
-                                    cus6.get(),cus7.get(),cus8.get(),cus9.get(),cus10.get(),cus11.get(),cus12.get(),
-                                    c_stat.get(),b_stat.get(),b_style_lvl.get(),c_style_lvl.get(),b_plt.get(),b_cri.get(),
-                                    ele1.get(),ele2.get(),ele3.get(),ele4.get(),ele5.get(),ele6.get(),aria_up.get(),cool_con2.get())
-    tkinter.Button(custom_window,text="저장하기",font=calculator.mid_font,command=save_command,bg="lightyellow").place(x=190,y=295)
-    if auto==1:
-        calculator.auto_saved = 1
-        save_custom(ele_type.get(),cool_con.get(),cus1.get(),cus2.get(),cus3.get(),cus4.get(),
-                    cus6.get(),cus7.get(),cus8.get(),cus9.get(),cus10.get(),cus11.get(),cus12.get(),
-                    c_stat.get(),b_stat.get(),b_style_lvl.get(),c_style_lvl.get(),b_plt.get(),b_cri.get(),
-                    ele1.get(),ele2.get(),ele3.get(),ele4.get(),ele5.get(),ele6.get(),aria_up.get(),cool_con2.get())
-        print('자동저장')
-        calculator.auto_saved = 0
-        auto=0
-
-## 통합 커스텀 저장
-def save_custom(ele_type,cool_con,cus1,cus2,cus3,cus4,cus6,cus7,cus8,cus9,cus10,cus11,cus12,c_stat,b_stat,b_style_lvl,c_style_lvl,b_plt,b_cri,ele1,ele2,ele3,ele4,ele5,ele6,aria_up,cool_con2):
-    try:
-        load_excel3=load_workbook("DATA.xlsx")
-        load_preset1=load_workbook("preset.xlsx")
-        db_custom1=load_preset1["custom"]
-        db_save_one=load_excel3["one"]
-        db_save_set=load_excel3["set"]
-
-        db_custom1['B1']=ele_type
-        if ele_type == '화':
-            db_save_one['L181']=0;db_save_one['L165']=0;db_save_one['L149']=24;db_save_one['L129']=0
-            db_save_one['L429']=0;db_save_one['L430']=0;db_save_one['L431']=20;db_save_one['L433']=0
-        elif ele_type == '수':
-            db_save_one['L181']=0;db_save_one['L165']=24;db_save_one['L149']=0;db_save_one['L129']=0
-            db_save_one['L429']=20;db_save_one['L430']=0;db_save_one['L431']=0;db_save_one['L433']=0
-        elif ele_type == '명':
-            db_save_one['L181']=24;db_save_one['L165']=0;db_save_one['L149']=0;db_save_one['L129']=0
-            db_save_one['L429']=0;db_save_one['L430']=20;db_save_one['L431']=0;db_save_one['L433']=0
-        elif ele_type == '암':
-            db_save_one['L181']=0;db_save_one['L165']=0;db_save_one['L149']=0;db_save_one['L129']=24
-            db_save_one['L429']=0;db_save_one['L430']=0;db_save_one['L431']=0;db_save_one['L433']=20
-
-        db_custom1['B3']=float(cus1);db_save_one['O164']=float(cus1)
-        db_custom1['B4']=float(cus2);db_save_one['O180']=float(cus2)
-        db_custom1['B5']=float(cus6);db_save_one['O100']=float(cus6);db_save_one['O101']=float(cus6)
-        db_custom1['B6']=float(cus7);db_save_one['O127']=float(cus7)
-        db_custom1['B7']=float(cus8);db_save_one['O147']=float(cus8)
-        db_custom1['B8']=float(cus9);db_save_one['O163']=float(cus9)
-        db_custom1['B9']=float(cus10);db_save_one['O179']=float(cus10)
-        db_custom1['B10']=float(cus11);db_save_one['O295']=float(cus11)
-        db_custom1['B11']=float(cus12);db_save_one['O296']=float(cus12);db_save_one['O297']=float(cus12)
-        db_custom1['B12']=cus3
-        db_custom1['B2']=cool_con
-        db_custom1['B20']=cool_con2
-        if cus3=='전설↓':
-            db_save_one['J86']=34;db_save_one['F120']=34;db_save_one['N140']=34;db_save_one['L156']=68;db_save_one['K172']=34;db_save_one['G276']=40;
-        else:
-            db_save_one['J86']=35;db_save_one['F120']=35;db_save_one['N140']=35;db_save_one['L156']=72;db_save_one['K172']=35;db_save_one['G276']=41;
-        db_custom1['B13']=cus4
-        db_save_one['N189']=int(cus4)+4;db_save_one['N190']=int(cus4)+4;db_save_one['K205']=int(cus4)+4;db_save_one['E214']=int(cus4)+4
-
-        db_custom1['H1']=c_stat
-        db_custom1['H6']=b_stat
-        db_custom1['H2']=b_style_lvl
-        db_custom1['H3']=c_style_lvl
-        db_custom1['H4']=b_plt
-        db_custom1['H5']=b_cri
-        db_custom1['H7']=aria_up
-
-        db_custom1['B14']=ele1
-        db_custom1['B15']=ele2
-        db_custom1['B16']=ele3
-        db_custom1['B17']=ele4
-        db_custom1['B18']=ele5
-        db_custom1['B19']=ele6
-
-        load_preset1.save("preset.xlsx")
-        load_preset1.close()
-        load_excel3.save("DATA.xlsx")
-        load_excel3.close()
-        custom_window.destroy()
-        if calculator.auto_saved != 1:
-            tkinter.messagebox.showinfo("알림","저장 완료")
-    except PermissionError as error:
-        tkinter.messagebox.showerror("에러","엑셀을 닫고 다시 시도해주세요.")
-
 ## 저장된 preset 불러오기
 def load_checklist():
     ask_msg1=tkinter.messagebox.askquestion('확인',"저장된 내역을 불러오겠습니까?")
@@ -4959,7 +5008,7 @@ timeline_img=calculator.get_photo_image("ext_img/timeline.png")
 select_custom=tkinter.Button(calculator.window,image=timeline_img,borderwidth=0,activebackground=calculator.dark_main,command=timeline_select,bg=calculator.dark_sub)
 select_custom.place(x=345+165,y=340-100)
 custom_img=calculator.get_photo_image("ext_img/custom.png")
-select_custom2=tkinter.Button(calculator.window,image=custom_img,borderwidth=0,activebackground=calculator.dark_main,command=lambda:costum(0),bg=calculator.dark_sub)
+select_custom2=tkinter.Button(calculator.window,image=custom_img,borderwidth=0,activebackground=calculator.dark_main,command=lambda:calculator.create_custom_window(0),bg=calculator.dark_sub)
 select_custom2.place(x=435+165,y=340-100)
 
 save_select = tkinter.ttk.Combobox(calculator.window, width=8, values=calculator.save_name_list)
@@ -5757,7 +5806,7 @@ maker.place(x=622,y=585)
 version.place(x=630-3,y=645+3)
 
 if auto_custom==1:
-    costum(1)
+    calculator.create_custom_window(1)
 
 if __name__ == "__main__":
     update_thread()
