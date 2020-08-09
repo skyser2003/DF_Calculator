@@ -595,6 +595,112 @@ class Calculator:
         except PermissionError as error:
             tkinter.messagebox.showerror("에러", "엑셀을 닫고 다시 시도해주세요.")
 
+    # 타임라인 조회 창
+    def timeline_select(self):
+        try:
+            self.timeline_window.destroy()
+        except:
+            pass
+
+        self.timeline_window = tkinter.Toplevel(self.window)
+        timeline_window = self.timeline_window
+        timeline_window.attributes("-topmost", True)
+        timeline_window.geometry("310x150+750+20")
+        tkinter.Label(timeline_window, text="캐릭터명=\n(정확히)", font=self.guide_font).place(x=10, y=9)
+        cha_name = tkinter.Entry(timeline_window, width=13)
+        cha_name.place(x=80, y=12)
+        tkinter.Label(timeline_window, text="서버명=", font=self.guide_font).place(x=10, y=59)
+        sever_list = ['카인', '디레지에', '바칼', '힐더', '안톤', '카시야스', '프레이', '시로코']
+        serv_name = tkinter.ttk.Combobox(timeline_window, values=sever_list, width=11)
+        serv_name.place(x=80, y=62)
+        serv_name.set('카인')
+        load_timeline = tkinter.Button(timeline_window, command=lambda: self.show_timeline(cha_name.get(), serv_name.get()),
+                                       text="불러오기", font=self.mid_font)
+        load_timeline.place(x=200, y=25)
+        tkinter.Label(timeline_window, text="타임라인에 있는 에픽만 불러옵니다(일부X)", fg="Red").place(x=10, y=100)
+        tkinter.Label(timeline_window, text="서버 불안정때매 안되면 여러번 눌러보세요", fg="Red").place(x=10, y=120)
+
+    # 타임라인 조회
+    def show_timeline(self, name, server):
+
+        server_dict = {'안톤': 'anton', '바칼': 'bakal', '카인': 'cain', '카시야스': 'casillas',
+                       '디레지에': 'diregie', '힐더': 'hilder', '프레이': 'prey', '시로코': 'siroco'}
+        try:
+            sever_code = server_dict[server]
+            cha_id_api = urllib.request.urlopen(
+                'https://api.neople.co.kr/df/servers/' + sever_code + '/characters?characterName=' + parse.quote(
+                    name) + '&apikey=' + apikey)
+            cha_id_dic = loads(cha_id_api.read().decode("utf-8"))
+            cha_id = cha_id_dic['rows'][0]['characterId']
+
+            ##
+            print(sever_code)
+            print(cha_id)
+            time.sleep(0.3)
+            start_time = '20200101T0000'
+            time_now = time.strftime('%Y%m%dT%H%M', time.localtime(time.time()))
+            now = time_now
+            now_1 = '20200101T0000'
+            now_2 = '20200101T0000'
+            now_3 = '20200101T0000'
+            now2 = '20200101T0000'
+            now3 = '20200101T0000'
+            now4 = '20200101T0000'  ## 현재 11월 13일까지 조회 가능
+            if int(time_now[0:8]) >= 20200316:
+                now = '20200315T2359'
+                now_1 = '20200316T0000'
+                now2 = time.strftime('%Y%m%dT%H%M', time.localtime(time.time()))
+            if int(time_now[0:8]) >= 20200601:
+                now2 = '20200531T2359'
+                now_2 = '20200601T0000'
+                now3 = time.strftime('%Y%m%dT%H%M', time.localtime(time.time()))
+            if int(time_now[0:8]) >= 20200816:
+                now3 = '20200815T2359'
+                now_3 = '20200816T0000'
+                now4 = time.strftime('%Y%m%dT%H%M', time.localtime(time.time()))
+            time_code = '504,505,506,507,508,510,511,512,513,514'
+            timeline_list = []
+            for nows in [[now, start_time], [now2, now_1], [now3, now_2], [now4, now_3]]:
+                if nows[0] != '20200101T0000':
+                    timeline = urllib.request.urlopen(
+                        'https://api.neople.co.kr/df/servers/' + sever_code + '/characters/' + cha_id + '/timeline?limit=100&code=' + time_code + '&startDate=' +
+                        nows[1] + '&endDate=' + nows[0] + '&apikey=' + apikey)
+                    timeline2 = loads(timeline.read().decode("utf-8"))['timeline']
+                    show_next = timeline2['next']
+                    timeline_list = timeline_list + timeline2['rows']
+                    time.sleep(0.3)
+                    while show_next != None:
+                        timeline_next = urllib.request.urlopen(
+                            'https://api.neople.co.kr/df/servers/' + sever_code + '/characters/' + cha_id + '/timeline?next=' + show_next + '&apikey=' + apikey)
+                        timeline_next2 = loads(timeline_next.read().decode("utf-8"))['timeline']
+                        timeline_list = timeline_list + timeline_next2['rows']
+                        time.sleep(0.3)
+                        show_next = timeline_next2['next']
+
+            all_item = []
+            for now in timeline_list:
+                item = now['data']['itemId']
+                all_item.append(item)
+            xl = openpyxl.load_workbook("DATA.xlsx", data_only=True)
+            sh = xl['one']
+
+            reset()
+
+            for i in range(76, 257):
+                api_cod = sh.cell(i, 40).value
+                if all_item.count(api_cod) != 0:
+                    select_item['tg{}'.format(str(sh.cell(i, 1).value))] = 1
+            xl.close()
+            check_equipment()
+            for i in range(101, 136):
+                check_set(i)
+            self.timeline_window.destroy()
+            tkinter.messagebox.showinfo("주의", "과거 메타몽했던 에픽도 전부 불러와집니다.\n" +
+                                        "알아서 빼주세요.\n\n초월한 에픽은 뜨지않습니다.\n알아서 넣으세요.\n\n" +
+                                        "현재 무기와 시로코 에픽은 불러오지 않습니다")
+        except urllib.error.HTTPError as error:
+            tkinter.messagebox.showerror("에러", "API 접근 실패(네트워크 오류)")
+
     def init_ui(self):
         self.case_count_label = tkinter.Label(self.window, font=self.guide_font, fg="white", bg=self.dark_sub)
         self.case_count_label.place(x=700, y=145 - 12)
@@ -4224,165 +4330,6 @@ def update_thread():
 def update_thread2():
     threading.Thread(target=update_count2,daemon=True).start()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## 타임라인 조회 창
-def timeline_select():
-    global timeline_window
-    try:
-        timeline_window.destroy()
-    except:
-        pass
-
-    timeline_window = tkinter.Toplevel(calculator.window)
-    timeline_window.attributes("-topmost", True)
-    timeline_window.geometry("310x150+750+20")
-    tkinter.Label(timeline_window,text="캐릭터명=\n(정확히)",font=calculator.guide_font).place(x=10,y=9)
-    cha_name=tkinter.Entry(timeline_window,width=13)
-    cha_name.place(x=80,y=12)
-    tkinter.Label(timeline_window,text="서버명=",font=calculator.guide_font).place(x=10,y=59)
-    sever_list=['카인','디레지에','바칼','힐더','안톤','카시야스','프레이','시로코']
-    serv_name=tkinter.ttk.Combobox(timeline_window,values=sever_list,width=11)
-    serv_name.place(x=80,y=62)
-    serv_name.set('카인')
-    load_timeline=tkinter.Button(timeline_window,command=lambda:show_timeline(cha_name.get(),serv_name.get()),text="불러오기",font=calculator.mid_font)
-    load_timeline.place(x=200,y=25)
-    tkinter.Label(timeline_window,text="타임라인에 있는 에픽만 불러옵니다(일부X)",fg="Red").place(x=10,y=100)
-    tkinter.Label(timeline_window,text="서버 불안정때매 안되면 여러번 눌러보세요",fg="Red").place(x=10,y=120)
-
-## 타임라인 조회
-def show_timeline(name,server):
-
-    server_dict={'안톤':'anton','바칼':'bakal','카인':'cain','카시야스':'casillas',
-                '디레지에':'diregie','힐더':'hilder','프레이':'prey','시로코':'siroco'}
-    try:
-        sever_code=server_dict[server]
-        cha_id_api=urllib.request.urlopen('https://api.neople.co.kr/df/servers/'+sever_code+'/characters?characterName='+parse.quote(name)+'&apikey=' + apikey)
-        cha_id_dic=loads(cha_id_api.read().decode("utf-8"))
-        cha_id=cha_id_dic['rows'][0]['characterId']
-
-    ##
-        print(sever_code)
-        print(cha_id)
-        time.sleep(0.3)
-        start_time='20200101T0000'
-        time_now=time.strftime('%Y%m%dT%H%M', time.localtime(time.time()))
-        now=time_now
-        now_1='20200101T0000'
-        now_2='20200101T0000'
-        now_3='20200101T0000'
-        now2='20200101T0000'
-        now3='20200101T0000'
-        now4='20200101T0000' ## 현재 11월 13일까지 조회 가능
-        if int(time_now[0:8]) >= 20200316:
-            now='20200315T2359'
-            now_1='20200316T0000'
-            now2=time.strftime('%Y%m%dT%H%M', time.localtime(time.time()))
-        if int(time_now[0:8]) >= 20200601:
-            now2='20200531T2359'
-            now_2='20200601T0000'
-            now3=time.strftime('%Y%m%dT%H%M', time.localtime(time.time()))
-        if int(time_now[0:8]) >= 20200816:
-            now3='20200815T2359'
-            now_3='20200816T0000'
-            now4=time.strftime('%Y%m%dT%H%M', time.localtime(time.time()))
-        time_code='504,505,506,507,508,510,511,512,513,514'
-        timeline_list=[]
-        for nows in [[now,start_time],[now2,now_1],[now3,now_2],[now4,now_3]]:
-            if nows[0] != '20200101T0000':
-                timeline=urllib.request.urlopen('https://api.neople.co.kr/df/servers/'+sever_code+'/characters/'+cha_id+'/timeline?limit=100&code='+time_code+'&startDate='+nows[1]+'&endDate='+nows[0]+'&apikey='+apikey)
-                timeline2=loads(timeline.read().decode("utf-8"))['timeline']
-                show_next=timeline2['next']
-                timeline_list=timeline_list+timeline2['rows']
-                time.sleep(0.3)
-                while show_next != None:
-                    timeline_next=urllib.request.urlopen('https://api.neople.co.kr/df/servers/'+sever_code+'/characters/'+cha_id+'/timeline?next='+show_next+'&apikey='+apikey)
-                    timeline_next2=loads(timeline_next.read().decode("utf-8"))['timeline']
-                    timeline_list=timeline_list+timeline_next2['rows']
-                    time.sleep(0.3)
-                    show_next=timeline_next2['next']
-
-        all_item=[]
-        for now in timeline_list:
-            item=now['data']['itemId']
-            all_item.append(item)
-        xl=openpyxl.load_workbook("DATA.xlsx", data_only=True)
-        sh=xl['one']
-
-        reset()
-
-        for i in range(76,257):
-            api_cod=sh.cell(i,40).value
-            if all_item.count(api_cod) != 0:
-                select_item['tg{}'.format(str(sh.cell(i,1).value))]=1
-        xl.close()
-        check_equipment()
-        for i in range(101,136):
-            check_set(i)
-        timeline_window.destroy()
-        tkinter.messagebox.showinfo("주의","과거 메타몽했던 에픽도 전부 불러와집니다.\n"+
-                                    "알아서 빼주세요.\n\n초월한 에픽은 뜨지않습니다.\n알아서 넣으세요.\n\n"+
-                                    "현재 무기와 시로코 에픽은 불러오지 않습니다")
-    except urllib.error.HTTPError as error:
-        tkinter.messagebox.showerror("에러","API 접근 실패(네트워크 오류)")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 선택한 모든 장비 체크 초기화
 def reset():
     know_list2=['13390150','22390240','23390450','33390750','21390340','31390540','32390650',
@@ -5044,7 +4991,7 @@ stop_img=calculator.get_photo_image("ext_img/stop.png")
 tkinter.Button(calculator.window,image=stop_img,borderwidth=0,activebackground=calculator.dark_main,command=stop_calc,bg=calculator.dark_main).place(x=390-35+150,y=62)
 
 timeline_img=calculator.get_photo_image("ext_img/timeline.png")
-select_custom=tkinter.Button(calculator.window,image=timeline_img,borderwidth=0,activebackground=calculator.dark_main,command=timeline_select,bg=calculator.dark_sub)
+select_custom=tkinter.Button(calculator.window,image=timeline_img,borderwidth=0,activebackground=calculator.dark_main,command=calculator.timeline_select,bg=calculator.dark_sub)
 select_custom.place(x=345+165,y=340-100)
 custom_img=calculator.get_photo_image("ext_img/custom.png")
 select_custom2=tkinter.Button(calculator.window,image=custom_img,borderwidth=0,activebackground=calculator.dark_main,command=lambda:calculator.create_custom_window(0),bg=calculator.dark_sub)
