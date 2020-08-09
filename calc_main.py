@@ -2623,7 +2623,6 @@ def show_result_dealer():
     now_rank_num = calculator.now_rank_num
 
     result_window.geometry("585x710")
-    global tg_result_first
 
     rank0_list = calculator.rank_list[0]
     rank1_list = calculator.rank_list[1]
@@ -2907,8 +2906,6 @@ def change_groggy(ele_skill):
     threading.Timer(0.07, change_groggy2,args=(ele_skill,)).start()
     threading.Timer(0, time_delayy).start()
 def change_groggy2(ele_skill):
-    global groggy
-
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
     gif_images = calculator.gif_images
