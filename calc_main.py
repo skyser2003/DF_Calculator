@@ -116,8 +116,8 @@ class Calculator:
         self.deal_rank_inv: List[List[int]] = [[], []]
         self.buff_rank_inv: List[List[int]] = [[], [], []]
         self.res_inv: Text = None
-        self.result_image_gif: List[List[int]] = [[], []]
-        self.result_image_gif_tg: List[List[int]] = [[], []]
+        self.deal_result_image_gif: List[List[int]] = [[], []]
+        self.deal_result_image_gif_tg: List[List[int]] = [[], []]
         self.result_siroco_gif: List[List[int]] =[[], []]
         self.result_siroco_gif_tg: List[List[int]] =[[], []]
         self.res_cool_what: Text = None
@@ -1921,10 +1921,10 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank_wep_img.extend([0, 0, 0, 0, 0])
         rank0_wep_img.extend([0, 0, 0, 0, 0])
 
-        result_image_gif = calculator.result_image_gif[0] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
-        result0_image_gif = calculator.result_image_gif[1] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
-        result_image_gif_tg = calculator.result_image_gif_tg[0] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
-        result0_image_gif_tg = calculator.result_image_gif_tg[1] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        deal_result_image_gif = calculator.deal_result_image_gif[0] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        deal_result0_image_gif = calculator.deal_result_image_gif[1] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        deal_result_image_gif_tg = calculator.deal_result_image_gif_tg[0] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        deal_result0_image_gif_tg = calculator.deal_result_image_gif_tg[1] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
 
         result_siroco_gif = calculator.result_siroco_gif[0] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
         result0_siroco_gif = calculator.result_siroco_gif[1] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
@@ -1973,14 +1973,14 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                                 result_image_on[temp_rank][str(i)]=image_list[j]
                                 result_image_tag[temp_rank][str(i)]=j
                                 if i ==11 and j[4:5]=='1' and len(j)==5:
-                                    result_image_gif[temp_rank][0]=calc_gif.img_gif(j,0)
-                                    result_image_gif_tg[temp_rank][0]=1
+                                    deal_result_image_gif[temp_rank][0]=calc_gif.img_gif(j,0)
+                                    deal_result_image_gif_tg[temp_rank][0]=1
                                 if i ==21 and j[4:5]=='1' and len(j)==5:
-                                    result_image_gif[temp_rank][1]=calc_gif.img_gif(j,0)
-                                    result_image_gif_tg[temp_rank][1]=1
+                                    deal_result_image_gif[temp_rank][1]=calc_gif.img_gif(j,0)
+                                    deal_result_image_gif_tg[temp_rank][1]=1
                                 if i ==33 and j[4:5]=='1' and len(j)==5:
-                                    result_image_gif[temp_rank][2]=calc_gif.img_gif(j,0)
-                                    result_image_gif_tg[temp_rank][2]=1
+                                    deal_result_image_gif[temp_rank][2]=calc_gif.img_gif(j,0)
+                                    deal_result_image_gif_tg[temp_rank][2]=1
                                 if i ==41 and j[3:5]!='00' and len(j)==5:
                                     result_siroco_gif[temp_rank][0]=calc_gif.img_gif(j,1)
                                     result_siroco_gif_tg[temp_rank][0]=1
@@ -1997,14 +1997,14 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                                 result0_image_on[temp_rank][str(i)]=image_list[j]
                                 result0_image_tag[temp_rank][str(i)]=j
                                 if i ==11 and j[4:5]=='1' and len(j)==5:
-                                    result0_image_gif[temp_rank][0]=calc_gif.img_gif(j,0)
-                                    result0_image_gif_tg[temp_rank][0]=1
+                                    deal_result0_image_gif[temp_rank][0]=calc_gif.img_gif(j,0)
+                                    deal_result0_image_gif_tg[temp_rank][0]=1
                                 if i ==21 and j[4:5]=='1' and len(j)==5:
-                                    result0_image_gif[temp_rank][1]=calc_gif.img_gif(j,0)
-                                    result0_image_gif_tg[temp_rank][1]=1
+                                    deal_result0_image_gif[temp_rank][1]=calc_gif.img_gif(j,0)
+                                    deal_result0_image_gif_tg[temp_rank][1]=1
                                 if i ==33 and j[4:5]=='1' and len(j)==5:
-                                    result0_image_gif[temp_rank][2]=calc_gif.img_gif(j,0)
-                                    result0_image_gif_tg[temp_rank][2]=1
+                                    deal_result0_image_gif[temp_rank][2]=calc_gif.img_gif(j,0)
+                                    deal_result0_image_gif_tg[temp_rank][2]=1
                                 if i ==41 and j[3:5]!='00' and len(j)==5:
                                     result0_siroco_gif[temp_rank][0]=calc_gif.img_gif(j,1)
                                     result0_siroco_gif_tg[temp_rank][0]=1
@@ -2253,12 +2253,12 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                 cn1=0
                 cn4=5
         length=len(rank1_list)
-        if result_image_gif_tg[0][0]==1:
-            play_gif( 0,0,0,gif_images["11"],result_image_gif,0,1,1)
-        if result_image_gif_tg[0][1]==1:
-            play_gif( 0,0,1,gif_images["21"],result_image_gif,0,1,1)
-        if result_image_gif_tg[0][2]==1:
-            play_gif( 0,0,2,gif_images["33"],result_image_gif,0,1,1)
+        if deal_result_image_gif_tg[0][0]==1:
+            play_gif( 0,0,0,gif_images["11"],deal_result_image_gif,0,1,1)
+        if deal_result_image_gif_tg[0][1]==1:
+            play_gif( 0,0,1,gif_images["21"],deal_result_image_gif,0,1,1)
+        if deal_result_image_gif_tg[0][2]==1:
+            play_gif( 0,0,2,gif_images["33"],deal_result_image_gif,0,1,1)
         if result_siroco_gif_tg[0][0]==1:
             play_gif( 0,0,0,gif_images["41"],result_siroco_gif,0,1,1)
         if result_siroco_gif_tg[0][1]==1:
@@ -2269,8 +2269,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         for i in range(0,5):
             for j in [11,21,33]:
                 temp=int(j/10)-1
-                if result_image_gif_tg[i][temp]==1:
-                    play_gif(0,i,temp,res_item_list[i][str(j)],result_image_gif,1,0,1)
+                if deal_result_image_gif_tg[i][temp]==1:
+                    play_gif(0,i,temp,res_item_list[i][str(j)],deal_result_image_gif,1,0,1)
             for j in [41,42,43]:
                 temp=j-41
                 if result_siroco_gif_tg[i][temp]==1:
@@ -2918,10 +2918,10 @@ def change_groggy2(ele_skill):
     rank0_dam_noele = calculator.rank_dam_noele[1]
     rank_inv = calculator.deal_rank_inv[0]
     rank0_inv = calculator.deal_rank_inv[1]
-    result_image_gif = calculator.result_image_gif[0]
-    result0_image_gif = calculator.result_image_gif[1]
-    result_image_gif_tg = calculator.result_image_gif_tg[0]
-    result0_image_gif_tg = calculator.result_image_gif_tg[1]
+    deal_result_image_gif = calculator.deal_result_image_gif[0]
+    deal_result0_image_gif = calculator.deal_result_image_gif[1]
+    deal_result_image_gif_tg = calculator.deal_result_image_gif_tg[0]
+    deal_result0_image_gif_tg = calculator.deal_result_image_gif_tg[1]
     result_siroco_gif = calculator.result_siroco_gif[0]
     result0_siroco_gif = calculator.result_siroco_gif[1]
     result_siroco_gif_tg = calculator.result_siroco_gif_tg[0]
@@ -2944,8 +2944,8 @@ def change_groggy2(ele_skill):
         rank_changed = calculator.rank_dam[1]
         change_stat3=rank0_stat3
         change_inv=rank0_inv
-        image_gif_changed_tg=result0_image_gif_tg
-        image_gif_changed=result0_image_gif
+        image_gif_changed_tg=deal_result0_image_gif_tg
+        image_gif_changed=deal_result0_image_gif
         siroco_gif_changed_tg=result0_siroco_gif_tg
         siroco_gif_changed=result0_siroco_gif
         wep_changed=rank0_wep_name
@@ -2963,8 +2963,8 @@ def change_groggy2(ele_skill):
         rank_changed = calculator.rank_dam[0]
         change_stat3=rank_stat3
         change_inv=rank_inv
-        image_gif_changed_tg=result_image_gif_tg
-        image_gif_changed=result_image_gif
+        image_gif_changed_tg=deal_result_image_gif_tg
+        image_gif_changed=deal_result_image_gif
         siroco_gif_changed_tg=result_siroco_gif_tg
         siroco_gif_changed=result_siroco_gif
         wep_changed=rank_wep_name
@@ -3163,10 +3163,10 @@ def change_rank2(now,job_type,ele_skill):
         rank_inv = calculator.deal_rank_inv[0]
         rank0_inv = calculator.deal_rank_inv[1]
 
-        result_image_gif = calculator.result_image_gif[0]
-        result0_image_gif = calculator.result_image_gif[1]
-        result_image_gif_tg = calculator.result_image_gif_tg[0]
-        result0_image_gif_tg = calculator.result_image_gif_tg[1]
+        deal_result_image_gif = calculator.deal_result_image_gif[0]
+        deal_result0_image_gif = calculator.deal_result_image_gif[1]
+        deal_result_image_gif_tg = calculator.deal_result_image_gif_tg[0]
+        deal_result0_image_gif_tg = calculator.deal_result_image_gif_tg[1]
 
         result_siroco_gif = calculator.result_siroco_gif[0]
         result0_siroco_gif = calculator.result_siroco_gif[1]
@@ -3194,9 +3194,9 @@ def change_rank2(now,job_type,ele_skill):
                     canvas_res.itemconfig(calculator.res_wep, fill="white")
                 c_rank_stat3=rank_stat3
                 c_rank_inv=rank_inv
-                image_gif_changed=result_image_gif
+                image_gif_changed=deal_result_image_gif
                 siroco_gif_changed=result_siroco_gif
-                image_gif_changed_tg=result_image_gif_tg
+                image_gif_changed_tg=deal_result_image_gif_tg
                 siroco_gif_changed_tg=result_siroco_gif_tg
             elif calculator.tg_groggy == 1:
                 image_changed = calculator.deal_result_image_on[1][now]
@@ -3215,9 +3215,9 @@ def change_rank2(now,job_type,ele_skill):
                     canvas_res.itemconfig(calculator.res_wep, fill="white")
                 c_rank_stat3=rank0_stat3
                 c_rank_inv=rank0_inv
-                image_gif_changed=result0_image_gif
+                image_gif_changed=deal_result0_image_gif
                 siroco_gif_changed=result0_siroco_gif
-                image_gif_changed_tg=result0_image_gif_tg
+                image_gif_changed_tg=deal_result0_image_gif_tg
                 siroco_gif_changed_tg=result0_siroco_gif_tg
 
 
