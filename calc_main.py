@@ -154,34 +154,53 @@ class Calculator:
         self.buf_jingak_tg = 0
         self.buf_jingak: Button = None
 
+        ## GUI 메인
+        self.window = tkinter.Tk()
+
+        window = self.window
+        window.title("에픽 조합 자동 계산기")
+        window.geometry("910x720+0+0")
+        window.resizable(False, False)
+        self.place_center(window, 0)
+        window.iconbitmap(r'ext_img/icon.ico')
+
+        self.dark_main = self._from_rgb((32, 34, 37))
+        self.dark_sub = self._from_rgb((50, 46, 52))
+        self.dark_blue = self._from_rgb((29, 30, 36))
+        self.result_sub = self._from_rgb((31, 28, 31))
+
+        self.guide_font = tkinter.font.Font(family="맑은 고딕", size=10, weight='bold')
+        self.small_font = tkinter.font.Font(family="맑은 고딕", size=8, weight='bold')
+        self.mid_font = tkinter.font.Font(family="맑은 고딕", size=14, weight='bold')
+
+        bg_img = self.get_photo_image("ext_img/bg_img.png")
+        bg_wall = tkinter.Label(window, image=bg_img)
+        bg_wall.place(x=-2, y=0)
+        window.configure(bg=self.dark_main)
+
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
         self.photo_images.append(photo_image)
 
         return photo_image
 
+    @staticmethod
+    def place_center(toplevel, move_x):
+        toplevel.update_idletasks()
+        w = toplevel.winfo_screenwidth()
+        h = toplevel.winfo_screenheight()
+        size = tuple(int(_) for _ in toplevel.geometry().split('+')[0].split('x'))
+        x = w/2 - size[0]/2
+        y = h/2 - size[1]/2
+        toplevel.geometry("%dx%d+%d+%d" % (size + (x+move_x, y)))
+
+    @staticmethod
+    def _from_rgb(rgb):
+        return "#%02x%02x%02x" % rgb
+
 
 calculator = Calculator()
 
-
-def _from_rgb(rgb):
-    return "#%02x%02x%02x" % rgb
-
-
-dark_main=_from_rgb((32, 34, 37))
-dark_sub=_from_rgb((50, 46, 52))
-dark_blue=_from_rgb((29, 30, 36))
-result_sub=_from_rgb((31, 28, 31))
-
-
-def place_center(toplevel,move_x):
-    toplevel.update_idletasks()
-    w = toplevel.winfo_screenwidth()
-    h = toplevel.winfo_screenheight()
-    size = tuple(int(_) for _ in toplevel.geometry().split('+')[0].split('x'))
-    x = w/2 - size[0]/2
-    y = h/2 - size[1]/2
-    toplevel.geometry("%dx%d+%d+%d" % (size + (x+move_x, y)))
 
 def capture_screen(toplevel):
     nowx=toplevel.winfo_x()+8
@@ -202,23 +221,6 @@ all_list_num=0 #해당 사이클 당시 경우의 수
 
 equip_buttons = {}
 set_buttons = {}
-
-## GUI 메인
-self = tkinter.Tk()
-self.title("에픽 조합 자동 계산기")
-self.geometry("910x720+0+0")
-self.resizable(False, False)
-place_center(self,0)
-
-self.iconbitmap(r'ext_img/icon.ico')
-guide_font=tkinter.font.Font(family="맑은 고딕", size=10, weight='bold')
-small_font=tkinter.font.Font(family="맑은 고딕", size=8, weight='bold')
-mid_font=tkinter.font.Font(family="맑은 고딕", size=14, weight='bold')
-big_font=tkinter.font.Font(family="맑은 고딕", size=18, weight='bold')
-bg_img=calculator.get_photo_image("ext_img/bg_img.png")
-bg_wall=tkinter.Label(self,image=bg_img)
-bg_wall.place(x=-2,y=0)
-self.configure(bg=dark_main)
 
 ## API키 외부 모듈 (API_key.TXT 파일로도 기입 가능)
 try:
@@ -293,12 +295,13 @@ def update_log():
         load_show.save("preset.xlsx")
         load_show.close()
         update_window.destroy()
-    update_window=tkinter.Toplevel(self)
+
+    update_window = tkinter.Toplevel(calculator.window)
     update_window.attributes("-topmost", True)
     update_window.geometry("300x320+0+0")
     update_window.resizable(False, False)
-    place_center(update_window,0)
-    update_window.configure(bg=dark_main)
+    calculator.place_center(update_window, 0)
+    update_window.configure(bg=calculator.dark_main)
     def _on_mousewheel(event): #마우스 휠 스크롤링
         update_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
     scrollbar=Scrollbar(update_window)
@@ -313,12 +316,12 @@ def update_log():
     except:
         update_text='업데이트 텍스트 파일 누락'
 
-    update_canvas=tkinter.Canvas(update_window,width=276,height=250,bg=dark_main,bd=0)
+    update_canvas=tkinter.Canvas(update_window,width=276,height=250,bg=calculator.dark_main,bd=0)
     update_canvas.pack()
-    update_canvas.create_text(5,0,text=update_text,fill='white',font=guide_font,anchor='nw',width=280)
+    update_canvas.create_text(5,0,text=update_text,fill='white',font=calculator.guide_font,anchor='nw',width=280)
     update_canvas.bind("<MouseWheel>", _on_mousewheel)
-    tkinter.Label(update_window,bg=dark_main,font=guide_font,fg='red',text="2.X.X 버전이랑 계수 호환 X",anchor='w').pack()
-    tkinter.Button(update_window,font=small_font,command=donotshow,text="업데이트 전까지 보지않기").pack()
+    tkinter.Label(update_window,bg=calculator.dark_main,font=calculator.guide_font,fg='red',text="2.X.X 버전이랑 계수 호환 X",anchor='w').pack()
+    tkinter.Button(update_window,font=calculator.small_font,command=donotshow,text="업데이트 전까지 보지않기").pack()
 
     scrollbar.config(command=update_canvas.yview)
 
@@ -336,7 +339,7 @@ try:
         calc_update.update_preset() ## 업데이트: 외부모듈
 except PermissionError as error:
     tkinter.messagebox.showerror("에러","업데이트 실패. 엑셀을 닫고 다시 실행해주세요.")
-    self.destroy()
+    calculator.window.destroy()
 load_excel1.close()
 
 
@@ -1827,14 +1830,15 @@ result_upbox_img=calculator.get_photo_image('ext_img/bg_result_upbox.png')
 result_downbox_img=calculator.get_photo_image('ext_img/bg_result_downbox.png')
 result_sidebox_img=calculator.get_photo_image('ext_img/bg_result_sidebox.png')
 result_showbox_img=calculator.get_photo_image('ext_img/bg_result_showbox.png')
+
 def show_result(rank_list,job_type,ele_skill,cool_eff):
-    result_window = calculator.result_window = tkinter.Toplevel(self)
+    result_window = calculator.result_window = tkinter.Toplevel(calculator.window)
     result_window.attributes("-topmost", True)
     result_window.geometry("585x402")
     result_window.title("결과값")
     result_window.resizable(False,False)
-    result_window.configure(bg=dark_main)
-    canvas_res = calculator.canvas_res = Canvas(result_window, width=587, height=804, bd=0, bg=dark_main)
+    result_window.configure(bg=calculator.dark_main)
+    canvas_res = calculator.canvas_res = Canvas(result_window, width=587, height=804, bd=0, bg=calculator.dark_main)
     canvas_res.place(x=-2,y=-2)
     if job_type=='deal':
         result_bg=calculator.get_photo_image('ext_img/bg_result.png')
@@ -1854,9 +1858,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     calculator.stop_gif2 = 0
     job_name=jobup_select.get()[:-4]
     job_up_name=jobup_select.get()[-4:]
-    canvas_res.create_text(122,50,text="<직업>",font=guide_font,fill='white')
-    canvas_res.create_text(122,70,text=job_name,font=guide_font,fill='white')
-    canvas_res.create_text(122,87,text=job_up_name,font=guide_font,fill='white')
+    canvas_res.create_text(122,50,text="<직업>",font=calculator.guide_font,fill='white')
+    canvas_res.create_text(122,70,text=job_name,font=calculator.guide_font,fill='white')
+    canvas_res.create_text(122,87,text=job_up_name,font=calculator.guide_font,fill='white')
     know_set_list=['22400150','22400250','22400350','22400450','22400550','21400640','31400750',
                    '31400850','31400950','31401050','31401150','32401240','32401340','32401440']
 
@@ -1895,7 +1899,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
             calculator.cool_eff_text = '(쿨감X)'
             cool_eff_text_all='그로기(쿨감X)'
 
-        calculator.res_cool_what = canvas_res.create_text(122,114,text=cool_eff_text_all,font=small_font,fill='white')
+        calculator.res_cool_what = canvas_res.create_text(122,114,text=cool_eff_text_all,font=calculator.small_font,fill='white')
 
         rank0_list = calculator.rank_list[0] = rank_list[1]
         rank1_list = calculator.rank_list[1] = rank_list[0]
@@ -2076,8 +2080,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
             calculator.tagkgum_img = calculator.get_photo_image('ext_img/tagk_um.png')
 
             tagkgum = calculator.tagkgum = tkinter.Button(result_window, command = lambda: change_tagk(ele_skill,),
-                                                          image=calculator.tagkgum_img, bg=dark_main, borderwidth=0,
-                                                          activebackground=dark_main)
+                                                          image=calculator.tagkgum_img, bg=calculator.dark_main, borderwidth=0,
+                                                          activebackground=calculator.dark_main)
             tagkgum.place(x=182,y=7)
             tagkgum.command=change_tagk
         if job_up_name =='(진각)':
@@ -2210,16 +2214,16 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
             except:
                 pass
 
-        calculator.res_wep = canvas_res.create_text(12,22,text=rank_wep_name[0],font=guide_font,fill='white',anchor='w')
+        calculator.res_wep = canvas_res.create_text(12,22,text=rank_wep_name[0],font=calculator.guide_font,fill='white',anchor='w')
         if int(ele_skill) != 0:
             ele_change_toggle=1
-            calculator.res_ele = canvas_res.create_text(122,149,text="자속강X="+str(rank_dam_noele[0])+"%",fill='white',font=small_font)
+            calculator.res_ele = canvas_res.create_text(122,149,text="자속강X="+str(rank_dam_noele[0])+"%",fill='white',font=calculator.small_font)
 
-        calculator.res_dam = canvas_res.create_text(122,130,text=rank_dam[0],font=mid_font,fill='white')
+        calculator.res_dam = canvas_res.create_text(122,130,text=rank_dam[0],font=calculator.mid_font,fill='white')
         calculator.res_stat = canvas_res.create_text(50,293,text=rank_stat[0],fill='white')
         calculator.res_stat2 = canvas_res.create_text(163,263,text=rank_stat2[0],fill='white',anchor='w')
         calculator.res_stat3 = canvas_res.create_text(145+24,361,text=rank_stat3[0],fill='white')
-        calculator.res_inv = canvas_res.create_text(122,174,text=rank_inv[0],font=guide_font,fill='white')
+        calculator.res_inv = canvas_res.create_text(122,174,text=rank_inv[0],font=calculator.guide_font,fill='white')
 
         gif_images = calculator.gif_images
 
@@ -2255,7 +2259,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                     cn4=cn4+1
                 cn1=0
                 cn4=5
-                res_dam_list[j]=canvas_res.create_text(358,34+78*j,text=rank_dam[j],font=mid_font,fill='white')
+                res_dam_list[j]=canvas_res.create_text(358,34+78*j,text=rank_dam[j],font=calculator.mid_font,fill='white')
                 calculator.res_wep_img.append(canvas_res.create_image(304, 36+78*j, image=rank_wep_img[j]))
             except KeyError as error:
                 cn1=0
@@ -2288,7 +2292,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
         groggy_bt = calculator.groggy_bt = tkinter.Button(result_window,command=lambda:change_groggy(ele_skill),
                                                           image=calculator.tg_groggy_img1,
-                                                          fg='white',bg=dark_main,borderwidth=0,activebackground=dark_main)
+                                                          fg='white',bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main)
         groggy_bt.place(x=190,y=325)
         canvas_res.create_text(217, 382, text="버전=\n" + calculator.now_version, fill='white', anchor='c')
 
@@ -2494,19 +2498,19 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                     calculator.buf_jingak_tg = 0
 
             calculator.buf_jingak_exist = 1
-            buf_jingak = calculator.buf_jingak = tkinter.Button(result_window,command=change_buf_jingak,image=buf_jingak_img2,bg=dark_main,borderwidth=0,activebackground=dark_main)
+            buf_jingak = calculator.buf_jingak = tkinter.Button(result_window,command=change_buf_jingak,image=buf_jingak_img2,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main)
             buf_jingak.place(x=172,y=7)
             buf_jingak.image=buf_jingak_img2
             buf_jingak.command=change_buf_jingak
 
-        calculator.res_wep = canvas_res.create_text(12,22,text=rank_wep_name3[0],font=guide_font,fill='white',anchor='w')
-        canvas_res.create_text(122-55,193,text=rank_inv1[0],font=small_font,fill='white',anchor="w")
-        res_buf = calculator.res_buf = canvas_res.create_text(122,125,text=rank_buf3[0],font=mid_font,fill='white')
-        calculator.res_buf_type_what = canvas_res.create_text(122,145,text="총합 기준",font=guide_font,fill='white')
+        calculator.res_wep = canvas_res.create_text(12,22,text=rank_wep_name3[0],font=calculator.guide_font,fill='white',anchor='w')
+        canvas_res.create_text(122-55,193,text=rank_inv1[0],font=calculator.small_font,fill='white',anchor="w")
+        res_buf = calculator.res_buf = canvas_res.create_text(122,125,text=rank_buf3[0],font=calculator.mid_font,fill='white')
+        calculator.res_buf_type_what = canvas_res.create_text(122,145,text="총합 기준",font=calculator.guide_font,fill='white')
         calculator.res_buf_ex = [
-            canvas_res.create_text(64, 283, text=rank_buf_ex3[0][0], font=small_font, fill='white'),
-            canvas_res.create_text(183, 261, text=rank_buf_ex3[0][1], font=small_font, fill='white'),
-            canvas_res.create_text(183, 318, text=rank_buf_ex3[0][2], font=small_font, fill='white')
+            canvas_res.create_text(64, 283, text=rank_buf_ex3[0][0], font=calculator.small_font, fill='white'),
+            canvas_res.create_text(183, 261, text=rank_buf_ex3[0][1], font=calculator.small_font, fill='white'),
+            canvas_res.create_text(183, 318, text=rank_buf_ex3[0][2], font=calculator.small_font, fill='white')
         ]
 
         gif_images = calculator.gif_images
@@ -2543,7 +2547,7 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                     cn6=cn6+1
                 cn1=0
                 cn6=5
-                temp_buf=canvas_res.create_text(358,34+78*j,text=rank_buf3[j],font=mid_font,fill='white')
+                temp_buf=canvas_res.create_text(358,34+78*j,text=rank_buf3[j],font=calculator.mid_font,fill='white')
                 calculator.res_wep_img.append(canvas_res.create_image(304,36+78*j,image=rank_wep_img3[j]))
                 res_buf_list[j]=temp_buf
             except KeyError as error:
@@ -2551,9 +2555,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                 cn6=5
         length=len(rank_list[0])
 
-        rank_type_but1=tkinter.Button(result_window,command=lambda:change_rank_type(1),image=type1_img,bg=dark_main,borderwidth=0,activebackground=dark_main);rank_type_but1.place(x=8,y=337)
-        rank_type_but2=tkinter.Button(result_window,command=lambda:change_rank_type(2),image=type2_img,bg=dark_main,borderwidth=0,activebackground=dark_main);rank_type_but2.place(x=84,y=337)
-        rank_type_but3=tkinter.Button(result_window,command=lambda:change_rank_type(3),image=type3_img,bg=dark_main,borderwidth=0,activebackground=dark_main);rank_type_but3.place(x=160,y=337)
+        rank_type_but1=tkinter.Button(result_window,command=lambda:change_rank_type(1),image=type1_img,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main);rank_type_but1.place(x=8,y=337)
+        rank_type_but2=tkinter.Button(result_window,command=lambda:change_rank_type(2),image=type2_img,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main);rank_type_but2.place(x=84,y=337)
+        rank_type_but3=tkinter.Button(result_window,command=lambda:change_rank_type(3),image=type3_img,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main);rank_type_but3.place(x=160,y=337)
         rank_type_but1.image=type1_img
         rank_type_but2.image=type2_img
         rank_type_but3.image=type3_img
@@ -2582,11 +2586,11 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
         load_presetr.close()
 
-    res_bt1=tkinter.Button(result_window,command=lambda:change_rank(0,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=dark_blue,borderwidth=0,activebackground=dark_blue);res_bt1.place(x=486,y=20+78*0)
-    res_bt2=tkinter.Button(result_window,command=lambda:change_rank(1,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=dark_blue,borderwidth=0,activebackground=dark_blue)
-    res_bt3=tkinter.Button(result_window,command=lambda:change_rank(2,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=dark_blue,borderwidth=0,activebackground=dark_blue)
-    res_bt4=tkinter.Button(result_window,command=lambda:change_rank(3,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=dark_blue,borderwidth=0,activebackground=dark_blue)
-    res_bt5=tkinter.Button(result_window,command=lambda:change_rank(4,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=dark_blue,borderwidth=0,activebackground=dark_blue)
+    res_bt1=tkinter.Button(result_window,command=lambda:change_rank(0,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue);res_bt1.place(x=486,y=20+78*0)
+    res_bt2=tkinter.Button(result_window,command=lambda:change_rank(1,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
+    res_bt3=tkinter.Button(result_window,command=lambda:change_rank(2,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
+    res_bt4=tkinter.Button(result_window,command=lambda:change_rank(3,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
+    res_bt5=tkinter.Button(result_window,command=lambda:change_rank(4,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
     if length>1:
         res_bt2.place(x=486,y=20+78*1)
     if length>2:
@@ -2596,23 +2600,22 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     if length>4:
         res_bt5.place(x=486,y=20+78*4)
 
-    show_tag_but=tkinter.Button(result_window,command=lambda:show_set_name(job_type),image=show_tag_img,bg=dark_sub,borderwidth=0,activebackground=dark_sub)
+    show_tag_but=tkinter.Button(result_window,command=lambda:show_set_name(job_type),image=show_tag_img,bg=calculator.dark_sub,borderwidth=0,activebackground=calculator.dark_sub)
     show_tag_but.place(x=173,y=158-26)
     show_tag_but.image=show_tag_img
 
-    capture_but=tkinter.Button(result_window,command=lambda:capture_screen(result_window),image=capture_img,bg=dark_sub,borderwidth=0,activebackground=dark_sub)
+    capture_but=tkinter.Button(result_window,command=lambda:capture_screen(result_window),image=capture_img,bg=calculator.dark_sub,borderwidth=0,activebackground=calculator.dark_sub)
     capture_but.place(x=173-164,y=158-26)
     capture_but.image=capture_img
     canvas_res.image=result_bg,random_npc_img
     res_bt1.image=show_detail_img
-    place_center(result_window,0)
+    calculator.place_center(result_window, 0)
 
 
 result_gauge_bar_img=calculator.get_photo_image('ext_img/result_gauge_bar.png')
 result_gauge_img=calculator.get_photo_image('ext_img/result_gauge.png')
 result_checklist_img=calculator.get_photo_image('ext_img/result_show_checklist.png')
 def show_result_dealer():
-    global guide_font
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
     now_rank_num = calculator.now_rank_num
@@ -2679,7 +2682,7 @@ def show_result_dealer():
             canvas_res.itemconfig(result_cool_canvas_list[i],text=str(cool_list[i])+"%",fill=fg)
             canvas_res.delete('not_overlap')
     else:
-        canvas_res.create_text(58,425,text='<쿨감%>',font=guide_font,fill='white')
+        canvas_res.create_text(58,425,text='<쿨감%>',font=calculator.guide_font,fill='white')
         for i in range(0,18):
             lvl_type_list=[1,5,10,15,20,25,30,35,40,45,50,60,70,75,80,85,95,100]
             canvas_res.create_text(20,450+i*14,text='Lv.',fill='white',anchor='w')
@@ -2710,10 +2713,10 @@ def show_result_dealer():
             ratio_value_text="<지속딜 우세>";ratio_value_fg='sky blue';check_list3_fg='gray';check_list3_tg=font_overstrike
     else:
         ratio_value_text="<올라운더>";ratio_value_fg='ivory2';check_list3_fg='gray';check_list3_tg=font_overstrike
-    canvas_res.create_text(213+int(move_gauge),465,text=str(round(groggy_sustain_ratio-100,1))+"%",font=guide_font,fill=ratio_color,anchor='c',tags=('not_overlap',))
-    canvas_res.create_text(210,483,text=ratio_value_text,font=guide_font,fill=ratio_value_fg,anchor='c',tags=('not_overlap',))
+    canvas_res.create_text(213+int(move_gauge),465,text=str(round(groggy_sustain_ratio-100,1))+"%",font=calculator.guide_font,fill=ratio_color,anchor='c',tags=('not_overlap',))
+    canvas_res.create_text(210,483,text=ratio_value_text,font=calculator.guide_font,fill=ratio_value_fg,anchor='c',tags=('not_overlap',))
 
-    canvas_res.create_text(189,521,text="<세팅 체크리스트>",font=guide_font,fill='white',tags=('not_overlap',))
+    canvas_res.create_text(189,521,text="<세팅 체크리스트>",font=calculator.guide_font,fill='white',tags=('not_overlap',))
     if (-sum(cool_list)/18)>15:
         check_list4_fg="white";check_list4_tg=font_normal
     else:
@@ -2779,33 +2782,33 @@ def show_result_dealer():
     def del_check_list(num):
         canvas_res.delete("mouse_overlap")
 
-    explain_ratio_bt=tkinter.Label(result_window,image=result_checklist_img,font=small_font,bd=0,bg=result_sub);
+    explain_ratio_bt=tkinter.Label(result_window,image=result_checklist_img,font=calculator.small_font,bd=0,bg=calculator.result_sub);
     explain_ratio_bt.place(x=265,y=470)
     explain_ratio_bt.bind("<Enter>",show_explain_ratio);explain_ratio_bt.bind("<Leave>",del_explain_ratio)
 
-    explain_damage_bt=tkinter.Label(result_window,image=result_checklist_img,font=small_font,bd=0,bg=result_sub);
+    explain_damage_bt=tkinter.Label(result_window,image=result_checklist_img,font=calculator.small_font,bd=0,bg=calculator.result_sub);
     explain_damage_bt.place(x=146,y=76)
     explain_damage_bt.bind("<Enter>",show_explain_damage);explain_damage_bt.bind("<Leave>",del_explain_damage)
 
-    check_list1_bt=tkinter.Label(result_window,image=result_checklist_img,font=small_font,bd=0,bg=result_sub);
+    check_list1_bt=tkinter.Label(result_window,image=result_checklist_img,font=calculator.small_font,bd=0,bg=calculator.result_sub);
     check_list1_bt.place(x=265,y=533)
     check_list1_bt.bind("<Enter>",show_check_list1);check_list1_bt.bind("<Leave>",del_check_list1)
-    check_list2_bt=tkinter.Label(result_window,image=result_checklist_img,font=small_font,bd=0,bg=result_sub);
+    check_list2_bt=tkinter.Label(result_window,image=result_checklist_img,font=calculator.small_font,bd=0,bg=calculator.result_sub);
     check_list2_bt.place(x=265,y=553)
     check_list2_bt.bind("<Enter>",show_check_list2);check_list2_bt.bind("<Leave>",del_check_list2)
-    check_list3_bt=tkinter.Label(result_window,image=result_checklist_img,font=small_font,bd=0,bg=result_sub);
+    check_list3_bt=tkinter.Label(result_window,image=result_checklist_img,font=calculator.small_font,bd=0,bg=calculator.result_sub);
     check_list3_bt.place(x=265,y=583)
     check_list3_bt.bind("<Enter>",show_check_list3);check_list3_bt.bind("<Leave>",del_check_list3)
-    check_list4_bt=tkinter.Label(result_window,image=result_checklist_img,font=small_font,bd=0,bg=result_sub);
+    check_list4_bt=tkinter.Label(result_window,image=result_checklist_img,font=calculator.small_font,bd=0,bg=calculator.result_sub);
     check_list4_bt.place(x=265,y=603)
     check_list4_bt.bind("<Enter>",show_check_list4);check_list4_bt.bind("<Leave>",del_check_list4)
-    check_list5_bt=tkinter.Label(result_window,image=result_checklist_img,font=small_font,bd=0,bg=result_sub);
+    check_list5_bt=tkinter.Label(result_window,image=result_checklist_img,font=calculator.small_font,bd=0,bg=calculator.result_sub);
     check_list5_bt.place(x=265,y=623)
     check_list5_bt.bind("<Enter>",show_check_list5);check_list5_bt.bind("<Leave>",del_check_list5)
-    check_list6_bt=tkinter.Label(result_window,image=result_checklist_img,font=small_font,bd=0,bg=result_sub);
+    check_list6_bt=tkinter.Label(result_window,image=result_checklist_img,font=calculator.small_font,bd=0,bg=calculator.result_sub);
     check_list6_bt.place(x=265,y=653)
     check_list6_bt.bind("<Enter>",show_check_list6);check_list6_bt.bind("<Leave>",del_check_list6)
-    check_list7_bt=tkinter.Label(result_window,image=result_checklist_img,font=small_font,bd=0,bg=result_sub);
+    check_list7_bt=tkinter.Label(result_window,image=result_checklist_img,font=calculator.small_font,bd=0,bg=calculator.result_sub);
     check_list7_bt.place(x=265,y=673)
     check_list7_bt.bind("<Enter>",show_check_list7);check_list7_bt.bind("<Leave>",del_check_list7)
 
@@ -2848,7 +2851,7 @@ def show_result_dealer():
 
         return result_explain+result_str
 
-    style_compare_bt=tkinter.Label(result_window,image=style_compare_img,bd=0,bg=result_sub)
+    style_compare_bt=tkinter.Label(result_window,image=style_compare_img,bd=0,bg=calculator.result_sub)
     style_compare_bt.place(x=255,y=508)
     style_compare_bt.bind("<Enter>",show_check_style);style_compare_bt.bind("<Leave>",del_check_style)
 
@@ -3546,7 +3549,7 @@ def change_rank_type2(in_type):
                     canvas_res.itemconfig(res_img_list[str(j)+str(i)],image=image_changed_all[j][str(i)])
                     cn2=cn2+2
                 cn2=0
-                canvas_res.itemconfig(calculator.res_buf_list[j],text=rank_changed[j],font=mid_font,fill='white')
+                canvas_res.itemconfig(calculator.res_buf_list[j],text=rank_changed[j],font=calculator.mid_font,fill='white')
                 canvas_res.itemconfig(calculator.res_wep_img[j], image=wep_img_changed[j])
             except KeyError as error:
                 c=1
@@ -3606,119 +3609,120 @@ def costum(auto):
         custom_window.destroy()
     except:
         pass
-    custom_window=tkinter.Toplevel(self)
+
+    custom_window=tkinter.Toplevel(calculator.window)
     custom_window.attributes("-topmost", True)
     custom_window.geometry("620x400+750+20")
 
     load_preset=load_workbook("preset.xlsx",data_only=True)
     db_preset=load_preset["custom"]
 
-    tkinter.Label(custom_window,text="<쿨감보정>",font=mid_font).place(x=100,y=10)
-    tkinter.Label(custom_window,text="그로기   =          %",font=guide_font).place(x=160,y=50) ##Y11/Z11
+    tkinter.Label(custom_window,text="<쿨감보정>",font=calculator.mid_font).place(x=100,y=10)
+    tkinter.Label(custom_window,text="그로기   =          %",font=calculator.guide_font).place(x=160,y=50) ##Y11/Z11
     cool_con=tkinter.Entry(custom_window,width=5);cool_con.place(x=230,y=52)
     cool_con.insert(END,db_preset['B2'].value)
-    tkinter.Label(custom_window,text="지속딜   =          %",font=guide_font).place(x=10,y=50) ##Y11/Z11
+    tkinter.Label(custom_window,text="지속딜   =          %",font=calculator.guide_font).place(x=10,y=50) ##Y11/Z11
     cool_con2=tkinter.Entry(custom_window,width=5);cool_con2.place(x=80,y=52)
     cool_con2.insert(END,db_preset['B20'].value)
 
-    tkinter.Label(custom_window,text="<딜러장비>",font=mid_font).place(x=100,y=85)
+    tkinter.Label(custom_window,text="<딜러장비>",font=calculator.mid_font).place(x=100,y=85)
     tkinter.Label(custom_window,text="% 입력창은 그만큼 %딜증가로 환산한다는 뜻",fg="Red").place(x=30,y=120)
-    tkinter.Label(custom_window,text="선택벨트=  자동",font=guide_font).place(x=160,y=155) ##O164
+    tkinter.Label(custom_window,text="선택벨트=  자동",font=calculator.guide_font).place(x=160,y=155) ##O164
     cus1=tkinter.Entry(custom_window,width=5)
     cus1.insert(END,0)
-    tkinter.Label(custom_window,text="선택신발=          %",font=guide_font).place(x=160,y=185) ##O180
+    tkinter.Label(custom_window,text="선택신발=          %",font=calculator.guide_font).place(x=160,y=185) ##O180
     cus2=tkinter.Entry(custom_window,width=5);cus2.place(x=230,y=187)
     cus2.insert(END,db_preset['B4'].value)
-    tkinter.Label(custom_window,text="베테랑=",font=guide_font).place(x=160,y=215) ##G276
+    tkinter.Label(custom_window,text="베테랑=",font=calculator.guide_font).place(x=160,y=215) ##G276
     lvl_list=['전설↓','영웅↑']
     cus3=tkinter.ttk.Combobox(custom_window,width=5,values=lvl_list); cus3.place(x=230,y=217)
     cus3.set(db_preset['B12'].value)
-    tkinter.Label(custom_window,text="먼동강화=          강",font=guide_font).place(x=160,y=245)
+    tkinter.Label(custom_window,text="먼동강화=          강",font=calculator.guide_font).place(x=160,y=245)
     lvl_list=[10,11,12,13]
     cus4=tkinter.ttk.Combobox(custom_window,width=2,values=lvl_list); cus4.place(x=230,y=247)
     cus4.set(db_preset['B13'].value)
 
 
-    tkinter.Label(custom_window,text="흐름상의=          %",font=guide_font).place(x=10,y=155) ##O100
+    tkinter.Label(custom_window,text="흐름상의=          %",font=calculator.guide_font).place(x=10,y=155) ##O100
     cus6=tkinter.Entry(custom_window,width=5);cus6.place(x=80,y=157)
     cus6.insert(END,db_preset['B5'].value)
-    tkinter.Label(custom_window,text="흐름하의=          %",font=guide_font).place(x=10,y=185) ##O127
+    tkinter.Label(custom_window,text="흐름하의=          %",font=calculator.guide_font).place(x=10,y=185) ##O127
     cus7=tkinter.Entry(custom_window,width=5);cus7.place(x=80,y=187)
     cus7.insert(END,db_preset['B6'].value)
-    tkinter.Label(custom_window,text="흐름어깨=          %",font=guide_font).place(x=10,y=215) ##O147
+    tkinter.Label(custom_window,text="흐름어깨=          %",font=calculator.guide_font).place(x=10,y=215) ##O147
     cus8=tkinter.Entry(custom_window,width=5);cus8.place(x=80,y=217)
     cus8.insert(END,db_preset['B7'].value)
-    tkinter.Label(custom_window,text="흐름벨트=          %",font=guide_font).place(x=10,y=245) ##O163
+    tkinter.Label(custom_window,text="흐름벨트=          %",font=calculator.guide_font).place(x=10,y=245) ##O163
     cus9=tkinter.Entry(custom_window,width=5);cus9.place(x=80,y=247)
     cus9.insert(END,db_preset['B8'].value)
-    tkinter.Label(custom_window,text="흐름신발=          %",font=guide_font).place(x=10,y=275) ##O179
+    tkinter.Label(custom_window,text="흐름신발=          %",font=calculator.guide_font).place(x=10,y=275) ##O179
     cus10=tkinter.Entry(custom_window,width=5);cus10.place(x=80,y=277)
     cus10.insert(END,db_preset['B9'].value)
-    tkinter.Label(custom_window,text="흐름2셋=           %",font=guide_font).place(x=10,y=305) ##O295
+    tkinter.Label(custom_window,text="흐름2셋=           %",font=calculator.guide_font).place(x=10,y=305) ##O295
     cus11=tkinter.Entry(custom_window,width=5);cus11.place(x=80,y=307)
     cus11.insert(END,db_preset['B10'].value)
-    tkinter.Label(custom_window,text="흐름3셋=           %",font=guide_font).place(x=10,y=335) ##O296,O297
+    tkinter.Label(custom_window,text="흐름3셋=           %",font=calculator.guide_font).place(x=10,y=335) ##O296,O297
     cus12=tkinter.Entry(custom_window,width=5);cus12.place(x=80,y=337)
     cus12.insert(END,db_preset['B11'].value)
 
-    tkinter.Label(custom_window,text="<버퍼설정>",font=mid_font,fg='blue').place(x=410,y=5)
+    tkinter.Label(custom_window,text="<버퍼설정>",font=calculator.mid_font,fg='blue').place(x=410,y=5)
     tkinter.Label(custom_window,text="노증폭/극마부/극찬작 기준 스탯에서\n자신의 스탯이 얼마나 가감되는지 기입",fg="Red").place(x=350,y=33)
-    tkinter.Label(custom_window,text="1각스탯+          ",font=guide_font).place(x=320,y=80) ##
+    tkinter.Label(custom_window,text="1각스탯+          ",font=calculator.guide_font).place(x=320,y=80) ##
     c_stat=tkinter.Entry(custom_window,width=7);c_stat.place(x=390,y=82)
     c_stat.insert(END,db_preset['H1'].value)
-    tkinter.Label(custom_window,text="축복스탯+          ",font=guide_font).place(x=470,y=80) ##
+    tkinter.Label(custom_window,text="축복스탯+          ",font=calculator.guide_font).place(x=470,y=80) ##
     b_stat=tkinter.Entry(custom_window,width=7);b_stat.place(x=540,y=82)
     b_stat.insert(END,db_preset['H6'].value)
     three=[0,1,2,3];two=[0,1,2]
-    tkinter.Label(custom_window,text="축복칭호=",font=guide_font).place(x=320,y=110)
+    tkinter.Label(custom_window,text="축복칭호=",font=calculator.guide_font).place(x=320,y=110)
     b_style_lvl=tkinter.ttk.Combobox(custom_window,width=5,values=three); b_style_lvl.place(x=390,y=112) ##
     b_style_lvl.set(db_preset['H2'].value)
-    tkinter.Label(custom_window,text="1각칭호=",font=guide_font).place(x=470,y=110)
+    tkinter.Label(custom_window,text="1각칭호=",font=calculator.guide_font).place(x=470,y=110)
     c_style_lvl=tkinter.ttk.Combobox(custom_window,width=5,values=two); c_style_lvl.place(x=540,y=112) ##
     c_style_lvl.set(db_preset['H3'].value)
-    tkinter.Label(custom_window,text="축복플티=",font=guide_font).place(x=320,y=140)
+    tkinter.Label(custom_window,text="축복플티=",font=calculator.guide_font).place(x=320,y=140)
     b_plt=tkinter.ttk.Combobox(custom_window,width=5,values=two); b_plt.place(x=390,y=142) ##
     b_plt.set(db_preset['H4'].value)
-    tkinter.Label(custom_window,text="축복클쳐=",font=guide_font).place(x=470,y=140)
+    tkinter.Label(custom_window,text="축복클쳐=",font=calculator.guide_font).place(x=470,y=140)
     b_cri=tkinter.ttk.Combobox(custom_window,width=5,values=[0,1]); b_cri.place(x=540,y=142) ##
     b_cri.set(db_preset['H5'].value)
     aria_value=['항상증폭','템에따라','항상미증폭']
-    tkinter.Label(custom_window,text="아리아/퍼펫 증폭율 여부=",font=guide_font).place(x=320,y=170)
+    tkinter.Label(custom_window,text="아리아/퍼펫 증폭율 여부=",font=calculator.guide_font).place(x=320,y=170)
     aria_up=tkinter.ttk.Combobox(custom_window,values=aria_value,width=10);aria_up.place(x=540-55,y=170)
     aria_up.set(db_preset['H7'].value)
 
 
-    tkinter.Label(custom_window,text="<딜러속강>",font=mid_font).place(x=410,y=175+70)
-    tkinter.Label(custom_window,text="주속성=",font=guide_font).place(x=320,y=210+70)
+    tkinter.Label(custom_window,text="<딜러속강>",font=calculator.mid_font).place(x=410,y=175+70)
+    tkinter.Label(custom_window,text="주속성=",font=calculator.guide_font).place(x=320,y=210+70)
     ele_list=['화','수','명','암']
     ele_type=tkinter.ttk.Combobox(custom_window,width=5,values=ele_list); ele_type.place(x=390,y=212+70) ##
     ele_type.set(db_preset['B1'].value)
-    tkinter.Label(custom_window,text="마부총합=",font=guide_font).place(x=470,y=210+70)
+    tkinter.Label(custom_window,text="마부총합=",font=calculator.guide_font).place(x=470,y=210+70)
     ele1=tkinter.Entry(custom_window,width=7); ele1.place(x=540,y=212+70) ##
     ele1.insert(END,db_preset['B14'].value)
-    tkinter.Label(custom_window,text="오라속강=",font=guide_font).place(x=470,y=240+70)
+    tkinter.Label(custom_window,text="오라속강=",font=calculator.guide_font).place(x=470,y=240+70)
     ele2=tkinter.Entry(custom_window,width=7); ele2.place(x=540,y=242+70) ##
     ele2.insert(END,db_preset['B15'].value)
-    tkinter.Label(custom_window,text=" 젬 속강=",font=guide_font).place(x=470,y=270+70)
+    tkinter.Label(custom_window,text=" 젬 속강=",font=calculator.guide_font).place(x=470,y=270+70)
     ele3=tkinter.Entry(custom_window,width=7); ele3.place(x=540,y=272+70) ##
     ele3.insert(END,db_preset['B16'].value)
-    #tkinter.Label(custom_window,text="스킬속강= 자동",font=guide_font).place(x=320,y=210+70)
+    #tkinter.Label(custom_window,text="스킬속강= 자동",font=calculator.guide_font).place(x=320,y=210+70)
     ele4=tkinter.Entry(custom_window,width=7); ##ele4.place(x=390,y=212) ## 자속강 비활성화
     ele4.insert(END,db_preset['B17'].value)
-    tkinter.Label(custom_window,text=" 몹 속저=",font=guide_font).place(x=320,y=240+70)
+    tkinter.Label(custom_window,text=" 몹 속저=",font=calculator.guide_font).place(x=320,y=240+70)
     ele5=tkinter.Entry(custom_window,width=7); ele5.place(x=390,y=242+70) ##
     ele5.insert(END,db_preset['B18'].value)
-    tkinter.Label(custom_window,text="버퍼속깎=",font=guide_font).place(x=320,y=270+70)
+    tkinter.Label(custom_window,text="버퍼속깎=",font=calculator.guide_font).place(x=320,y=270+70)
     ele6=tkinter.Entry(custom_window,width=7); ele6.place(x=390,y=272+70) ##
     ele6.insert(END,db_preset['B19'].value)
-    tkinter.Label(custom_window,font=guide_font,fg="red",text="반드시 메인창 SAVE 버튼을 눌러야 세이브 슬롯에 저장됩니다").place(x=143,y=370)
+    tkinter.Label(custom_window,font=calculator.guide_font,fg="red",text="반드시 메인창 SAVE 버튼을 눌러야 세이브 슬롯에 저장됩니다").place(x=143,y=370)
 
     load_preset.close()
     save_command=lambda:save_custom(ele_type.get(),cool_con.get(),cus1.get(),cus2.get(),cus3.get(),cus4.get(),
                                     cus6.get(),cus7.get(),cus8.get(),cus9.get(),cus10.get(),cus11.get(),cus12.get(),
                                     c_stat.get(),b_stat.get(),b_style_lvl.get(),c_style_lvl.get(),b_plt.get(),b_cri.get(),
                                     ele1.get(),ele2.get(),ele3.get(),ele4.get(),ele5.get(),ele6.get(),aria_up.get(),cool_con2.get())
-    tkinter.Button(custom_window,text="저장하기",font=mid_font,command=save_command,bg="lightyellow").place(x=190,y=295)
+    tkinter.Button(custom_window,text="저장하기",font=calculator.mid_font,command=save_command,bg="lightyellow").place(x=190,y=295)
     if auto==1:
         global auto_saved
         auto_saved=1
@@ -3940,7 +3944,8 @@ def change_list_name():
         change_window.destroy()
     except:
         pass
-    change_window=tkinter.Toplevel(self)
+
+    change_window = tkinter.Toplevel(calculator.window)
     change_window.geometry("390x320+750+200")
     tkinter.Label(change_window,text="1번슬롯").place(x=20,y=10)
     tkinter.Label(change_window,text="2번슬롯").place(x=20,y=35)
@@ -3984,7 +3989,7 @@ def change_list_name():
     entry19=tkinter.Entry(change_window,width=10);entry19.place(x=295,y=212);entry19.insert(END,save_name_list[18])
     entry20=tkinter.Entry(change_window,width=10);entry20.place(x=295,y=237);entry20.insert(END,save_name_list[19])
 
-    tkinter.Button(change_window,text="저장",font=mid_font,command=lambda:change_savelist([entry1.get(),entry2.get(),entry3.get(),entry4.get(),entry5.get(),
+    tkinter.Button(change_window,text="저장",font=calculator.mid_font,command=lambda:change_savelist([entry1.get(),entry2.get(),entry3.get(),entry4.get(),entry5.get(),
                                                                                          entry6.get(),entry7.get(),entry8.get(),entry9.get(),entry10.get(),
                                                                                          entry11.get(),entry12.get(),entry13.get(),entry14.get(),entry15.get(),
                                                                                          entry16.get(),entry17.get(),entry18.get(),entry19.get(),entry20.get()])).place(x=170,y=270)
@@ -4165,18 +4170,19 @@ def timeline_select():
         timeline_window.destroy()
     except:
         pass
-    timeline_window=tkinter.Toplevel(self)
+
+    timeline_window = tkinter.Toplevel(calculator.window)
     timeline_window.attributes("-topmost", True)
     timeline_window.geometry("310x150+750+20")
-    tkinter.Label(timeline_window,text="캐릭터명=\n(정확히)",font=guide_font).place(x=10,y=9)
+    tkinter.Label(timeline_window,text="캐릭터명=\n(정확히)",font=calculator.guide_font).place(x=10,y=9)
     cha_name=tkinter.Entry(timeline_window,width=13)
     cha_name.place(x=80,y=12)
-    tkinter.Label(timeline_window,text="서버명=",font=guide_font).place(x=10,y=59)
+    tkinter.Label(timeline_window,text="서버명=",font=calculator.guide_font).place(x=10,y=59)
     sever_list=['카인','디레지에','바칼','힐더','안톤','카시야스','프레이','시로코']
     serv_name=tkinter.ttk.Combobox(timeline_window,values=sever_list,width=11)
     serv_name.place(x=80,y=62)
     serv_name.set('카인')
-    load_timeline=tkinter.Button(timeline_window,command=lambda:show_timeline(cha_name.get(),serv_name.get()),text="불러오기",font=mid_font)
+    load_timeline=tkinter.Button(timeline_window,command=lambda:show_timeline(cha_name.get(),serv_name.get()),text="불러오기",font=calculator.mid_font)
     load_timeline.place(x=200,y=25)
     tkinter.Label(timeline_window,text="타임라인에 있는 에픽만 불러옵니다(일부X)",fg="Red").place(x=10,y=100)
     tkinter.Label(timeline_window,text="서버 불안정때매 안되면 여러번 눌러보세요",fg="Red").place(x=10,y=120)
@@ -4561,7 +4567,7 @@ def show_profile2(name,server):
     setting_str=def_result[0]
     setting_dict=def_result[1]
 
-    profile_window=tkinter.Toplevel(self)
+    profile_window = tkinter.Toplevel(calculator.window)
     profile_window.geometry("415x277")
     profile_window.resizable(False,False)
     canvas = Canvas(profile_window, width=417, height=297, bd=0)
@@ -4625,7 +4631,7 @@ def show_profile2(name,server):
         if cha_siroco_gif[i]!=None: play_gif_cha(0,i,show_res2,cha_siroco_gif)
 
 
-    canvas.create_text(233,17,text=setting_dict['무기명'],font=guide_font,fill='white',anchor='e')
+    canvas.create_text(233,17,text=setting_dict['무기명'],font=calculator.guide_font,fill='white',anchor='e')
     canvas.create_text(10,170,text=setting_dict['캐릭명'],fill='white',anchor='w')
     canvas.create_text(10,185,text=setting_dict['직업명'],fill='white',anchor='w')
     canvas.create_text(233,170,text=setting_dict['모험단'],fill='white',anchor='e')
@@ -4641,27 +4647,27 @@ def show_profile2(name,server):
 
     canvas.create_text(18,217,text='장비%=',font=show_font,fill='white',anchor='w')
     canvas.create_text(18+73,217,text=setting_dict['장비딜'],font=show_font,fill='white',anchor='w')
-    canvas.create_text(20+189,220,text='쿨감기대값\n='+setting_dict['쿨감'],font=small_font,fill='white', anchor='c')
+    canvas.create_text(20+189,220,text='쿨감기대값\n='+setting_dict['쿨감'],font=calculator.small_font,fill='white', anchor='c')
     canvas.create_text(18,252,text='세팅%=',font=show_font,fill='white',anchor='w')
     canvas.create_text(18+73,252,text=setting_dict['종합점수'],font=show_font,fill=rank_color,anchor='w')
 
-    canvas.create_text(254,22,text='강화/스탯\n',font=guide_font,fill='white',anchor='w')
-    canvas.create_text(254,6+25,text=setting_dict['스탯'],font=mid_font,fill='white',anchor='w')
-    canvas.create_text(254+83,14,text='무기='+setting_dict['무기강화'],font=guide_font,fill='white',anchor='w')
-    canvas.create_text(254+83,33,text='스탯='+setting_dict['스탯상세'],font=guide_font,fill='white',anchor='w')
+    canvas.create_text(254,22,text='강화/스탯\n',font=calculator.guide_font,fill='white',anchor='w')
+    canvas.create_text(254,6+25,text=setting_dict['스탯'],font=calculator.mid_font,fill='white',anchor='w')
+    canvas.create_text(254+83,14,text='무기='+setting_dict['무기강화'],font=calculator.guide_font,fill='white',anchor='w')
+    canvas.create_text(254+83,33,text='스탯='+setting_dict['스탯상세'],font=calculator.guide_font,fill='white',anchor='w')
 
-    canvas.create_text(254,22+50,text='속강작\n',font=guide_font,fill='white',anchor='w')
-    canvas.create_text(254,6+75,text=setting_dict['속강'],font=mid_font,fill='white',anchor='w')
+    canvas.create_text(254,22+50,text='속강작\n',font=calculator.guide_font,fill='white',anchor='w')
+    canvas.create_text(254,6+75,text=setting_dict['속강'],font=calculator.mid_font,fill='white',anchor='w')
     if setting_dict['속강종류']=='화': ele_type='火'; ele_color='red'
     elif setting_dict['속강종류']=='수': ele_type='水'; ele_color='blue'
     elif setting_dict['속강종류']=='명': ele_type='明'; ele_color='yellow'
     elif setting_dict['속강종류']=='암': ele_type='暗'; ele_color='purple'
     elif setting_dict['속강종류']=='모': ele_type='某'; ele_color='white'
-    canvas.create_text(254+83,22+50,text=ele_type,font=mid_font,fill=ele_color,anchor='w')
-    canvas.create_text(254+83+23,22+50,text='+'+setting_dict['속강상세'],font=mid_font,fill='white',anchor='w')
+    canvas.create_text(254+83,22+50,text=ele_type,font=calculator.mid_font,fill=ele_color,anchor='w')
+    canvas.create_text(254+83+23,22+50,text='+'+setting_dict['속강상세'],font=calculator.mid_font,fill='white',anchor='w')
 
-    canvas.create_text(254,22+100,text='딜플티\n',font=guide_font,fill='white',anchor='w')
-    canvas.create_text(254,6+125,text=setting_dict['플티'],font=mid_font,fill='white',anchor='w')
+    canvas.create_text(254,22+100,text='딜플티\n',font=calculator.guide_font,fill='white',anchor='w')
+    canvas.create_text(254,6+125,text=setting_dict['플티'],font=calculator.mid_font,fill='white',anchor='w')
     plt_img=[0,0]
     for i in [0,1]:
         if setting_dict['플티상세'][i]=='S': plt_img[i]=calculator.get_photo_image('ext_img/plt_best.png')
@@ -4671,8 +4677,8 @@ def show_profile2(name,server):
         else: plt_img[i]=calculator.get_photo_image('ext_img/plt_nope.png')
     img_plt1=canvas.create_image(350,124,image=plt_img[0]);img_plt2=canvas.create_image(390,124,image=plt_img[1])
 
-    canvas.create_text(254,22+150,text='룬/탈리\n',font=guide_font,fill='white',anchor='w')
-    canvas.create_text(254,6+175,text=setting_dict['탈리'],font=mid_font,fill='white',anchor='w')
+    canvas.create_text(254,22+150,text='룬/탈리\n',font=calculator.guide_font,fill='white',anchor='w')
+    canvas.create_text(254,6+175,text=setting_dict['탈리'],font=calculator.mid_font,fill='white',anchor='w')
     tal_img=[0,0]
     for i in [0,1]:
         if setting_dict['탈리상세'][i]=='S': tal_img[i]=calculator.get_photo_image('ext_img/talisman_unique.png')
@@ -4690,22 +4696,22 @@ def show_profile2(name,server):
         else: rune_color='black'
         rune_img[i]=canvas.create_rectangle(336+i*11+shift,184,336+6+i*11+shift,184+7,fill=rune_color,width=0)
 
-    canvas.create_text(254,22+200,text='스위칭\n',font=guide_font,fill='white',anchor='w')
-    canvas.create_text(254,6+225,text=setting_dict['스위칭'],font=mid_font,fill='white',anchor='w')
-    canvas.create_text(254+83,22+191,text=setting_dict['스위칭상세'],font=guide_font,fill='white',anchor='w')
-    canvas.create_text(254+83+30,22+210,text=setting_dict['스위칭최대'],font=guide_font,fill='white',anchor='w')
+    canvas.create_text(254,22+200,text='스위칭\n',font=calculator.guide_font,fill='white',anchor='w')
+    canvas.create_text(254,6+225,text=setting_dict['스위칭'],font=calculator.mid_font,fill='white',anchor='w')
+    canvas.create_text(254+83,22+191,text=setting_dict['스위칭상세'],font=calculator.guide_font,fill='white',anchor='w')
+    canvas.create_text(254+83+30,22+210,text=setting_dict['스위칭최대'],font=calculator.guide_font,fill='white',anchor='w')
 
 
     capture_img=calculator.get_photo_image('ext_img/capture_img.png')
-    capture_but=tkinter.Button(profile_window,command=lambda:calc_profile.make_profile_image(name,server,def_result),image=capture_img,bg=dark_sub,borderwidth=0,activebackground=dark_sub,anchor='nw')
+    capture_but=tkinter.Button(profile_window,command=lambda:calc_profile.make_profile_image(name,server,def_result),image=capture_img,bg=calculator.dark_sub,borderwidth=0,activebackground=calculator.dark_sub,anchor='nw')
     capture_but.place(x=378,y=248)
     def profile_detail():
         tkinter.messagebox.showinfo('세부보기',setting_str,parent=profile_window)
     show_detail_img=calculator.get_photo_image('ext_img/show_detail2.png')
-    show_detail=tkinter.Button(profile_window,command=profile_detail,image=show_detail_img,bg=dark_sub,borderwidth=0,activebackground=dark_sub,anchor='nw')
+    show_detail=tkinter.Button(profile_window,command=profile_detail,image=show_detail_img,bg=calculator.dark_sub,borderwidth=0,activebackground=calculator.dark_sub,anchor='nw')
     show_detail.place(x=179,y=239)
 
-    canvas.create_text(255,262,text='[ESC키로 닫기 가능]',font=guide_font,fill='white',anchor='w')
+    canvas.create_text(255,262,text='[ESC키로 닫기 가능]',font=calculator.guide_font,fill='white',anchor='w')
 
     capture_but.image=capture_img
     show_detail.image=show_detail_img
@@ -4800,18 +4806,18 @@ for i in file_list_wep:
 image_item_void=calculator.get_photo_image("ext_img/00000.png")
 
 sever_list=['카인','디레지에','바칼','힐더','안톤','카시야스','프레이','시로코']
-tkinter.Label(self,font=mid_font,fg="white",bg=dark_sub, text="<딜러 프로필 생성기>").place(x=301,y=401)
-tkinter.Label(self,fg="white",bg=dark_sub, text="서버명=").place(x=296,y=433)
-tkinter.Label(self,fg="white",bg=dark_sub, text="캐릭명=").place(x=296,y=460)
-sever_in=tkinter.ttk.Combobox(self,width=9,values=sever_list);sever_in.place(x=346,y=435)
+tkinter.Label(calculator.window,font=calculator.mid_font,fg="white",bg=calculator.dark_sub, text="<딜러 프로필 생성기>").place(x=301,y=401)
+tkinter.Label(calculator.window,fg="white",bg=calculator.dark_sub, text="서버명=").place(x=296,y=433)
+tkinter.Label(calculator.window,fg="white",bg=calculator.dark_sub, text="캐릭명=").place(x=296,y=460)
+sever_in=tkinter.ttk.Combobox(calculator.window,width=9,values=sever_list);sever_in.place(x=346,y=435)
 sever_in.set('카인')
-cha_Entry=tkinter.Entry(self,width=12);cha_Entry.place(x=346,y=462)
+cha_Entry=tkinter.Entry(calculator.window,width=12);cha_Entry.place(x=346,y=462)
 sever_in.bind('<Return>',lambda e:show_profile(str(cha_Entry.get()),str(sever_in.get())))
 cha_Entry.bind('<Return>',lambda e:show_profile(str(cha_Entry.get()),str(sever_in.get())))
 generate_cha=calculator.get_photo_image("ext_img/generate_cha.png")
-tkinter.Button(self,image=generate_cha,command=lambda:show_profile(str(cha_Entry.get()),str(sever_in.get())),borderwidth=0,activebackground=dark_sub,bg=dark_sub).place(x=440,y=434)
+tkinter.Button(calculator.window,image=generate_cha,command=lambda:show_profile(str(cha_Entry.get()),str(sever_in.get())),borderwidth=0,activebackground=calculator.dark_sub,bg=calculator.dark_sub).place(x=440,y=434)
 
-tkinter.Label(self,text='엔터로도 조회됩니다',font=guide_font,fg='white',bg=dark_sub).place(x=332,y=482)
+tkinter.Label(calculator.window,text='엔터로도 조회됩니다',font=calculator.guide_font,fg='white',bg=calculator.dark_sub).place(x=332,y=482)
 cha_caution_text="""장비%:  12부위장비+칭호클쳐의
            수준을 표현한 % (쿨감O)
            (계산기 값과 유사)
@@ -4819,15 +4825,15 @@ cha_caution_text="""장비%:  12부위장비+칭호클쳐의
 세팅%:  위를 제외한 나머지의
            투자/세팅 실효율%
            (노증극세팅이 100%)"""
-tkinter.Label(self,text=cha_caution_text,font=small_font,fg='white',bg=dark_sub,anchor='nw',justify='left').place(x=512,y=405)
+tkinter.Label(calculator.window,text=cha_caution_text,font=calculator.small_font,fg='white',bg=calculator.dark_sub,anchor='nw',justify='left').place(x=512,y=405)
 
-select_perfect = calculator.preset_values["select_perfect"] = tkinter.ttk.Combobox(self,values=['풀셋모드(매우빠름)','메타몽풀셋모드','단품제외(보통)','단품포함(느림)','세트필터↓(매우느림)'],width=15)
+select_perfect = calculator.preset_values["select_perfect"] = tkinter.ttk.Combobox(calculator.window,values=['풀셋모드(매우빠름)','메타몽풀셋모드','단품제외(보통)','단품포함(느림)','세트필터↓(매우느림)'],width=15)
 select_perfect.place(x=145+605,y=11)
 select_perfect.set('단품포함(느림)')
 select_speed_img=calculator.get_photo_image("ext_img/select_speed.png")
-tkinter.Button(self,command=guide_speed,image=select_speed_img,borderwidth=0,activebackground=dark_main,bg=dark_main).place(x=29+605,y=7)
+tkinter.Button(calculator.window,command=guide_speed,image=select_speed_img,borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main).place(x=29+605,y=7)
 reset_img=calculator.get_photo_image("ext_img/reset.png")
-tkinter.Button(self,command=reset,image=reset_img,borderwidth=0,activebackground=dark_main,bg=dark_main).place(x=302+180+17+135,y=476-435)
+tkinter.Button(calculator.window,command=reset,image=reset_img,borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main).place(x=302+180+17+135,y=476-435)
 
 wep_img_list=[]
 wep_list=[]
@@ -4887,137 +4893,137 @@ def sync_wep_list():
 
 
 wep_image=calculator.get_photo_image("ext_img/wep.png")
-wep_g=tkinter.Label(self,image=wep_image,borderwidth=0,activebackground=dark_main,bg=dark_main)
+wep_g=tkinter.Label(calculator.window,image=wep_image,borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main)
 wep_g.place(x=29,y=10)
 wep_job_type=list(calc_list_wep.DNF_wep_list.keys())
-wep_job_select = calculator.preset_values["wep_job_select"] = tkinter.ttk.Combobox(self,width=12,values=wep_job_type)
+wep_job_select = calculator.preset_values["wep_job_select"] = tkinter.ttk.Combobox(calculator.window,width=12,values=wep_job_type)
 wep_job_select.place(x=110,y=10)
 wep_job_select.set('귀검/나이트')
 wep_job_select.bind("<<ComboboxSelected>>",wep_job_selected)
 
 wep_type=list(calc_list_wep.DNF_wep_list['귀검/나이트'].keys())
-wep_type_select = calculator.preset_values["wep_type_select"] = tkinter.ttk.Combobox(self,width=12,values=wep_type)
+wep_type_select = calculator.preset_values["wep_type_select"] = tkinter.ttk.Combobox(calculator.window,width=12,values=wep_type)
 wep_type_select.place(x=236,y=10)
 wep_type_select.set('광검')
 wep_type_select.bind("<<ComboboxSelected>>",wep_job_selected2)
 
 wep_default=list(calc_list_wep.DNF_wep_list['귀검/나이트']['광검'])
-wep_select = calculator.preset_values["wep_select"] = tkinter.ttk.Combobox(self,width=30,values=wep_default)
+wep_select = calculator.preset_values["wep_select"] = tkinter.ttk.Combobox(calculator.window,width=30,values=wep_default)
 wep_select.place(x=110,y=38)
 wep_select.set('(광검)별의 바다 : 바드나후')
 
 wep_select_image=calculator.get_photo_image("ext_img/wep_select.png")
 wep_reset_image=calculator.get_photo_image("ext_img/wep_reset.png")
-wep_select_bt=tkinter.Button(self,image=wep_select_image,fg="white",borderwidth=0,activebackground=dark_main,command=wep_list_select,bg=dark_main,font=mid_font)
+wep_select_bt=tkinter.Button(calculator.window,image=wep_select_image,fg="white",borderwidth=0,activebackground=calculator.dark_main,command=wep_list_select,bg=calculator.dark_main,font=calculator.mid_font)
 wep_select_bt.place(x=350,y=10)
-wep_select_bt=tkinter.Button(self,image=wep_reset_image,fg="white",borderwidth=0,activebackground=dark_main,command=wep_list_reset,bg=dark_main)
+wep_select_bt=tkinter.Button(calculator.window,image=wep_reset_image,fg="white",borderwidth=0,activebackground=calculator.dark_main,command=wep_list_reset,bg=calculator.dark_main)
 wep_select_bt.place(x=440,y=10)
-wep_list_num=tkinter.Label(self,font=guide_font,bg=dark_main,fg='white',text="무기 수="+"0 / 10",anchor='c')
+wep_list_num=tkinter.Label(calculator.window,font=calculator.guide_font,bg=calculator.dark_main,fg='white',text="무기 수="+"0 / 10",anchor='c')
 wep_list_num.place(x=365,y=67)
 wep_select_img=[0,0,0,0,0,0,0,0,0,0]
 for i in range(0,10):
-    wep_select_img[i]=tkinter.Label(self,bg=dark_sub,bd=0)
+    wep_select_img[i]=tkinter.Label(calculator.window,bg=calculator.dark_sub,bd=0)
     wep_select_img[i].place(x=32+31*i,y=65)
 
 def job_type_selected(event):
     jobup_select["values"]=list(calc_list_job.DNF_job_list[jobtype_select.get()])
     jobup_select.set(list(calc_list_job.DNF_job_list[jobtype_select.get()])[0])
 
-jobtype_select = calculator.preset_values["jobtype_select"] = tkinter.ttk.Combobox(self,width=13,values=list(calc_list_job.DNF_job_list.keys()))
+jobtype_select = calculator.preset_values["jobtype_select"] = tkinter.ttk.Combobox(calculator.window,width=13,values=list(calc_list_job.DNF_job_list.keys()))
 jobtype_select.bind("<<ComboboxSelected>>",job_type_selected)
 jobtype_select.set('귀검사(남)')
 jobtype_select.place(x=390-17,y=190+52)
 
-jobup_select = calculator.preset_values["jobup_select"] = tkinter.ttk.Combobox(self,width=13,values=list(calc_list_job.DNF_job_list['귀검사(남)']))
+jobup_select = calculator.preset_values["jobup_select"] = tkinter.ttk.Combobox(calculator.window,width=13,values=list(calc_list_job.DNF_job_list['귀검사(남)']))
 jobup_select.set('검신(진각)')
 jobup_select.place(x=390-17,y=220+52)
 
 style_list=['증뎀15%','속강32','증뎀10%','추뎀10%','크증10%','기타(직접비교)']
-style_select = calculator.preset_values["style_select"] = tkinter.ttk.Combobox(self,width=13,values=style_list)
+style_select = calculator.preset_values["style_select"] = tkinter.ttk.Combobox(calculator.window,width=13,values=style_list)
 style_select.set('증뎀15%')
 style_select.place(x=390-17,y=250+52)
 
 creature_list=['증뎀10%','모공15%','크증18%','물마독공18%','기타(직접비교)']
-creature_select = calculator.preset_values["creature_select"] = tkinter.ttk.Combobox(self,width=13,values=creature_list)
+creature_select = calculator.preset_values["creature_select"] = tkinter.ttk.Combobox(calculator.window,width=13,values=creature_list)
 creature_select.set('크증18%')
 creature_select.place(x=390-17,y=280+52)
 
-req_cool = calculator.preset_values["req_cool"] = tkinter.ttk.Combobox(self,width=13,values=['X(지속딜만)','O(그로기포함)'])
+req_cool = calculator.preset_values["req_cool"] = tkinter.ttk.Combobox(calculator.window,width=13,values=['X(지속딜만)','O(그로기포함)'])
 req_cool.set('X(지속딜만)')
 req_cool.place(x=390-17,y=310+52)
 
 calc_img=calculator.get_photo_image("ext_img/calc.png")
-select_all=tkinter.Button(self,image=calc_img,borderwidth=0,activebackground=dark_main,command=calc_thread,bg=dark_main)
+select_all=tkinter.Button(calculator.window,image=calc_img,borderwidth=0,activebackground=calculator.dark_main,command=calc_thread,bg=calculator.dark_main)
 select_all.place(x=390-35+150,y=7)
 stop_img=calculator.get_photo_image("ext_img/stop.png")
-tkinter.Button(self,image=stop_img,borderwidth=0,activebackground=dark_main,command=stop_calc,bg=dark_main).place(x=390-35+150,y=62)
+tkinter.Button(calculator.window,image=stop_img,borderwidth=0,activebackground=calculator.dark_main,command=stop_calc,bg=calculator.dark_main).place(x=390-35+150,y=62)
 
 timeline_img=calculator.get_photo_image("ext_img/timeline.png")
-select_custom=tkinter.Button(self,image=timeline_img,borderwidth=0,activebackground=dark_main,command=timeline_select,bg=dark_sub)
+select_custom=tkinter.Button(calculator.window,image=timeline_img,borderwidth=0,activebackground=calculator.dark_main,command=timeline_select,bg=calculator.dark_sub)
 select_custom.place(x=345+165,y=340-100)
 custom_img=calculator.get_photo_image("ext_img/custom.png")
-select_custom2=tkinter.Button(self,image=custom_img,borderwidth=0,activebackground=dark_main,command=lambda:costum(0),bg=dark_sub)
+select_custom2=tkinter.Button(calculator.window,image=custom_img,borderwidth=0,activebackground=calculator.dark_main,command=lambda:costum(0),bg=calculator.dark_sub)
 select_custom2.place(x=435+165,y=340-100)
 
-save_select=tkinter.ttk.Combobox(self,width=8,values=save_name_list)
+save_select=tkinter.ttk.Combobox(calculator.window,width=8,values=save_name_list)
 save_select.place(x=345+165,y=410-100);save_select.set(save_name_list[0])
 save_img=calculator.get_photo_image("ext_img/SAVE.png")
-save=tkinter.Button(self,image=save_img,borderwidth=0,activebackground=dark_main,command=save_checklist,bg=dark_sub)
+save=tkinter.Button(calculator.window,image=save_img,borderwidth=0,activebackground=calculator.dark_main,command=save_checklist,bg=calculator.dark_sub)
 save.place(x=345+165,y=440-100)
 load_img=calculator.get_photo_image("ext_img/LOAD.png")
-load=tkinter.Button(self,image=load_img,borderwidth=0,activebackground=dark_main,command=load_checklist,bg=dark_sub)
+load=tkinter.Button(calculator.window,image=load_img,borderwidth=0,activebackground=calculator.dark_main,command=load_checklist,bg=calculator.dark_sub)
 load.place(x=435+165,y=440-100)
 change_name_img=calculator.get_photo_image("ext_img/name_change.png")
-change_list_but=tkinter.Button(self,image=change_name_img,borderwidth=0,activebackground=dark_main,command=change_list_name,bg=dark_sub)
+change_list_but=tkinter.Button(calculator.window,image=change_name_img,borderwidth=0,activebackground=calculator.dark_main,command=change_list_name,bg=calculator.dark_sub)
 change_list_but.place(x=435+165,y=405-100)
 
-show_count=tkinter.Label(self,font=guide_font,fg="white",bg=dark_sub)
+show_count=tkinter.Label(calculator.window,font=calculator.guide_font,fg="white",bg=calculator.dark_sub)
 show_count.place(x=700,y=145-12)
 showcon=show_count.configure
-show_state=tkinter.Label(self,text="상태 표시 칸",font=guide_font,fg="white",bg=dark_sub)
+show_state=tkinter.Label(calculator.window,text="상태 표시 칸",font=calculator.guide_font,fg="white",bg=calculator.dark_sub)
 show_state.place(x=700,y=125-12)
 showsta=show_state.configure
 
-show_count2=tkinter.Label(self,font=guide_font,fg="white",bg=dark_sub)
+show_count2=tkinter.Label(calculator.window,font=calculator.guide_font,fg="white",bg=calculator.dark_sub)
 show_count2.place(x=430+259,y=480-287)
 showcon2=show_count2.configure
 
 image_list_set2 = calculator.image_list_set2
-set_buttons["101"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['101'],command=lambda:click_set(101));set_buttons["101"].place(x=29,y=100)
-set_buttons["102"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['102'],command=lambda:click_set(102));set_buttons["102"].place(x=29,y=130)
-set_buttons["103"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['103'],command=lambda:click_set(103));set_buttons["103"].place(x=29,y=160)
-set_buttons["104"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['104'],command=lambda:click_set(104));set_buttons["104"].place(x=29,y=190)
-set_buttons["105"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['105'],command=lambda:click_set(105));set_buttons["105"].place(x=29,y=220)
-set_buttons["106"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['106'],command=lambda:click_set(106));set_buttons["106"].place(x=29,y=250)
-set_buttons["107"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['107'],command=lambda:click_set(107));set_buttons["107"].place(x=29,y=280)
-set_buttons["108"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['108'],command=lambda:click_set(108));set_buttons["108"].place(x=29,y=310)
-set_buttons["109"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['109'],command=lambda:click_set(109));set_buttons["109"].place(x=29,y=340)
-set_buttons["110"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['110'],command=lambda:click_set(110));set_buttons["110"].place(x=29,y=370)
-set_buttons["111"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['111'],command=lambda:click_set(111));set_buttons["111"].place(x=29,y=400)
-set_buttons["112"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['112'],command=lambda:click_set(112));set_buttons["112"].place(x=29,y=430)
-set_buttons["113"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['113'],command=lambda:click_set(113));set_buttons["113"].place(x=29,y=460)
-set_buttons["114"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['114'],command=lambda:click_set(114));set_buttons["114"].place(x=29,y=490)
-set_buttons["115"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['115'],command=lambda:click_set(115));set_buttons["115"].place(x=29,y=520) ##
-set_buttons["116"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['116'],command=lambda:click_set(116));set_buttons["116"].place(x=320-33,y=100)
-set_buttons["117"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['117'],command=lambda:click_set(117));set_buttons["117"].place(x=320-33,y=130)
-set_buttons["118"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['118'],command=lambda:click_set(118));set_buttons["118"].place(x=320-33,y=160)
-set_buttons["119"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['119'],command=lambda:click_set(119));set_buttons["119"].place(x=320-33,y=190) ##
-set_buttons["120"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['120'],command=lambda:click_set(120));set_buttons["120"].place(x=500-17,y=100)
-set_buttons["121"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['121'],command=lambda:click_set(121));set_buttons["121"].place(x=500-17,y=130)
-set_buttons["122"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['122'],command=lambda:click_set(122));set_buttons["122"].place(x=500-17,y=160)
-set_buttons["123"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['123'],command=lambda:click_set(123));set_buttons["123"].place(x=500-17,y=190) ##
-set_buttons["128"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['128'],command=lambda:click_set(128));set_buttons["128"].place(x=29,y=570)
-set_buttons["129"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['129'],command=lambda:click_set(129));set_buttons["129"].place(x=29,y=600)
-set_buttons["130"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['130'],command=lambda:click_set(130));set_buttons["130"].place(x=29,y=630)
-set_buttons["131"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['131'],command=lambda:click_set(131));set_buttons["131"].place(x=29,y=660) ##
-set_buttons["124"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['124'],command=lambda:click_set(124));set_buttons["124"].place(x=225,y=570)
-set_buttons["125"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['125'],command=lambda:click_set(125));set_buttons["125"].place(x=225,y=600)
-set_buttons["126"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['126'],command=lambda:click_set(126));set_buttons["126"].place(x=225,y=630)
-set_buttons["127"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['127'],command=lambda:click_set(127));set_buttons["127"].place(x=225,y=660) ##
-set_buttons["132"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['132'],command=lambda:click_set(132));set_buttons["132"].place(x=421,y=570)
-set_buttons["133"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['133'],command=lambda:click_set(133));set_buttons["133"].place(x=421,y=600)
-set_buttons["134"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['134'],command=lambda:click_set(134));set_buttons["134"].place(x=421,y=630)
-set_buttons["135"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['135'],command=lambda:click_set(135));set_buttons["135"].place(x=421,y=660) ##
+set_buttons["101"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['101'],command=lambda:click_set(101));set_buttons["101"].place(x=29,y=100)
+set_buttons["102"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['102'],command=lambda:click_set(102));set_buttons["102"].place(x=29,y=130)
+set_buttons["103"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['103'],command=lambda:click_set(103));set_buttons["103"].place(x=29,y=160)
+set_buttons["104"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['104'],command=lambda:click_set(104));set_buttons["104"].place(x=29,y=190)
+set_buttons["105"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['105'],command=lambda:click_set(105));set_buttons["105"].place(x=29,y=220)
+set_buttons["106"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['106'],command=lambda:click_set(106));set_buttons["106"].place(x=29,y=250)
+set_buttons["107"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['107'],command=lambda:click_set(107));set_buttons["107"].place(x=29,y=280)
+set_buttons["108"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['108'],command=lambda:click_set(108));set_buttons["108"].place(x=29,y=310)
+set_buttons["109"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['109'],command=lambda:click_set(109));set_buttons["109"].place(x=29,y=340)
+set_buttons["110"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['110'],command=lambda:click_set(110));set_buttons["110"].place(x=29,y=370)
+set_buttons["111"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['111'],command=lambda:click_set(111));set_buttons["111"].place(x=29,y=400)
+set_buttons["112"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['112'],command=lambda:click_set(112));set_buttons["112"].place(x=29,y=430)
+set_buttons["113"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['113'],command=lambda:click_set(113));set_buttons["113"].place(x=29,y=460)
+set_buttons["114"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['114'],command=lambda:click_set(114));set_buttons["114"].place(x=29,y=490)
+set_buttons["115"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['115'],command=lambda:click_set(115));set_buttons["115"].place(x=29,y=520) ##
+set_buttons["116"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['116'],command=lambda:click_set(116));set_buttons["116"].place(x=320-33,y=100)
+set_buttons["117"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['117'],command=lambda:click_set(117));set_buttons["117"].place(x=320-33,y=130)
+set_buttons["118"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['118'],command=lambda:click_set(118));set_buttons["118"].place(x=320-33,y=160)
+set_buttons["119"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['119'],command=lambda:click_set(119));set_buttons["119"].place(x=320-33,y=190) ##
+set_buttons["120"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['120'],command=lambda:click_set(120));set_buttons["120"].place(x=500-17,y=100)
+set_buttons["121"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['121'],command=lambda:click_set(121));set_buttons["121"].place(x=500-17,y=130)
+set_buttons["122"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['122'],command=lambda:click_set(122));set_buttons["122"].place(x=500-17,y=160)
+set_buttons["123"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['123'],command=lambda:click_set(123));set_buttons["123"].place(x=500-17,y=190) ##
+set_buttons["128"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['128'],command=lambda:click_set(128));set_buttons["128"].place(x=29,y=570)
+set_buttons["129"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['129'],command=lambda:click_set(129));set_buttons["129"].place(x=29,y=600)
+set_buttons["130"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['130'],command=lambda:click_set(130));set_buttons["130"].place(x=29,y=630)
+set_buttons["131"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['131'],command=lambda:click_set(131));set_buttons["131"].place(x=29,y=660) ##
+set_buttons["124"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['124'],command=lambda:click_set(124));set_buttons["124"].place(x=225,y=570)
+set_buttons["125"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['125'],command=lambda:click_set(125));set_buttons["125"].place(x=225,y=600)
+set_buttons["126"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['126'],command=lambda:click_set(126));set_buttons["126"].place(x=225,y=630)
+set_buttons["127"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['127'],command=lambda:click_set(127));set_buttons["127"].place(x=225,y=660) ##
+set_buttons["132"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['132'],command=lambda:click_set(132));set_buttons["132"].place(x=421,y=570)
+set_buttons["133"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['133'],command=lambda:click_set(133));set_buttons["133"].place(x=421,y=600)
+set_buttons["134"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['134'],command=lambda:click_set(134));set_buttons["134"].place(x=421,y=630)
+set_buttons["135"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['135'],command=lambda:click_set(135));set_buttons["135"].place(x=421,y=660) ##
 
 
 ##잔향부여
@@ -5086,25 +5092,25 @@ def update_inv_buf2(event):
         inv_select4_2['values']=['+1/30(상)','+1/20(중)','+1/10(하)']
         inv_select4_2.set('+1/30(상)')
 inv_mod_list=["미부여","선택부여","최적부여(버퍼X)"]
-inv_mod = calculator.preset_values["inv_mod"] = tkinter.ttk.Combobox(self,width=10,values=inv_mod_list);inv_mod.place(x=785,y=285);inv_mod.set("미부여")
+inv_mod = calculator.preset_values["inv_mod"] = tkinter.ttk.Combobox(calculator.window,width=10,values=inv_mod_list);inv_mod.place(x=785,y=285);inv_mod.set("미부여")
 inv_mod.bind("<<ComboboxSelected>>",update_inv)
 
 inv_type_list=["증뎀","크증","추뎀","모공","공%","스탯"]
 inv_value_list1=[6,8,10]
 inv_value_list2=[3,4,5]
-inv_select1_1 = calculator.preset_values["inv_select1_1"] = tkinter.ttk.Combobox(self,width=4,values=inv_type_list);inv_select1_1.place(x=785,y=315);inv_select1_1.set("증뎀")
-inv_select1_2 = calculator.preset_values["inv_select1_2"] = tkinter.ttk.Combobox(self,width=3,values=inv_value_list1);inv_select1_2.place(x=842,y=315);inv_select1_2.set(10)
-inv_select2_1 = calculator.preset_values["inv_select2_1"] = tkinter.ttk.Combobox(self,width=4,values=inv_type_list);inv_select2_1.place(x=785,y=345);inv_select2_1.set("증뎀")
-inv_select2_2 = calculator.preset_values["inv_select2_2"] = tkinter.ttk.Combobox(self,width=3,values=inv_value_list2);inv_select2_2.place(x=842,y=345);inv_select2_2.set(5)
+inv_select1_1 = calculator.preset_values["inv_select1_1"] = tkinter.ttk.Combobox(calculator.window,width=4,values=inv_type_list);inv_select1_1.place(x=785,y=315);inv_select1_1.set("증뎀")
+inv_select1_2 = calculator.preset_values["inv_select1_2"] = tkinter.ttk.Combobox(calculator.window,width=3,values=inv_value_list1);inv_select1_2.place(x=842,y=315);inv_select1_2.set(10)
+inv_select2_1 = calculator.preset_values["inv_select2_1"] = tkinter.ttk.Combobox(calculator.window,width=4,values=inv_type_list);inv_select2_1.place(x=785,y=345);inv_select2_1.set("증뎀")
+inv_select2_2 = calculator.preset_values["inv_select2_2"] = tkinter.ttk.Combobox(calculator.window,width=3,values=inv_value_list2);inv_select2_2.place(x=842,y=345);inv_select2_2.set(5)
 
 inv_type_list2=["축스탯%/1각","축스탯%/1각%","축앞뎀%/1각","축앞뎀%/1각%","전직패","축스탯%/1각+1"]
 inv_type_list2_1=["축스탯%/1각","축스탯%/1각%","축앞뎀%/1각","축앞뎀%/1각%","전직패","축+1/1각"]
 inv_value_list3=['3%/60(상)','3%/40(중)','3%/20(하)']
 inv_value_list3_1=['3%/40(상)','3%/30(중)','3%/20(하)']
-inv_select3_1 = calculator.preset_values["inv_select3_1"] = tkinter.ttk.Combobox(self,width=12,values=inv_type_list2);inv_select3_1.place(x=785,y=385);inv_select3_1.set("축스탯%/1각")
-inv_select3_2 = calculator.preset_values["inv_select3_2"] = tkinter.ttk.Combobox(self,width=12,values=inv_value_list3);inv_select3_2.place(x=785,y=412);inv_select3_2.set('3%/60(상)')
-inv_select4_1 = calculator.preset_values["inv_select4_1"] = tkinter.ttk.Combobox(self,width=12,values=inv_type_list2_1);inv_select4_1.place(x=785,y=440);inv_select4_1.set("축스탯%/1각")
-inv_select4_2 = calculator.preset_values["inv_select4_2"] = tkinter.ttk.Combobox(self,width=12,values=inv_value_list3_1);inv_select4_2.place(x=785,y=467);inv_select4_2.set('3%/40(상)')
+inv_select3_1 = calculator.preset_values["inv_select3_1"] = tkinter.ttk.Combobox(calculator.window,width=12,values=inv_type_list2);inv_select3_1.place(x=785,y=385);inv_select3_1.set("축스탯%/1각")
+inv_select3_2 = calculator.preset_values["inv_select3_2"] = tkinter.ttk.Combobox(calculator.window,width=12,values=inv_value_list3);inv_select3_2.place(x=785,y=412);inv_select3_2.set('3%/60(상)')
+inv_select4_1 = calculator.preset_values["inv_select4_1"] = tkinter.ttk.Combobox(calculator.window,width=12,values=inv_type_list2_1);inv_select4_1.place(x=785,y=440);inv_select4_1.set("축스탯%/1각")
+inv_select4_2 = calculator.preset_values["inv_select4_2"] = tkinter.ttk.Combobox(calculator.window,width=12,values=inv_value_list3_1);inv_select4_2.place(x=785,y=467);inv_select4_2.set('3%/40(상)')
 inv_select3_1.bind("<<ComboboxSelected>>",update_inv_buf)
 inv_select4_1.bind("<<ComboboxSelected>>",update_inv_buf2)
 update_inv(0)
@@ -5112,26 +5118,26 @@ update_inv(0)
 image_list2 = calculator.image_list2
 image_list_set2 = calculator.image_list_set2
 
-set_buttons["151"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['151'],command=lambda:click_set(151));set_buttons["151"].place(x=710+10,y=445+95) ##
-set_buttons["152"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['152'],command=lambda:click_set(152));set_buttons["152"].place(x=710+10,y=475+95) ##
-set_buttons["153"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['153'],command=lambda:click_set(153));set_buttons["153"].place(x=710+10,y=505+95) ##
-set_buttons["154"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['154'],command=lambda:click_set(154));set_buttons["154"].place(x=710+10,y=535+95) ##
-set_buttons["155"]=tkinter.Button(self,bg=dark_main,borderwidth=0,activebackground=dark_main,image=image_list_set2['155'],command=lambda:click_set(155));set_buttons["155"].place(x=710+10,y=565+95) ##
-select_item['tg41510']=0;equip_buttons["41510"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['41510'], command=lambda:click_equipment(41510))
-select_item['tg41520']=0;equip_buttons["41520"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['41520'], command=lambda:click_equipment(41520))
-select_item['tg41530']=0;equip_buttons["41530"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['41530'], command=lambda:click_equipment(41530))
-select_item['tg41540']=0;equip_buttons["41540"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['41540'], command=lambda:click_equipment(41540))
-select_item['tg41550']=0;equip_buttons["41550"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['41550'], command=lambda:click_equipment(41550))
-select_item['tg42510']=0;equip_buttons["42510"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['42510'], command=lambda:click_equipment(42510))
-select_item['tg42520']=0;equip_buttons["42520"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['42520'], command=lambda:click_equipment(42520))
-select_item['tg42530']=0;equip_buttons["42530"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['42530'], command=lambda:click_equipment(42530))
-select_item['tg42540']=0;equip_buttons["42540"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['42540'], command=lambda:click_equipment(42540))
-select_item['tg42550']=0;equip_buttons["42550"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['42550'], command=lambda:click_equipment(42550))
-select_item['tg43510']=0;equip_buttons["43510"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['43510'], command=lambda:click_equipment(43510))
-select_item['tg43520']=0;equip_buttons["43520"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['43520'], command=lambda:click_equipment(43520))
-select_item['tg43530']=0;equip_buttons["43530"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['43530'], command=lambda:click_equipment(43530))
-select_item['tg43540']=0;equip_buttons["43540"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['43540'], command=lambda:click_equipment(43540))
-select_item['tg43550']=0;equip_buttons["43550"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['43550'], command=lambda:click_equipment(43550))
+set_buttons["151"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['151'],command=lambda:click_set(151));set_buttons["151"].place(x=710+10,y=445+95) ##
+set_buttons["152"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['152'],command=lambda:click_set(152));set_buttons["152"].place(x=710+10,y=475+95) ##
+set_buttons["153"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['153'],command=lambda:click_set(153));set_buttons["153"].place(x=710+10,y=505+95) ##
+set_buttons["154"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['154'],command=lambda:click_set(154));set_buttons["154"].place(x=710+10,y=535+95) ##
+set_buttons["155"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['155'],command=lambda:click_set(155));set_buttons["155"].place(x=710+10,y=565+95) ##
+select_item['tg41510']=0;equip_buttons["41510"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['41510'], command=lambda:click_equipment(41510))
+select_item['tg41520']=0;equip_buttons["41520"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['41520'], command=lambda:click_equipment(41520))
+select_item['tg41530']=0;equip_buttons["41530"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['41530'], command=lambda:click_equipment(41530))
+select_item['tg41540']=0;equip_buttons["41540"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['41540'], command=lambda:click_equipment(41540))
+select_item['tg41550']=0;equip_buttons["41550"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['41550'], command=lambda:click_equipment(41550))
+select_item['tg42510']=0;equip_buttons["42510"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['42510'], command=lambda:click_equipment(42510))
+select_item['tg42520']=0;equip_buttons["42520"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['42520'], command=lambda:click_equipment(42520))
+select_item['tg42530']=0;equip_buttons["42530"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['42530'], command=lambda:click_equipment(42530))
+select_item['tg42540']=0;equip_buttons["42540"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['42540'], command=lambda:click_equipment(42540))
+select_item['tg42550']=0;equip_buttons["42550"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['42550'], command=lambda:click_equipment(42550))
+select_item['tg43510']=0;equip_buttons["43510"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['43510'], command=lambda:click_equipment(43510))
+select_item['tg43520']=0;equip_buttons["43520"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['43520'], command=lambda:click_equipment(43520))
+select_item['tg43530']=0;equip_buttons["43530"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['43530'], command=lambda:click_equipment(43530))
+select_item['tg43540']=0;equip_buttons["43540"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['43540'], command=lambda:click_equipment(43540))
+select_item['tg43550']=0;equip_buttons["43550"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['43550'], command=lambda:click_equipment(43550))
 equip_buttons["41510"].place(x=710 + 10 + 71, y=445 + 95)
 equip_buttons["41520"].place(x=710 + 10 + 71, y=445 + 30 + 95)
 equip_buttons["41530"].place(x=710 + 10 + 71, y=445 + 60 + 95)
@@ -5181,131 +5187,131 @@ def know_epic():
         know_window.destroy()
     except:
         pass
-    know_window=tkinter.Toplevel(self)
+    know_window=tkinter.Toplevel(calculator.window)
     know_window.attributes("-topmost", True)
     know_window.geometry("545x405+750+20")
     know_window.resizable(False, False)
-    know_window.configure(bg=dark_main)
+    know_window.configure(bg=calculator.dark_main)
     know_image_list={}
     for i in know_list+know_set_list+know_jin_list:
         if select_item['tg'+i]==0:
             know_image_list[i] = calculator.image_list2[i]
         else:
             know_image_list[i] = calculator.image_list[i]
-    equip_buttons["13390150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['13390150'], command=lambda:click_equipment(13390150))
+    equip_buttons["13390150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['13390150'], command=lambda:click_equipment(13390150))
     equip_buttons["13390150"].place(x=303 - 290, y=20)
-    equip_buttons["22390240"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['22390240'], command=lambda:click_equipment(22390240))
+    equip_buttons["22390240"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['22390240'], command=lambda:click_equipment(22390240))
     equip_buttons["22390240"].place(x=333 - 290, y=20)
-    equip_buttons["23390450"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['23390450'], command=lambda:click_equipment(23390450))
+    equip_buttons["23390450"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['23390450'], command=lambda:click_equipment(23390450))
     equip_buttons["23390450"].place(x=363 - 290, y=20)
-    equip_buttons["33390750"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['33390750'], command=lambda:click_equipment(33390750))
+    equip_buttons["33390750"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['33390750'], command=lambda:click_equipment(33390750))
     equip_buttons["33390750"].place(x=393 - 290, y=20)
-    equip_buttons["21390340"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['21390340'], command=lambda:click_equipment(21390340))
+    equip_buttons["21390340"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['21390340'], command=lambda:click_equipment(21390340))
     equip_buttons["21390340"].place(x=424 - 290, y=20)
-    equip_buttons["31390540"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['31390540'], command=lambda:click_equipment(31390540))
+    equip_buttons["31390540"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['31390540'], command=lambda:click_equipment(31390540))
     equip_buttons["31390540"].place(x=454 - 290, y=20)
-    equip_buttons["32390650"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['32390650'], command=lambda:click_equipment(32390650))
+    equip_buttons["32390650"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['32390650'], command=lambda:click_equipment(32390650))
     equip_buttons["32390650"].place(x=484 - 290, y=20)
-    equip_buttons["11390850"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['11390850'], command=lambda:click_equipment(11390850))
+    equip_buttons["11390850"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['11390850'], command=lambda:click_equipment(11390850))
     equip_buttons["11390850"].place(x=484 - 290 + 80, y=20)
-    equip_buttons["12390950"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['12390950'], command=lambda:click_equipment(12390950))
+    equip_buttons["12390950"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['12390950'], command=lambda:click_equipment(12390950))
     equip_buttons["12390950"].place(x=484 - 290 + 110, y=20)
-    equip_buttons["13391050"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['13391050'], command=lambda:click_equipment(13391050))
+    equip_buttons["13391050"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['13391050'], command=lambda:click_equipment(13391050))
     equip_buttons["13391050"].place(x=484 - 290 + 140, y=20)
-    equip_buttons["14391150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['14391150'], command=lambda:click_equipment(14391150))
+    equip_buttons["14391150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['14391150'], command=lambda:click_equipment(14391150))
     equip_buttons["14391150"].place(x=484 - 290 + 170, y=20)
-    equip_buttons["15391250"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['15391250'], command=lambda:click_equipment(15391250))
+    equip_buttons["15391250"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['15391250'], command=lambda:click_equipment(15391250))
     equip_buttons["15391250"].place(x=484 - 290 + 200, y=20)
 
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['201']).place(x=303-290,y=70)
-    equip_buttons["22400150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['22400150'], command=lambda:click_equipment(22400150))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['201']).place(x=303-290,y=70)
+    equip_buttons["22400150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['22400150'], command=lambda:click_equipment(22400150))
     equip_buttons["22400150"].place(x=303 - 290 + 63, y=70)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['202']).place(x=303-290,y=70+40)
-    equip_buttons["22400250"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['22400250'], command=lambda:click_equipment(22400250))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['202']).place(x=303-290,y=70+40)
+    equip_buttons["22400250"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['22400250'], command=lambda:click_equipment(22400250))
     equip_buttons["22400250"].place(x=303 - 290 + 63, y=70 + 40)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['203']).place(x=303-290,y=70+80)
-    equip_buttons["22400350"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['22400350'], command=lambda:click_equipment(22400350))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['203']).place(x=303-290,y=70+80)
+    equip_buttons["22400350"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['22400350'], command=lambda:click_equipment(22400350))
     equip_buttons["22400350"].place(x=303 - 290 + 63, y=70 + 80)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['204']).place(x=303-290,y=70+120)
-    equip_buttons["22400450"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['22400450'], command=lambda:click_equipment(22400450))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['204']).place(x=303-290,y=70+120)
+    equip_buttons["22400450"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['22400450'], command=lambda:click_equipment(22400450))
     equip_buttons["22400450"].place(x=303 - 290 + 63, y=70 + 120)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['205']).place(x=303-290,y=70+160)
-    equip_buttons["22400550"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['22400550'], command=lambda:click_equipment(22400550))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['205']).place(x=303-290,y=70+160)
+    equip_buttons["22400550"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['22400550'], command=lambda:click_equipment(22400550))
     equip_buttons["22400550"].place(x=303 - 290 + 63, y=70 + 160)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['206']).place(x=303-290,y=70+200)
-    equip_buttons["21400640"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['21400640'], command=lambda:click_equipment(21400640))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['206']).place(x=303-290,y=70+200)
+    equip_buttons["21400640"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['21400640'], command=lambda:click_equipment(21400640))
     equip_buttons["21400640"].place(x=303 - 290 + 63, y=70 + 200)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['207']).place(x=303-290,y=70+240)
-    equip_buttons["31400750"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['31400750'], command=lambda:click_equipment(31400750))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['207']).place(x=303-290,y=70+240)
+    equip_buttons["31400750"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['31400750'], command=lambda:click_equipment(31400750))
     equip_buttons["31400750"].place(x=303 - 290 + 63, y=70 + 240)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['208']).place(x=120,y=70)
-    equip_buttons["31400850"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['31400850'], command=lambda:click_equipment(31400850))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['208']).place(x=120,y=70)
+    equip_buttons["31400850"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['31400850'], command=lambda:click_equipment(31400850))
     equip_buttons["31400850"].place(x=120 + 63, y=70)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['209']).place(x=120,y=70+40)
-    equip_buttons["31400950"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['31400950'], command=lambda:click_equipment(31400950))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['209']).place(x=120,y=70+40)
+    equip_buttons["31400950"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['31400950'], command=lambda:click_equipment(31400950))
     equip_buttons["31400950"].place(x=120 + 63, y=70 + 40)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['210']).place(x=120,y=70+80)
-    equip_buttons["31401050"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['31401050'], command=lambda:click_equipment(31401050))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['210']).place(x=120,y=70+80)
+    equip_buttons["31401050"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['31401050'], command=lambda:click_equipment(31401050))
     equip_buttons["31401050"].place(x=120 + 63, y=70 + 80)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['211']).place(x=120,y=70+120)
-    equip_buttons["31401150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['31401150'], command=lambda:click_equipment(31401150))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['211']).place(x=120,y=70+120)
+    equip_buttons["31401150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['31401150'], command=lambda:click_equipment(31401150))
     equip_buttons["31401150"].place(x=120 + 63, y=70 + 120)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['212']).place(x=120,y=70+160)
-    equip_buttons["32401240"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['32401240'], command=lambda:click_equipment(32401240))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['212']).place(x=120,y=70+160)
+    equip_buttons["32401240"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['32401240'], command=lambda:click_equipment(32401240))
     equip_buttons["32401240"].place(x=120 + 63, y=70 + 160)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['213']).place(x=120,y=70+200)
-    equip_buttons["32401340"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['32401340'], command=lambda:click_equipment(32401340))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['213']).place(x=120,y=70+200)
+    equip_buttons["32401340"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['32401340'], command=lambda:click_equipment(32401340))
     equip_buttons["32401340"].place(x=120 + 63, y=70 + 200)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['214']).place(x=120,y=70+240)
-    equip_buttons["32401440"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['32401440'], command=lambda:click_equipment(32401440))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['214']).place(x=120,y=70+240)
+    equip_buttons["32401440"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['32401440'], command=lambda:click_equipment(32401440))
     equip_buttons["32401440"].place(x=120 + 63, y=70 + 240)
 
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['215']).place(x=250,y=69+200)
-    equip_buttons["11410100"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['11410100'], command=lambda:click_equipment(11410100))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['215']).place(x=250,y=69+200)
+    equip_buttons["11410100"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['11410100'], command=lambda:click_equipment(11410100))
     equip_buttons["11410100"].place(x=280 + 45, y=70 + 200)
-    equip_buttons["11410110"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['11410110'], command=lambda:click_equipment(11410110))
+    equip_buttons["11410110"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['11410110'], command=lambda:click_equipment(11410110))
     equip_buttons["11410110"].place(x=280 + 75, y=70 + 200)
-    equip_buttons["11410120"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['11410120'], command=lambda:click_equipment(11410120))
+    equip_buttons["11410120"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['11410120'], command=lambda:click_equipment(11410120))
     equip_buttons["11410120"].place(x=280 + 105, y=70 + 200)
-    equip_buttons["11410130"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['11410130'], command=lambda:click_equipment(11410130))
+    equip_buttons["11410130"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['11410130'], command=lambda:click_equipment(11410130))
     equip_buttons["11410130"].place(x=280 + 135, y=70 + 200)
-    equip_buttons["11410140"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['11410140'], command=lambda:click_equipment(11410140))
+    equip_buttons["11410140"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['11410140'], command=lambda:click_equipment(11410140))
     equip_buttons["11410140"].place(x=280 + 165, y=70 + 200)
-    equip_buttons["11410150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['11410150'], command=lambda:click_equipment(11410150))
+    equip_buttons["11410150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['11410150'], command=lambda:click_equipment(11410150))
     equip_buttons["11410150"].place(x=280 + 195, y=70 + 200)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['216']).place(x=250,y=69+240)
-    equip_buttons["21420100"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['21420100'], command=lambda:click_equipment(21420100))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['216']).place(x=250,y=69+240)
+    equip_buttons["21420100"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['21420100'], command=lambda:click_equipment(21420100))
     equip_buttons["21420100"].place(x=280 + 45, y=70 + 240)
-    equip_buttons["21420110"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['21420110'], command=lambda:click_equipment(21420110))
+    equip_buttons["21420110"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['21420110'], command=lambda:click_equipment(21420110))
     equip_buttons["21420110"].place(x=280 + 75, y=70 + 240)
-    equip_buttons["21420120"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['21420120'], command=lambda:click_equipment(21420120))
+    equip_buttons["21420120"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['21420120'], command=lambda:click_equipment(21420120))
     equip_buttons["21420120"].place(x=280 + 105, y=70 + 240)
-    equip_buttons["21420130"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['21420130'], command=lambda:click_equipment(21420130))
+    equip_buttons["21420130"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['21420130'], command=lambda:click_equipment(21420130))
     equip_buttons["21420130"].place(x=280 + 135, y=70 + 240)
-    equip_buttons["21420140"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['21420140'], command=lambda:click_equipment(21420140))
+    equip_buttons["21420140"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['21420140'], command=lambda:click_equipment(21420140))
     equip_buttons["21420140"].place(x=280 + 165, y=70 + 240)
-    equip_buttons["21420150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['21420150'], command=lambda:click_equipment(21420150))
+    equip_buttons["21420150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['21420150'], command=lambda:click_equipment(21420150))
     equip_buttons["21420150"].place(x=280 + 195, y=70 + 240)
-    tkinter.Label(know_window,bg=dark_main,image=image_list_set['217']).place(x=250,y=69+280)
-    equip_buttons["33430100"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['33430100'], command=lambda:click_equipment(33430100))
+    tkinter.Label(know_window,bg=calculator.dark_main,image=image_list_set['217']).place(x=250,y=69+280)
+    equip_buttons["33430100"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['33430100'], command=lambda:click_equipment(33430100))
     equip_buttons["33430100"].place(x=280 + 45, y=70 + 280)
-    equip_buttons["33430110"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['33430110'], command=lambda:click_equipment(33430110))
+    equip_buttons["33430110"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['33430110'], command=lambda:click_equipment(33430110))
     equip_buttons["33430110"].place(x=280 + 75, y=70 + 280)
-    equip_buttons["33430120"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['33430120'], command=lambda:click_equipment(33430120))
+    equip_buttons["33430120"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['33430120'], command=lambda:click_equipment(33430120))
     equip_buttons["33430120"].place(x=280 + 105, y=70 + 280)
-    equip_buttons["33430130"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['33430130'], command=lambda:click_equipment(33430130))
+    equip_buttons["33430130"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['33430130'], command=lambda:click_equipment(33430130))
     equip_buttons["33430130"].place(x=280 + 135, y=70 + 280)
-    equip_buttons["33430140"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['33430140'], command=lambda:click_equipment(33430140))
+    equip_buttons["33430140"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['33430140'], command=lambda:click_equipment(33430140))
     equip_buttons["33430140"].place(x=280 + 165, y=70 + 280)
-    equip_buttons["33430150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=know_image_list['33430150'], command=lambda:click_equipment(33430150))
+    equip_buttons["33430150"]=tkinter.Button(know_window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=know_image_list['33430150'], command=lambda:click_equipment(33430150))
     equip_buttons["33430150"].place(x=280 + 195, y=70 + 280)
 
-    tkinter.Label(know_window,bg=dark_main,fg='white',text=("세트 산물은 증/크증이 겹치는 경우가 있습니다.\n칭호/크리쳐 선택에 유의하세요.\n(중복안되게 계산식 처리 해놨음)\n\n"
+    tkinter.Label(know_window,bg=calculator.dark_main,fg='white',text=("세트 산물은 증/크증이 겹치는 경우가 있습니다.\n칭호/크리쳐 선택에 유의하세요.\n(중복안되게 계산식 처리 해놨음)\n\n"
                                                             +"불마/엘드 셋의 '마딜 전용'옵션은\n따로 구분되어 계산되지 않습니다.\n알아서 빼주세요.\n\n"
                                                             +"스탯 옵션은 버프+가호 받은 기준입니다.\n가호 미적용 스탯이 많은 산물 특성상,\n수련방 솔플 효율과 굉장히 다를수 있습니다.")).place(x=250,y=70)
 
 know_image=calculator.get_photo_image("set_name/know_name.png")
-tkinter.Button(self,bg=dark_main,image=know_image,command=know_epic).place(x=302,y=520)
+tkinter.Button(calculator.window,bg=calculator.dark_main,image=know_image,command=know_epic).place(x=302,y=520)
 
 ##디폴트 변경
 default_chawon=0
@@ -5333,397 +5339,397 @@ def change_default(value):
         select_default_lengend['image']=default_img1f
         select_default_chawon['image']=default_img2f
         select_default_old['image']=default_img3n
-select_default_lengend=tkinter.Button(self,relief='flat',borderwidth=0,activebackground=dark_main,bg=dark_main,image=default_img1n,command=lambda:change_default(0))
+select_default_lengend=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=default_img1n,command=lambda:change_default(0))
 select_default_lengend.place(x=492+15,y=516)
-select_default_chawon=tkinter.Button(self,relief='flat',borderwidth=0,activebackground=dark_main,bg=dark_main,image=default_img2f,command=lambda:change_default(1))
+select_default_chawon=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=default_img2f,command=lambda:change_default(1))
 select_default_chawon.place(x=522+15,y=516)
-select_default_old=tkinter.Button(self,relief='flat',borderwidth=0,activebackground=dark_main,bg=dark_main,image=default_img3f,command=lambda:change_default(2))
+select_default_old=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=default_img3f,command=lambda:change_default(2))
 select_default_old.place(x=552+15,y=516)
-select_legend_on=tkinter.Checkbutton(self,variable=legend_on_tg,bg=dark_main,activebackground=dark_main,bd=0)
+select_legend_on=tkinter.Checkbutton(calculator.window,variable=legend_on_tg,bg=calculator.dark_main,activebackground=calculator.dark_main,bd=0)
 select_legend_on.place(x=432,y=547)
-tkinter.Label(self,text="레전 적극 반영 여부(느려짐)",font=small_font,fg='white',bg=dark_main,bd=0).place(x=450,y=551)
+tkinter.Label(calculator.window,text="레전 적극 반영 여부(느려짐)",font=calculator.small_font,fg='white',bg=calculator.dark_main,bd=0).place(x=450,y=551)
 
 default_tag_img=calculator.get_photo_image("ext_img/default_tag.png")
-tkinter.Label(self,bg=dark_main,image=default_tag_img).place(x=431,y=515)
+tkinter.Label(calculator.window,bg=calculator.dark_main,image=default_tag_img).place(x=431,y=515)
 
 
 ##상의
 image_list2 = calculator.image_list2
 
-select_item['tg11010']=0;equip_buttons["11010"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11010'], command=lambda:click_equipment(11010))
+select_item['tg11010']=0;equip_buttons["11010"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11010'], command=lambda:click_equipment(11010))
 equip_buttons["11010"].place(x=100, y=100)
-select_item['tg11011']=0;equip_buttons["11011"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11011'], command=lambda:click_equipment(11011))
+select_item['tg11011']=0;equip_buttons["11011"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11011'], command=lambda:click_equipment(11011))
 equip_buttons["11011"].place(x=130, y=100)
-select_item['tg11020']=0;equip_buttons["11020"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11020'], command=lambda:click_equipment(11020))
+select_item['tg11020']=0;equip_buttons["11020"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11020'], command=lambda:click_equipment(11020))
 equip_buttons["11020"].place(x=100, y=130)
-select_item['tg11021']=0;equip_buttons["11021"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11021'], command=lambda:click_equipment(11021))
+select_item['tg11021']=0;equip_buttons["11021"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11021'], command=lambda:click_equipment(11021))
 equip_buttons["11021"].place(x=130, y=130)
-select_item['tg11030']=0;equip_buttons["11030"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11030'], command=lambda:click_equipment(11030))
+select_item['tg11030']=0;equip_buttons["11030"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11030'], command=lambda:click_equipment(11030))
 equip_buttons["11030"].place(x=100, y=160)
-select_item['tg11031']=0;equip_buttons["11031"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11031'], command=lambda:click_equipment(11031))
+select_item['tg11031']=0;equip_buttons["11031"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11031'], command=lambda:click_equipment(11031))
 equip_buttons["11031"].place(x=130, y=160)
-select_item['tg11040']=0;equip_buttons["11040"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11040'], command=lambda:click_equipment(11040))
+select_item['tg11040']=0;equip_buttons["11040"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11040'], command=lambda:click_equipment(11040))
 equip_buttons["11040"].place(x=100, y=190)
-select_item['tg11041']=0;equip_buttons["11041"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11041'], command=lambda:click_equipment(11041))
+select_item['tg11041']=0;equip_buttons["11041"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11041'], command=lambda:click_equipment(11041))
 equip_buttons["11041"].place(x=130, y=190)
-select_item['tg11050']=0;equip_buttons["11050"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11050'], command=lambda:click_equipment(11050))
+select_item['tg11050']=0;equip_buttons["11050"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11050'], command=lambda:click_equipment(11050))
 equip_buttons["11050"].place(x=100, y=220)
-select_item['tg11051']=0;equip_buttons["11051"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11051'], command=lambda:click_equipment(11051))
+select_item['tg11051']=0;equip_buttons["11051"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11051'], command=lambda:click_equipment(11051))
 equip_buttons["11051"].place(x=130, y=220)
-select_item['tg11060']=0;equip_buttons["11060"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11060'], command=lambda:click_equipment(11060))
+select_item['tg11060']=0;equip_buttons["11060"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11060'], command=lambda:click_equipment(11060))
 equip_buttons["11060"].place(x=100, y=250)
-select_item['tg11061']=0;equip_buttons["11061"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11061'], command=lambda:click_equipment(11061))
+select_item['tg11061']=0;equip_buttons["11061"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11061'], command=lambda:click_equipment(11061))
 equip_buttons["11061"].place(x=130, y=250)
-select_item['tg11070']=0;equip_buttons["11070"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11070'], command=lambda:click_equipment(11070))
+select_item['tg11070']=0;equip_buttons["11070"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11070'], command=lambda:click_equipment(11070))
 equip_buttons["11070"].place(x=100, y=280)
-select_item['tg11071']=0;equip_buttons["11071"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11071'], command=lambda:click_equipment(11071))
+select_item['tg11071']=0;equip_buttons["11071"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11071'], command=lambda:click_equipment(11071))
 equip_buttons["11071"].place(x=130, y=280)
-select_item['tg11080']=0;equip_buttons["11080"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11080'], command=lambda:click_equipment(11080))
+select_item['tg11080']=0;equip_buttons["11080"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11080'], command=lambda:click_equipment(11080))
 equip_buttons["11080"].place(x=100, y=310)
-select_item['tg11081']=0;equip_buttons["11081"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11081'], command=lambda:click_equipment(11081))
+select_item['tg11081']=0;equip_buttons["11081"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11081'], command=lambda:click_equipment(11081))
 equip_buttons["11081"].place(x=130, y=310)
-select_item['tg11090']=0;equip_buttons["11090"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11090'], command=lambda:click_equipment(11090))
+select_item['tg11090']=0;equip_buttons["11090"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11090'], command=lambda:click_equipment(11090))
 equip_buttons["11090"].place(x=100, y=340)
-select_item['tg11091']=0;equip_buttons["11091"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11091'], command=lambda:click_equipment(11091))
+select_item['tg11091']=0;equip_buttons["11091"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11091'], command=lambda:click_equipment(11091))
 equip_buttons["11091"].place(x=130, y=340)
-select_item['tg11100']=0;equip_buttons["11100"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11100'], command=lambda:click_equipment(11100))
+select_item['tg11100']=0;equip_buttons["11100"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11100'], command=lambda:click_equipment(11100))
 equip_buttons["11100"].place(x=100, y=370)
-select_item['tg11101']=0;equip_buttons["11101"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11101'], command=lambda:click_equipment(11101))
+select_item['tg11101']=0;equip_buttons["11101"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11101'], command=lambda:click_equipment(11101))
 equip_buttons["11101"].place(x=130, y=370)
-select_item['tg11110']=0;equip_buttons["11110"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11110'], command=lambda:click_equipment(11110))
+select_item['tg11110']=0;equip_buttons["11110"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11110'], command=lambda:click_equipment(11110))
 equip_buttons["11110"].place(x=100, y=400)
-select_item['tg11111']=0;equip_buttons["11111"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11111'], command=lambda:click_equipment(11111))
+select_item['tg11111']=0;equip_buttons["11111"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11111'], command=lambda:click_equipment(11111))
 equip_buttons["11111"].place(x=130, y=400)
-select_item['tg11120']=0;equip_buttons["11120"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11120'], command=lambda:click_equipment(11120))
+select_item['tg11120']=0;equip_buttons["11120"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11120'], command=lambda:click_equipment(11120))
 equip_buttons["11120"].place(x=100, y=430)
-select_item['tg11121']=0;equip_buttons["11121"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11121'], command=lambda:click_equipment(11121))
+select_item['tg11121']=0;equip_buttons["11121"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11121'], command=lambda:click_equipment(11121))
 equip_buttons["11121"].place(x=130, y=430)
-select_item['tg11130']=0;equip_buttons["11130"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11130'], command=lambda:click_equipment(11130))
+select_item['tg11130']=0;equip_buttons["11130"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11130'], command=lambda:click_equipment(11130))
 equip_buttons["11130"].place(x=100, y=460)
-select_item['tg11131']=0;equip_buttons["11131"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11131'], command=lambda:click_equipment(11131))
+select_item['tg11131']=0;equip_buttons["11131"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11131'], command=lambda:click_equipment(11131))
 equip_buttons["11131"].place(x=130, y=460)
-select_item['tg11140']=0;equip_buttons["11140"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11140'], command=lambda:click_equipment(11140))
+select_item['tg11140']=0;equip_buttons["11140"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11140'], command=lambda:click_equipment(11140))
 equip_buttons["11140"].place(x=100, y=490)
-select_item['tg11141']=0;equip_buttons["11141"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11141'], command=lambda:click_equipment(11141))
+select_item['tg11141']=0;equip_buttons["11141"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11141'], command=lambda:click_equipment(11141))
 equip_buttons["11141"].place(x=130, y=490)
-select_item['tg11150']=0;equip_buttons["11150"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11150'], command=lambda:click_equipment(11150))
+select_item['tg11150']=0;equip_buttons["11150"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11150'], command=lambda:click_equipment(11150))
 equip_buttons["11150"].place(x=100, y=520)
-select_item['tg11151']=0;equip_buttons["11151"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11151'], command=lambda:click_equipment(11151))
+select_item['tg11151']=0;equip_buttons["11151"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11151'], command=lambda:click_equipment(11151))
 equip_buttons["11151"].place(x=130, y=520)
 
-select_item['tg11280']=0;equip_buttons["11280"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11280'], command=lambda:click_equipment(11280))
+select_item['tg11280']=0;equip_buttons["11280"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11280'], command=lambda:click_equipment(11280))
 equip_buttons["11280"].place(x=100, y=570)
-select_item['tg11281']=0;equip_buttons["11281"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11281'], command=lambda:click_equipment(11281))
+select_item['tg11281']=0;equip_buttons["11281"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11281'], command=lambda:click_equipment(11281))
 equip_buttons["11281"].place(x=130, y=570)
-select_item['tg11290']=0;equip_buttons["11290"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11290'], command=lambda:click_equipment(11290))
+select_item['tg11290']=0;equip_buttons["11290"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11290'], command=lambda:click_equipment(11290))
 equip_buttons["11290"].place(x=100, y=600)
-select_item['tg11291']=0;equip_buttons["11291"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11291'], command=lambda:click_equipment(11291))
+select_item['tg11291']=0;equip_buttons["11291"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11291'], command=lambda:click_equipment(11291))
 equip_buttons["11291"].place(x=130, y=600)
-select_item['tg11300']=0;equip_buttons["11300"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11300'], command=lambda:click_equipment(11300))
+select_item['tg11300']=0;equip_buttons["11300"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11300'], command=lambda:click_equipment(11300))
 equip_buttons["11300"].place(x=100, y=630)
-select_item['tg11301']=0;equip_buttons["11301"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11301'], command=lambda:click_equipment(11301))
+select_item['tg11301']=0;equip_buttons["11301"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11301'], command=lambda:click_equipment(11301))
 equip_buttons["11301"].place(x=130, y=630)
-select_item['tg11310']=0;equip_buttons["11310"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11310'], command=lambda:click_equipment(11310))
+select_item['tg11310']=0;equip_buttons["11310"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11310'], command=lambda:click_equipment(11310))
 equip_buttons["11310"].place(x=100, y=660)
-select_item['tg11311']=0;equip_buttons["11311"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['11311'], command=lambda:click_equipment(11311))
+select_item['tg11311']=0;equip_buttons["11311"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['11311'], command=lambda:click_equipment(11311))
 equip_buttons["11311"].place(x=130, y=660)
 ##하의
-select_item['tg12010']=0;equip_buttons["12010"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12010'], command=lambda:click_equipment(12010))
+select_item['tg12010']=0;equip_buttons["12010"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12010'], command=lambda:click_equipment(12010))
 equip_buttons["12010"].place(x=161, y=100)
-select_item['tg12020']=0;equip_buttons["12020"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12020'], command=lambda:click_equipment(12020))
+select_item['tg12020']=0;equip_buttons["12020"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12020'], command=lambda:click_equipment(12020))
 equip_buttons["12020"].place(x=161, y=130)
-select_item['tg12030']=0;equip_buttons["12030"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12030'], command=lambda:click_equipment(12030))
+select_item['tg12030']=0;equip_buttons["12030"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12030'], command=lambda:click_equipment(12030))
 equip_buttons["12030"].place(x=161, y=160)
-select_item['tg12040']=0;equip_buttons["12040"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12040'], command=lambda:click_equipment(12040))
+select_item['tg12040']=0;equip_buttons["12040"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12040'], command=lambda:click_equipment(12040))
 equip_buttons["12040"].place(x=161, y=190)
-select_item['tg12050']=0;equip_buttons["12050"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12050'], command=lambda:click_equipment(12050))
+select_item['tg12050']=0;equip_buttons["12050"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12050'], command=lambda:click_equipment(12050))
 equip_buttons["12050"].place(x=161, y=220)
-select_item['tg12060']=0;equip_buttons["12060"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12060'], command=lambda:click_equipment(12060))
+select_item['tg12060']=0;equip_buttons["12060"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12060'], command=lambda:click_equipment(12060))
 equip_buttons["12060"].place(x=161, y=250)
-select_item['tg12070']=0;equip_buttons["12070"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12070'], command=lambda:click_equipment(12070))
+select_item['tg12070']=0;equip_buttons["12070"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12070'], command=lambda:click_equipment(12070))
 equip_buttons["12070"].place(x=161, y=280)
-select_item['tg12080']=0;equip_buttons["12080"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12080'], command=lambda:click_equipment(12080))
+select_item['tg12080']=0;equip_buttons["12080"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12080'], command=lambda:click_equipment(12080))
 equip_buttons["12080"].place(x=161, y=310)
-select_item['tg12090']=0;equip_buttons["12090"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12090'], command=lambda:click_equipment(12090))
+select_item['tg12090']=0;equip_buttons["12090"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12090'], command=lambda:click_equipment(12090))
 equip_buttons["12090"].place(x=161, y=340)
-select_item['tg12100']=0;equip_buttons["12100"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12100'], command=lambda:click_equipment(12100))
+select_item['tg12100']=0;equip_buttons["12100"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12100'], command=lambda:click_equipment(12100))
 equip_buttons["12100"].place(x=161, y=370)
-select_item['tg12110']=0;equip_buttons["12110"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12110'], command=lambda:click_equipment(12110))
+select_item['tg12110']=0;equip_buttons["12110"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12110'], command=lambda:click_equipment(12110))
 equip_buttons["12110"].place(x=161, y=400)
-select_item['tg12120']=0;equip_buttons["12120"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12120'], command=lambda:click_equipment(12120))
+select_item['tg12120']=0;equip_buttons["12120"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12120'], command=lambda:click_equipment(12120))
 equip_buttons["12120"].place(x=161, y=430)
-select_item['tg12130']=0;equip_buttons["12130"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12130'], command=lambda:click_equipment(12130))
+select_item['tg12130']=0;equip_buttons["12130"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12130'], command=lambda:click_equipment(12130))
 equip_buttons["12130"].place(x=161, y=460)
-select_item['tg12140']=0;equip_buttons["12140"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12140'], command=lambda:click_equipment(12140))
+select_item['tg12140']=0;equip_buttons["12140"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12140'], command=lambda:click_equipment(12140))
 equip_buttons["12140"].place(x=161, y=490)
-select_item['tg12150']=0;equip_buttons["12150"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12150'], command=lambda:click_equipment(12150))
+select_item['tg12150']=0;equip_buttons["12150"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12150'], command=lambda:click_equipment(12150))
 equip_buttons["12150"].place(x=161, y=520)
-select_item['tg12240']=0;equip_buttons["12240"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12240'], command=lambda:click_equipment(12240))
+select_item['tg12240']=0;equip_buttons["12240"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12240'], command=lambda:click_equipment(12240))
 equip_buttons["12240"].place(x=296, y=570)
-select_item['tg12250']=0;equip_buttons["12250"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12250'], command=lambda:click_equipment(12250))
+select_item['tg12250']=0;equip_buttons["12250"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12250'], command=lambda:click_equipment(12250))
 equip_buttons["12250"].place(x=296, y=600)
-select_item['tg12260']=0;equip_buttons["12260"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12260'], command=lambda:click_equipment(12260))
+select_item['tg12260']=0;equip_buttons["12260"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12260'], command=lambda:click_equipment(12260))
 equip_buttons["12260"].place(x=296, y=630)
-select_item['tg12270']=0;equip_buttons["12270"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['12270'], command=lambda:click_equipment(12270))
+select_item['tg12270']=0;equip_buttons["12270"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['12270'], command=lambda:click_equipment(12270))
 equip_buttons["12270"].place(x=296, y=660)
 ##어깨
-select_item['tg13010']=0;equip_buttons["13010"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13010'], command=lambda:click_equipment(13010))
+select_item['tg13010']=0;equip_buttons["13010"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13010'], command=lambda:click_equipment(13010))
 equip_buttons["13010"].place(x=192, y=100)
-select_item['tg13020']=0;equip_buttons["13020"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13020'], command=lambda:click_equipment(13020))
+select_item['tg13020']=0;equip_buttons["13020"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13020'], command=lambda:click_equipment(13020))
 equip_buttons["13020"].place(x=192, y=130)
-select_item['tg13030']=0;equip_buttons["13030"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13030'], command=lambda:click_equipment(13030))
+select_item['tg13030']=0;equip_buttons["13030"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13030'], command=lambda:click_equipment(13030))
 equip_buttons["13030"].place(x=192, y=160)
-select_item['tg13040']=0;equip_buttons["13040"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13040'], command=lambda:click_equipment(13040))
+select_item['tg13040']=0;equip_buttons["13040"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13040'], command=lambda:click_equipment(13040))
 equip_buttons["13040"].place(x=192, y=190)
-select_item['tg13050']=0;equip_buttons["13050"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13050'], command=lambda:click_equipment(13050))
+select_item['tg13050']=0;equip_buttons["13050"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13050'], command=lambda:click_equipment(13050))
 equip_buttons["13050"].place(x=192, y=220)
-select_item['tg13060']=0;equip_buttons["13060"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13060'], command=lambda:click_equipment(13060))
+select_item['tg13060']=0;equip_buttons["13060"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13060'], command=lambda:click_equipment(13060))
 equip_buttons["13060"].place(x=192, y=250)
-select_item['tg13070']=0;equip_buttons["13070"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13070'], command=lambda:click_equipment(13070))
+select_item['tg13070']=0;equip_buttons["13070"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13070'], command=lambda:click_equipment(13070))
 equip_buttons["13070"].place(x=192, y=280)
-select_item['tg13080']=0;equip_buttons["13080"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13080'], command=lambda:click_equipment(13080))
+select_item['tg13080']=0;equip_buttons["13080"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13080'], command=lambda:click_equipment(13080))
 equip_buttons["13080"].place(x=192, y=310)
-select_item['tg13090']=0;equip_buttons["13090"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13090'], command=lambda:click_equipment(13090))
+select_item['tg13090']=0;equip_buttons["13090"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13090'], command=lambda:click_equipment(13090))
 equip_buttons["13090"].place(x=192, y=340)
-select_item['tg13100']=0;equip_buttons["13100"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13100'], command=lambda:click_equipment(13100))
+select_item['tg13100']=0;equip_buttons["13100"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13100'], command=lambda:click_equipment(13100))
 equip_buttons["13100"].place(x=192, y=370)
-select_item['tg13110']=0;equip_buttons["13110"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13110'], command=lambda:click_equipment(13110))
+select_item['tg13110']=0;equip_buttons["13110"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13110'], command=lambda:click_equipment(13110))
 equip_buttons["13110"].place(x=192, y=400)
-select_item['tg13120']=0;equip_buttons["13120"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13120'], command=lambda:click_equipment(13120))
+select_item['tg13120']=0;equip_buttons["13120"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13120'], command=lambda:click_equipment(13120))
 equip_buttons["13120"].place(x=192, y=430)
-select_item['tg13130']=0;equip_buttons["13130"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13130'], command=lambda:click_equipment(13130))
+select_item['tg13130']=0;equip_buttons["13130"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13130'], command=lambda:click_equipment(13130))
 equip_buttons["13130"].place(x=192, y=460)
-select_item['tg13140']=0;equip_buttons["13140"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13140'], command=lambda:click_equipment(13140))
+select_item['tg13140']=0;equip_buttons["13140"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13140'], command=lambda:click_equipment(13140))
 equip_buttons["13140"].place(x=192, y=490)
-select_item['tg13150']=0;equip_buttons["13150"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['13150'], command=lambda:click_equipment(13150))
+select_item['tg13150']=0;equip_buttons["13150"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['13150'], command=lambda:click_equipment(13150))
 equip_buttons["13150"].place(x=192, y=520)
 ##벨트
-select_item['tg14010']=0;equip_buttons["14010"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14010'], command=lambda:click_equipment(14010))
+select_item['tg14010']=0;equip_buttons["14010"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14010'], command=lambda:click_equipment(14010))
 equip_buttons["14010"].place(x=223, y=100)
-select_item['tg14020']=0;equip_buttons["14020"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14020'], command=lambda:click_equipment(14020))
+select_item['tg14020']=0;equip_buttons["14020"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14020'], command=lambda:click_equipment(14020))
 equip_buttons["14020"].place(x=223, y=130)
-select_item['tg14030']=0;equip_buttons["14030"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14030'], command=lambda:click_equipment(14030))
+select_item['tg14030']=0;equip_buttons["14030"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14030'], command=lambda:click_equipment(14030))
 equip_buttons["14030"].place(x=223, y=160)
-select_item['tg14040']=0;equip_buttons["14040"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14040'], command=lambda:click_equipment(14040))
+select_item['tg14040']=0;equip_buttons["14040"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14040'], command=lambda:click_equipment(14040))
 equip_buttons["14040"].place(x=223, y=190)
-select_item['tg14050']=0;equip_buttons["14050"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14050'], command=lambda:click_equipment(14050))
+select_item['tg14050']=0;equip_buttons["14050"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14050'], command=lambda:click_equipment(14050))
 equip_buttons["14050"].place(x=223, y=220)
-select_item['tg14060']=0;equip_buttons["14060"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14060'], command=lambda:click_equipment(14060))
+select_item['tg14060']=0;equip_buttons["14060"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14060'], command=lambda:click_equipment(14060))
 equip_buttons["14060"].place(x=223, y=250)
-select_item['tg14070']=0;equip_buttons["14070"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14070'], command=lambda:click_equipment(14070))
+select_item['tg14070']=0;equip_buttons["14070"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14070'], command=lambda:click_equipment(14070))
 equip_buttons["14070"].place(x=223, y=280)
-select_item['tg14080']=0;equip_buttons["14080"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14080'], command=lambda:click_equipment(14080))
+select_item['tg14080']=0;equip_buttons["14080"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14080'], command=lambda:click_equipment(14080))
 equip_buttons["14080"].place(x=223, y=310)
-select_item['tg14090']=0;equip_buttons["14090"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14090'], command=lambda:click_equipment(14090))
+select_item['tg14090']=0;equip_buttons["14090"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14090'], command=lambda:click_equipment(14090))
 equip_buttons["14090"].place(x=223, y=340)
-select_item['tg14100']=0;equip_buttons["14100"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14100'], command=lambda:click_equipment(14100))
+select_item['tg14100']=0;equip_buttons["14100"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14100'], command=lambda:click_equipment(14100))
 equip_buttons["14100"].place(x=223, y=370)
-select_item['tg14110']=0;equip_buttons["14110"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14110'], command=lambda:click_equipment(14110))
+select_item['tg14110']=0;equip_buttons["14110"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14110'], command=lambda:click_equipment(14110))
 equip_buttons["14110"].place(x=223, y=400)
-select_item['tg14120']=0;equip_buttons["14120"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14120'], command=lambda:click_equipment(14120))
+select_item['tg14120']=0;equip_buttons["14120"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14120'], command=lambda:click_equipment(14120))
 equip_buttons["14120"].place(x=223, y=430)
-select_item['tg14130']=0;equip_buttons["14130"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14130'], command=lambda:click_equipment(14130))
+select_item['tg14130']=0;equip_buttons["14130"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14130'], command=lambda:click_equipment(14130))
 equip_buttons["14130"].place(x=223, y=460)
-select_item['tg14140']=0;equip_buttons["14140"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14140'], command=lambda:click_equipment(14140))
+select_item['tg14140']=0;equip_buttons["14140"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14140'], command=lambda:click_equipment(14140))
 equip_buttons["14140"].place(x=223, y=490)
-select_item['tg14150']=0;equip_buttons["14150"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['14150'], command=lambda:click_equipment(14150))
+select_item['tg14150']=0;equip_buttons["14150"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['14150'], command=lambda:click_equipment(14150))
 equip_buttons["14150"].place(x=223, y=520)
 ##신발
-select_item['tg15010']=0;equip_buttons["15010"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15010'], command=lambda:click_equipment(15010))
+select_item['tg15010']=0;equip_buttons["15010"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15010'], command=lambda:click_equipment(15010))
 equip_buttons["15010"].place(x=254, y=100)
-select_item['tg15020']=0;equip_buttons["15020"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15020'], command=lambda:click_equipment(15020))
+select_item['tg15020']=0;equip_buttons["15020"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15020'], command=lambda:click_equipment(15020))
 equip_buttons["15020"].place(x=254, y=130)
-select_item['tg15030']=0;equip_buttons["15030"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15030'], command=lambda:click_equipment(15030))
+select_item['tg15030']=0;equip_buttons["15030"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15030'], command=lambda:click_equipment(15030))
 equip_buttons["15030"].place(x=254, y=160)
-select_item['tg15040']=0;equip_buttons["15040"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15040'], command=lambda:click_equipment(15040))
+select_item['tg15040']=0;equip_buttons["15040"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15040'], command=lambda:click_equipment(15040))
 equip_buttons["15040"].place(x=254, y=190)
-select_item['tg15050']=0;equip_buttons["15050"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15050'], command=lambda:click_equipment(15050))
+select_item['tg15050']=0;equip_buttons["15050"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15050'], command=lambda:click_equipment(15050))
 equip_buttons["15050"].place(x=254, y=220)
-select_item['tg15060']=0;equip_buttons["15060"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15060'], command=lambda:click_equipment(15060))
+select_item['tg15060']=0;equip_buttons["15060"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15060'], command=lambda:click_equipment(15060))
 equip_buttons["15060"].place(x=254, y=250)
-select_item['tg15070']=0;equip_buttons["15070"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15070'], command=lambda:click_equipment(15070))
+select_item['tg15070']=0;equip_buttons["15070"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15070'], command=lambda:click_equipment(15070))
 equip_buttons["15070"].place(x=254, y=280)
-select_item['tg15080']=0;equip_buttons["15080"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15080'], command=lambda:click_equipment(15080))
+select_item['tg15080']=0;equip_buttons["15080"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15080'], command=lambda:click_equipment(15080))
 equip_buttons["15080"].place(x=254, y=310)
-select_item['tg15090']=0;equip_buttons["15090"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15090'], command=lambda:click_equipment(15090))
+select_item['tg15090']=0;equip_buttons["15090"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15090'], command=lambda:click_equipment(15090))
 equip_buttons["15090"].place(x=254, y=340)
-select_item['tg15100']=0;equip_buttons["15100"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15100'], command=lambda:click_equipment(15100))
+select_item['tg15100']=0;equip_buttons["15100"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15100'], command=lambda:click_equipment(15100))
 equip_buttons["15100"].place(x=254, y=370)
-select_item['tg15110']=0;equip_buttons["15110"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15110'], command=lambda:click_equipment(15110))
+select_item['tg15110']=0;equip_buttons["15110"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15110'], command=lambda:click_equipment(15110))
 equip_buttons["15110"].place(x=254, y=400)
-select_item['tg15120']=0;equip_buttons["15120"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15120'], command=lambda:click_equipment(15120))
+select_item['tg15120']=0;equip_buttons["15120"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15120'], command=lambda:click_equipment(15120))
 equip_buttons["15120"].place(x=254, y=430)
-select_item['tg15130']=0;equip_buttons["15130"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15130'], command=lambda:click_equipment(15130))
+select_item['tg15130']=0;equip_buttons["15130"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15130'], command=lambda:click_equipment(15130))
 equip_buttons["15130"].place(x=254, y=460)
-select_item['tg15140']=0;equip_buttons["15140"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15140'], command=lambda:click_equipment(15140))
+select_item['tg15140']=0;equip_buttons["15140"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15140'], command=lambda:click_equipment(15140))
 equip_buttons["15140"].place(x=254, y=490)
-select_item['tg15150']=0;equip_buttons["15150"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15150'], command=lambda:click_equipment(15150))
+select_item['tg15150']=0;equip_buttons["15150"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15150'], command=lambda:click_equipment(15150))
 equip_buttons["15150"].place(x=254, y=520)
-select_item['tg15320']=0;equip_buttons["15320"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15320'], command=lambda:click_equipment(15320))
+select_item['tg15320']=0;equip_buttons["15320"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15320'], command=lambda:click_equipment(15320))
 equip_buttons["15320"].place(x=492, y=570)
-select_item['tg15330']=0;equip_buttons["15330"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15330'], command=lambda:click_equipment(15330))
+select_item['tg15330']=0;equip_buttons["15330"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15330'], command=lambda:click_equipment(15330))
 equip_buttons["15330"].place(x=492, y=600)
-select_item['tg15340']=0;equip_buttons["15340"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15340'], command=lambda:click_equipment(15340))
+select_item['tg15340']=0;equip_buttons["15340"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15340'], command=lambda:click_equipment(15340))
 equip_buttons["15340"].place(x=492, y=630)
-select_item['tg15350']=0;equip_buttons["15350"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['15350'], command=lambda:click_equipment(15350))
+select_item['tg15350']=0;equip_buttons["15350"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['15350'], command=lambda:click_equipment(15350))
 equip_buttons["15350"].place(x=492, y=660)
 ##팔찌
-select_item['tg21160']=0;equip_buttons["21160"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21160'], command=lambda:click_equipment(21160))
+select_item['tg21160']=0;equip_buttons["21160"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21160'], command=lambda:click_equipment(21160))
 equip_buttons["21160"].place(x=370 - 12, y=100)
-select_item['tg21161']=0;equip_buttons["21161"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21161'], command=lambda:click_equipment(21161))
+select_item['tg21161']=0;equip_buttons["21161"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21161'], command=lambda:click_equipment(21161))
 equip_buttons["21161"].place(x=370 - 12 + 30, y=100)
-select_item['tg21170']=0;equip_buttons["21170"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21170'], command=lambda:click_equipment(21170))
+select_item['tg21170']=0;equip_buttons["21170"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21170'], command=lambda:click_equipment(21170))
 equip_buttons["21170"].place(x=370 - 12, y=130)
-select_item['tg21171']=0;equip_buttons["21171"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21171'], command=lambda:click_equipment(21171))
+select_item['tg21171']=0;equip_buttons["21171"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21171'], command=lambda:click_equipment(21171))
 equip_buttons["21171"].place(x=370 - 12 + 30, y=130)
-select_item['tg21180']=0;equip_buttons["21180"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21180'], command=lambda:click_equipment(21180))
+select_item['tg21180']=0;equip_buttons["21180"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21180'], command=lambda:click_equipment(21180))
 equip_buttons["21180"].place(x=370 - 12, y=160)
-select_item['tg21181']=0;equip_buttons["21181"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21181'], command=lambda:click_equipment(21181))
+select_item['tg21181']=0;equip_buttons["21181"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21181'], command=lambda:click_equipment(21181))
 equip_buttons["21181"].place(x=370 - 12 + 30, y=160)
-select_item['tg21190']=0;equip_buttons["21190"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21190'], command=lambda:click_equipment(21190))
+select_item['tg21190']=0;equip_buttons["21190"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21190'], command=lambda:click_equipment(21190))
 equip_buttons["21190"].place(x=370 - 12, y=190)
-select_item['tg21191']=0;equip_buttons["21191"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21191'], command=lambda:click_equipment(21191))
+select_item['tg21191']=0;equip_buttons["21191"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21191'], command=lambda:click_equipment(21191))
 equip_buttons["21191"].place(x=370 - 12 + 30, y=190)
-select_item['tg21240']=0;equip_buttons["21240"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21240'], command=lambda:click_equipment(21240))
+select_item['tg21240']=0;equip_buttons["21240"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21240'], command=lambda:click_equipment(21240))
 equip_buttons["21240"].place(x=327, y=570)
-select_item['tg21241']=0;equip_buttons["21241"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21241'], command=lambda:click_equipment(21241))
+select_item['tg21241']=0;equip_buttons["21241"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21241'], command=lambda:click_equipment(21241))
 equip_buttons["21241"].place(x=357, y=570)
-select_item['tg21250']=0;equip_buttons["21250"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21250'], command=lambda:click_equipment(21250))
+select_item['tg21250']=0;equip_buttons["21250"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21250'], command=lambda:click_equipment(21250))
 equip_buttons["21250"].place(x=327, y=600)
-select_item['tg21251']=0;equip_buttons["21251"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21251'], command=lambda:click_equipment(21251))
+select_item['tg21251']=0;equip_buttons["21251"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21251'], command=lambda:click_equipment(21251))
 equip_buttons["21251"].place(x=357, y=600)
-select_item['tg21260']=0;equip_buttons["21260"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21260'], command=lambda:click_equipment(21260))
+select_item['tg21260']=0;equip_buttons["21260"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21260'], command=lambda:click_equipment(21260))
 equip_buttons["21260"].place(x=327, y=630)
-select_item['tg21261']=0;equip_buttons["21261"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21261'], command=lambda:click_equipment(21261))
+select_item['tg21261']=0;equip_buttons["21261"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21261'], command=lambda:click_equipment(21261))
 equip_buttons["21261"].place(x=357, y=630)
-select_item['tg21270']=0;equip_buttons["21270"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21270'], command=lambda:click_equipment(21270))
+select_item['tg21270']=0;equip_buttons["21270"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21270'], command=lambda:click_equipment(21270))
 equip_buttons["21270"].place(x=327, y=660)
-select_item['tg21271']=0;equip_buttons["21271"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['21271'], command=lambda:click_equipment(21271))
+select_item['tg21271']=0;equip_buttons["21271"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['21271'], command=lambda:click_equipment(21271))
 equip_buttons["21271"].place(x=357, y=660)
 ##목걸이
-select_item['tg22160']=0;equip_buttons["22160"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['22160'], command=lambda:click_equipment(22160))
+select_item['tg22160']=0;equip_buttons["22160"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['22160'], command=lambda:click_equipment(22160))
 equip_buttons["22160"].place(x=419, y=100)
-select_item['tg22170']=0;equip_buttons["22170"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['22170'], command=lambda:click_equipment(22170))
+select_item['tg22170']=0;equip_buttons["22170"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['22170'], command=lambda:click_equipment(22170))
 equip_buttons["22170"].place(x=419, y=130)
-select_item['tg22180']=0;equip_buttons["22180"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['22180'], command=lambda:click_equipment(22180))
+select_item['tg22180']=0;equip_buttons["22180"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['22180'], command=lambda:click_equipment(22180))
 equip_buttons["22180"].place(x=419, y=160)
-select_item['tg22190']=0;equip_buttons["22190"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['22190'], command=lambda:click_equipment(22190))
+select_item['tg22190']=0;equip_buttons["22190"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['22190'], command=lambda:click_equipment(22190))
 equip_buttons["22190"].place(x=419, y=190)
-select_item['tg22280']=0;equip_buttons["22280"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['22280'], command=lambda:click_equipment(22280))
+select_item['tg22280']=0;equip_buttons["22280"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['22280'], command=lambda:click_equipment(22280))
 equip_buttons["22280"].place(x=161, y=570)
-select_item['tg22290']=0;equip_buttons["22290"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['22290'], command=lambda:click_equipment(22290))
+select_item['tg22290']=0;equip_buttons["22290"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['22290'], command=lambda:click_equipment(22290))
 equip_buttons["22290"].place(x=161, y=600)
-select_item['tg22300']=0;equip_buttons["22300"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['22300'], command=lambda:click_equipment(22300))
+select_item['tg22300']=0;equip_buttons["22300"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['22300'], command=lambda:click_equipment(22300))
 equip_buttons["22300"].place(x=161, y=630)
-select_item['tg22310']=0;equip_buttons["22310"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['22310'], command=lambda:click_equipment(22310))
+select_item['tg22310']=0;equip_buttons["22310"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['22310'], command=lambda:click_equipment(22310))
 equip_buttons["22310"].place(x=161, y=660)
 ##반지
-select_item['tg23160']=0;equip_buttons["23160"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['23160'], command=lambda:click_equipment(23160))
+select_item['tg23160']=0;equip_buttons["23160"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['23160'], command=lambda:click_equipment(23160))
 equip_buttons["23160"].place(x=450, y=100)
-select_item['tg23170']=0;equip_buttons["23170"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['23170'], command=lambda:click_equipment(23170))
+select_item['tg23170']=0;equip_buttons["23170"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['23170'], command=lambda:click_equipment(23170))
 equip_buttons["23170"].place(x=450, y=130)
-select_item['tg23180']=0;equip_buttons["23180"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['23180'], command=lambda:click_equipment(23180))
+select_item['tg23180']=0;equip_buttons["23180"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['23180'], command=lambda:click_equipment(23180))
 equip_buttons["23180"].place(x=450, y=160)
-select_item['tg23190']=0;equip_buttons["23190"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['23190'], command=lambda:click_equipment(23190))
+select_item['tg23190']=0;equip_buttons["23190"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['23190'], command=lambda:click_equipment(23190))
 equip_buttons["23190"].place(x=450, y=190)
-select_item['tg23320']=0;equip_buttons["23320"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['23320'], command=lambda:click_equipment(23320))
+select_item['tg23320']=0;equip_buttons["23320"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['23320'], command=lambda:click_equipment(23320))
 equip_buttons["23320"].place(x=523, y=570)
-select_item['tg23330']=0;equip_buttons["23330"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['23330'], command=lambda:click_equipment(23330))
+select_item['tg23330']=0;equip_buttons["23330"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['23330'], command=lambda:click_equipment(23330))
 equip_buttons["23330"].place(x=523, y=600)
-select_item['tg23340']=0;equip_buttons["23340"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['23340'], command=lambda:click_equipment(23340))
+select_item['tg23340']=0;equip_buttons["23340"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['23340'], command=lambda:click_equipment(23340))
 equip_buttons["23340"].place(x=523, y=630)
-select_item['tg23350']=0;equip_buttons["23350"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['23350'], command=lambda:click_equipment(23350))
+select_item['tg23350']=0;equip_buttons["23350"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['23350'], command=lambda:click_equipment(23350))
 equip_buttons["23350"].place(x=523, y=660)
 ##보조장비
-select_item['tg31200']=0;equip_buttons["31200"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['31200'], command=lambda:click_equipment(31200))
+select_item['tg31200']=0;equip_buttons["31200"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['31200'], command=lambda:click_equipment(31200))
 equip_buttons["31200"].place(x=554, y=100)
-select_item['tg31210']=0;equip_buttons["31210"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['31210'], command=lambda:click_equipment(31210))
+select_item['tg31210']=0;equip_buttons["31210"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['31210'], command=lambda:click_equipment(31210))
 equip_buttons["31210"].place(x=554, y=130)
-select_item['tg31220']=0;equip_buttons["31220"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['31220'], command=lambda:click_equipment(31220))
+select_item['tg31220']=0;equip_buttons["31220"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['31220'], command=lambda:click_equipment(31220))
 equip_buttons["31220"].place(x=554, y=160)
-select_item['tg31230']=0;equip_buttons["31230"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['31230'], command=lambda:click_equipment(31230))
+select_item['tg31230']=0;equip_buttons["31230"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['31230'], command=lambda:click_equipment(31230))
 equip_buttons["31230"].place(x=554, y=190)
-select_item['tg31280']=0;equip_buttons["31280"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['31280'], command=lambda:click_equipment(31280))
+select_item['tg31280']=0;equip_buttons["31280"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['31280'], command=lambda:click_equipment(31280))
 equip_buttons["31280"].place(x=192, y=570)
-select_item['tg31290']=0;equip_buttons["31290"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['31290'], command=lambda:click_equipment(31290))
+select_item['tg31290']=0;equip_buttons["31290"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['31290'], command=lambda:click_equipment(31290))
 equip_buttons["31290"].place(x=192, y=600)
-select_item['tg31300']=0;equip_buttons["31300"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['31300'], command=lambda:click_equipment(31300))
+select_item['tg31300']=0;equip_buttons["31300"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['31300'], command=lambda:click_equipment(31300))
 equip_buttons["31300"].place(x=192, y=630)
-select_item['tg31310']=0;equip_buttons["31310"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['31310'], command=lambda:click_equipment(31310))
+select_item['tg31310']=0;equip_buttons["31310"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['31310'], command=lambda:click_equipment(31310))
 equip_buttons["31310"].place(x=192, y=660)
 ##마법석
-select_item['tg32200']=0;equip_buttons["32200"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['32200'], command=lambda:click_equipment(32200))
+select_item['tg32200']=0;equip_buttons["32200"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['32200'], command=lambda:click_equipment(32200))
 equip_buttons["32200"].place(x=585, y=100)
-select_item['tg32210']=0;equip_buttons["32210"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['32210'], command=lambda:click_equipment(32210))
+select_item['tg32210']=0;equip_buttons["32210"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['32210'], command=lambda:click_equipment(32210))
 equip_buttons["32210"].place(x=585, y=130)
-select_item['tg32220']=0;equip_buttons["32220"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['32220'], command=lambda:click_equipment(32220))
+select_item['tg32220']=0;equip_buttons["32220"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['32220'], command=lambda:click_equipment(32220))
 equip_buttons["32220"].place(x=585, y=160)
-select_item['tg32230']=0;equip_buttons["32230"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['32230'], command=lambda:click_equipment(32230))
+select_item['tg32230']=0;equip_buttons["32230"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['32230'], command=lambda:click_equipment(32230))
 equip_buttons["32230"].place(x=585, y=190)
-select_item['tg32240']=0;equip_buttons["32240"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['32240'], command=lambda:click_equipment(32240))
+select_item['tg32240']=0;equip_buttons["32240"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['32240'], command=lambda:click_equipment(32240))
 equip_buttons["32240"].place(x=388, y=570)
-select_item['tg32250']=0;equip_buttons["32250"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['32250'], command=lambda:click_equipment(32250))
+select_item['tg32250']=0;equip_buttons["32250"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['32250'], command=lambda:click_equipment(32250))
 equip_buttons["32250"].place(x=388, y=600)
-select_item['tg32260']=0;equip_buttons["32260"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['32260'], command=lambda:click_equipment(32260))
+select_item['tg32260']=0;equip_buttons["32260"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['32260'], command=lambda:click_equipment(32260))
 equip_buttons["32260"].place(x=388, y=630)
-select_item['tg32270']=0;equip_buttons["32270"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['32270'], command=lambda:click_equipment(32270))
+select_item['tg32270']=0;equip_buttons["32270"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['32270'], command=lambda:click_equipment(32270))
 equip_buttons["32270"].place(x=388, y=660)
 ##귀걸이
-select_item['tg33200']=0;equip_buttons["33200"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33200'], command=lambda:click_equipment(33200))
+select_item['tg33200']=0;equip_buttons["33200"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33200'], command=lambda:click_equipment(33200))
 equip_buttons["33200"].place(x=616, y=100)
-select_item['tg33201']=0;equip_buttons["33201"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33201'], command=lambda:click_equipment(33201))
+select_item['tg33201']=0;equip_buttons["33201"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33201'], command=lambda:click_equipment(33201))
 equip_buttons["33201"].place(x=646, y=100)
-select_item['tg33210']=0;equip_buttons["33210"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33210'], command=lambda:click_equipment(33210))
+select_item['tg33210']=0;equip_buttons["33210"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33210'], command=lambda:click_equipment(33210))
 equip_buttons["33210"].place(x=616, y=130)
-select_item['tg33211']=0;equip_buttons["33211"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33211'], command=lambda:click_equipment(33211))
+select_item['tg33211']=0;equip_buttons["33211"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33211'], command=lambda:click_equipment(33211))
 equip_buttons["33211"].place(x=646, y=130)
-select_item['tg33220']=0;equip_buttons["33220"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33220'], command=lambda:click_equipment(33220))
+select_item['tg33220']=0;equip_buttons["33220"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33220'], command=lambda:click_equipment(33220))
 equip_buttons["33220"].place(x=616, y=160)
-select_item['tg33221']=0;equip_buttons["33221"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33221'], command=lambda:click_equipment(33221))
+select_item['tg33221']=0;equip_buttons["33221"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33221'], command=lambda:click_equipment(33221))
 equip_buttons["33221"].place(x=646, y=160)
-select_item['tg33230']=0;equip_buttons["33230"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33230'], command=lambda:click_equipment(33230))
+select_item['tg33230']=0;equip_buttons["33230"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33230'], command=lambda:click_equipment(33230))
 equip_buttons["33230"].place(x=616, y=190)
-select_item['tg33231']=0;equip_buttons["33231"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33231'], command=lambda:click_equipment(33231))
+select_item['tg33231']=0;equip_buttons["33231"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33231'], command=lambda:click_equipment(33231))
 equip_buttons["33231"].place(x=646, y=190)
-select_item['tg33320']=0;equip_buttons["33320"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33320'], command=lambda:click_equipment(33320))
+select_item['tg33320']=0;equip_buttons["33320"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33320'], command=lambda:click_equipment(33320))
 equip_buttons["33320"].place(x=554, y=570)
-select_item['tg33321']=0;equip_buttons["33321"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33321'], command=lambda:click_equipment(33321))
+select_item['tg33321']=0;equip_buttons["33321"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33321'], command=lambda:click_equipment(33321))
 equip_buttons["33321"].place(x=584, y=570)
-select_item['tg33330']=0;equip_buttons["33330"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33330'], command=lambda:click_equipment(33330))
+select_item['tg33330']=0;equip_buttons["33330"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33330'], command=lambda:click_equipment(33330))
 equip_buttons["33330"].place(x=554, y=600)
-select_item['tg33331']=0;equip_buttons["33331"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33331'], command=lambda:click_equipment(33331))
+select_item['tg33331']=0;equip_buttons["33331"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33331'], command=lambda:click_equipment(33331))
 equip_buttons["33331"].place(x=584, y=600)
-select_item['tg33340']=0;equip_buttons["33340"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33340'], command=lambda:click_equipment(33340))
+select_item['tg33340']=0;equip_buttons["33340"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33340'], command=lambda:click_equipment(33340))
 equip_buttons["33340"].place(x=554, y=630)
-select_item['tg33341']=0;equip_buttons["33341"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33341'], command=lambda:click_equipment(33341))
+select_item['tg33341']=0;equip_buttons["33341"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33341'], command=lambda:click_equipment(33341))
 equip_buttons["33341"].place(x=584, y=630)
-select_item['tg33350']=0;equip_buttons["33350"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33350'], command=lambda:click_equipment(33350))
+select_item['tg33350']=0;equip_buttons["33350"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33350'], command=lambda:click_equipment(33350))
 equip_buttons["33350"].place(x=554, y=660)
-select_item['tg33351']=0;equip_buttons["33351"]=tkinter.Button(self, relief='flat', borderwidth=0, activebackground=dark_main, bg=dark_main, image=image_list2['33351'], command=lambda:click_equipment(33351))
+select_item['tg33351']=0;equip_buttons["33351"]=tkinter.Button(calculator.window, relief='flat', borderwidth=0, activebackground=calculator.dark_main, bg=calculator.dark_main, image=image_list2['33351'], command=lambda:click_equipment(33351))
 equip_buttons["33351"].place(x=584, y=660)
 
 
 def donate():
     webbrowser.open('https://twip.kr/dawnclass16')
 donate_image=calculator.get_photo_image('ext_img/donate.png')
-donate_bt=tkinter.Button(self,image=donate_image, command=donate,borderwidth=0,bg=dark_main,activebackground=dark_main)
+donate_bt=tkinter.Button(calculator.window,image=donate_image, command=donate,borderwidth=0,bg=calculator.dark_main,activebackground=calculator.dark_main)
 donate_bt.place(x=622,y=520)
 def dunfaoff():
     webbrowser.open('https://dunfaoff.com/')
 dunfaoff_image=calculator.get_photo_image('ext_img/dunfaoff.png')
-dunfaoff_url=tkinter.Button(self,image=dunfaoff_image, command=dunfaoff,borderwidth=0,bg=dark_main,activebackground=dark_main)
+dunfaoff_url=tkinter.Button(calculator.window,image=dunfaoff_image, command=dunfaoff,borderwidth=0,bg=calculator.dark_main,activebackground=calculator.dark_main)
 dunfaoff_url.place(x=535+219,y=410-402+32)
 
 def blog():
     webbrowser.open('https://blog.naver.com/dawnclass16/221837654941')
 blog_image=calculator.get_photo_image('ext_img/blog.png')
-blog_url=tkinter.Button(self,image=blog_image, command=blog,borderwidth=0,bg=dark_main,activebackground=dark_main)
+blog_url=tkinter.Button(calculator.window,image=blog_image, command=blog,borderwidth=0,bg=calculator.dark_main,activebackground=calculator.dark_main)
 blog_url.place(x=615+219,y=410-402+32)
 
 def hamjung():
     tkinter.messagebox.showinfo("제작자 크레딧","총제작자=Dawnclass(새벽반)\n이미지/그래픽=경철부동산\n직업/버퍼DB=대략볼록할철\n기타조언=히든 도비 4,5,6,7호\n\n오류 제보는 블로그 덧글이나 던조 쪽지로")
 maker_image=calculator.get_photo_image('ext_img/maker.png')
-maker=tkinter.Button(self,image=maker_image, command=hamjung,borderwidth=0,bg=dark_main,activebackground=dark_main)
+maker=tkinter.Button(calculator.window,image=maker_image, command=hamjung,borderwidth=0,bg=calculator.dark_main,activebackground=calculator.dark_main)
 def check_update(event):
     try:
         now_version_num = int(calculator.now_version[0] + calculator.now_version[2] + calculator.now_version[4])
@@ -5748,7 +5754,7 @@ def check_update(event):
         if event==1:
             return "-"
 net_latest_version=check_update(1)
-version=tkinter.Button(self, text='현재 '+ calculator.now_version + '\n최신 ' + str(net_latest_version) + '\n업데이트', font=small_font, command=lambda: check_update(0))
+version=tkinter.Button(calculator.window, text='현재 '+ calculator.now_version + '\n최신 ' + str(net_latest_version) + '\n업데이트', font=calculator.small_font, command=lambda: check_update(0))
 maker.place(x=622,y=585)
 version.place(x=630-3,y=645+3)
 
@@ -5759,7 +5765,7 @@ if __name__ == "__main__":
     update_thread()
     update_thread2()
 
-self.mainloop()
+calculator.window.mainloop()
 
 
 
