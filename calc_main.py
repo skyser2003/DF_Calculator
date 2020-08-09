@@ -145,6 +145,8 @@ class Calculator:
         self.rank_buf_ex: List[List[int]] = [[], [], []]
         self.res_buf_type_what: Text = None
         self.result_image_on_tag: List[List[Dict[str, str]]] = [{}, {}, {}]
+        self.buff_result_image_gif: List[List[List[int]]] = [[[], [], []], [[], [], []], [[], [], []]]
+        self.buff_result_image_gif_tg: List[List[List[int]]] = [[[], [], []], [[], [], []], [[], [], []]]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2293,7 +2295,6 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     elif job_type=='buf': ########################### 버퍼 ###########################
         load_presetr=load_workbook("preset.xlsx", data_only=True)
         r_preset=load_presetr["custom"]
-        global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
         global rank_neo_buf1,rank_neo_buf2,rank_neo_buf3
 
@@ -2326,12 +2327,12 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         result_image_on1_tag = calculator.result_image_on_tag[0] = [{}, {}, {}, {}, {}]
         result_image_on2_tag = calculator.result_image_on_tag[1] = [{}, {}, {}, {}, {}]
         result_image_on3_tag = calculator.result_image_on_tag[2] = [{}, {}, {}, {}, {}]
-        result_image_gif1=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-        result_image_gif2=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-        result_image_gif3=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-        result_image_gif1_tg=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-        result_image_gif2_tg=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
-        result_image_gif3_tg=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
+        buff_result_image_gif1 = calculator.buff_result_image_gif[0] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        buff_result_image_gif2 = calculator.buff_result_image_gif[1] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        buff_result_image_gif3 = calculator.buff_result_image_gif[2] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        buff_result_image_gif1_tg = calculator.buff_result_image_gif_tg[0] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        buff_result_image_gif2_tg = calculator.buff_result_image_gif_tg[1] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        buff_result_image_gif3_tg = calculator.buff_result_image_gif_tg[2] = [[0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0], [0, 0, 0]]
         result_siroco_gif1=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
         result_siroco_gif2=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
         result_siroco_gif3=[[0,0,0],[0,0,0],[0,0,0],[0,0,0],[0,0,0]]
@@ -2413,8 +2414,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                                 result_image_on3_tag[temp_rank][str(i)]=j
                                 for k in [11,21,33]:
                                     if i ==k and j[4:5]=='1' and len(j)==5:
-                                        result_image_gif3[temp_rank][int(str(k+90)[1:2])]=calc_gif.img_gif(j,0)
-                                        result_image_gif3_tg[temp_rank][int(str(k+90)[1:2])]=1
+                                        buff_result_image_gif3[temp_rank][int(str(k+90)[1:2])]=calc_gif.img_gif(j,0)
+                                        buff_result_image_gif3_tg[temp_rank][int(str(k+90)[1:2])]=1
                                 if i ==41 and j[3:5]!='00' and len(j)==5:
                                     result_siroco_gif3[temp_rank][0]=calc_gif.img_gif(j,1)
                                     result_siroco_gif3_tg[temp_rank][0]=1
@@ -2431,8 +2432,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                                 result_image_on2_tag[temp_rank][str(i)]=j
                                 for k in [11,21,33]:
                                     if i ==k and j[4:5]=='1' and len(j)==5:
-                                        result_image_gif2[temp_rank][int(str(k+90)[1:2])]=calc_gif.img_gif(j,0)
-                                        result_image_gif2_tg[temp_rank][int(str(k+90)[1:2])]=1
+                                        buff_result_image_gif2[temp_rank][int(str(k+90)[1:2])]=calc_gif.img_gif(j,0)
+                                        buff_result_image_gif2_tg[temp_rank][int(str(k+90)[1:2])]=1
                                 if i ==41 and j[3:5]!='00' and len(j)==5:
                                     result_siroco_gif2[temp_rank][0]=calc_gif.img_gif(j,1)
                                     result_siroco_gif2_tg[temp_rank][0]=1
@@ -2449,8 +2450,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                                 result_image_on1_tag[temp_rank][str(i)]=j
                                 for k in [11,21,33]:
                                     if i ==k and j[4:5]=='1' and len(j)==5:
-                                        result_image_gif1[temp_rank][int(str(k+90)[1:2])]=calc_gif.img_gif(j,0)
-                                        result_image_gif1_tg[temp_rank][int(str(k+90)[1:2])]=1
+                                        buff_result_image_gif1[temp_rank][int(str(k+90)[1:2])]=calc_gif.img_gif(j,0)
+                                        buff_result_image_gif1_tg[temp_rank][int(str(k+90)[1:2])]=1
                                 if i ==41 and j[3:5]!='00' and len(j)==5:
                                     result_siroco_gif1[temp_rank][0]=calc_gif.img_gif(j,1)
                                     result_siroco_gif1_tg[temp_rank][0]=1
@@ -2552,12 +2553,12 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank_type_but1.image=type1_img
         rank_type_but2.image=type2_img
         rank_type_but3.image=type3_img
-        if result_image_gif3_tg[0][0]==1:
-            play_gif( 0,0,0,gif_images["11"],result_image_gif3,0,1,1)
-        if result_image_gif3_tg[0][1]==1:
-            play_gif( 0,0,1,gif_images["21"],result_image_gif3,0,1,1)
-        if result_image_gif3_tg[0][2]==1:
-            play_gif( 0,0,2,gif_images["33"],result_image_gif3,0,1,1)
+        if buff_result_image_gif3_tg[0][0]==1:
+            play_gif( 0,0,0,gif_images["11"],buff_result_image_gif3,0,1,1)
+        if buff_result_image_gif3_tg[0][1]==1:
+            play_gif( 0,0,1,gif_images["21"],buff_result_image_gif3,0,1,1)
+        if buff_result_image_gif3_tg[0][2]==1:
+            play_gif( 0,0,2,gif_images["33"],buff_result_image_gif3,0,1,1)
         if result_siroco_gif3_tg[0][0]==1:
             play_gif( 0,0,0,gif_images["41"],result_siroco_gif3,0,1,1)
         if result_siroco_gif3_tg[0][1]==1:
@@ -2568,8 +2569,8 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         for i in range(0,5):
             for j in [11,21,33]:
                 temp=int(j/10)-1
-                if result_image_gif3_tg[i][temp]==1:
-                    play_gif(0,i,temp,res_img_list[str(i)+str(j)],result_image_gif3,1,0,1)
+                if buff_result_image_gif3_tg[i][temp]==1:
+                    play_gif(0,i,temp,res_img_list[str(i)+str(j)],buff_result_image_gif3,1,0,1)
             for j in [41,42,43]:
                 temp=j-41
                 if result_siroco_gif3_tg[i][temp]==1:
@@ -3235,7 +3236,6 @@ def change_rank2(now,job_type,ele_skill):
 
 
     elif job_type =='buf':
-        global result_image_gif1,result_image_gif1_tg,result_image_gif2,result_image_gif2_tg,result_image_gif3,result_image_gif3_tg
         global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
 
         rank_wep_name1 = calculator.buff_rank_wep_name[0]
@@ -3250,6 +3250,13 @@ def change_rank2(now,job_type,ele_skill):
         res_buf_ex2 = calculator.res_buf_ex[1]
         res_buf_ex3 = calculator.res_buf_ex[2]
 
+        buff_result_image_gif1 = calculator.buff_result_image_gif[0]
+        buff_result_image_gif2 = calculator.buff_result_image_gif[1]
+        buff_result_image_gif3 = calculator.buff_result_image_gif[2]
+        buff_result_image_gif1_tg = calculator.buff_result_image_gif_tg[0]
+        buff_result_image_gif2_tg = calculator.buff_result_image_gif_tg[1]
+        buff_result_image_gif3_tg = calculator.buff_result_image_gif_tg[2]
+
         try:
             rank_type_buf = calculator.rank_type_buf
 
@@ -3257,8 +3264,8 @@ def change_rank2(now,job_type,ele_skill):
                 image_changed=result_image_on1[now]
                 rank_changed = calculator.rank_buf[0][now]
                 rank_buf_ex_changed = calculator.rank_buf_ex[0]
-                image_gif_changed=result_image_gif1
-                image_gif_changed_tg=result_image_gif1_tg
+                image_gif_changed=buff_result_image_gif1
+                image_gif_changed_tg=buff_result_image_gif1_tg
                 siroco_gif_changed=result_siroco_gif1
                 siroco_gif_changed_tg=result_siroco_gif1_tg
                 c_rank_wep=rank_wep_name1
@@ -3266,8 +3273,8 @@ def change_rank2(now,job_type,ele_skill):
                 image_changed=result_image_on2[now]
                 rank_changed = calculator.rank_buf[1][now]
                 rank_buf_ex_changed = calculator.rank_buf_ex[1]
-                image_gif_changed=result_image_gif2
-                image_gif_changed_tg=result_image_gif2_tg
+                image_gif_changed=buff_result_image_gif2
+                image_gif_changed_tg=buff_result_image_gif2_tg
                 siroco_gif_changed=result_siroco_gif2
                 siroco_gif_changed_tg=result_siroco_gif2_tg
                 c_rank_wep=rank_wep_name2
@@ -3275,8 +3282,8 @@ def change_rank2(now,job_type,ele_skill):
                 image_changed=result_image_on3[now]
                 rank_changed = calculator.rank_buf[2][now]
                 rank_buf_ex_changed = calculator.rank_buf_ex[2]
-                image_gif_changed=result_image_gif3
-                image_gif_changed_tg=result_image_gif3_tg
+                image_gif_changed=buff_result_image_gif3
+                image_gif_changed_tg=buff_result_image_gif3_tg
                 siroco_gif_changed=result_siroco_gif3
                 siroco_gif_changed_tg=result_siroco_gif3_tg
                 c_rank_wep=rank_wep_name3
@@ -3414,7 +3421,6 @@ def show_set_name(job_type):
 
 ## 버퍼용 축복/1각/종합 버프력 전환
 def change_rank_type2(in_type):
-    global result_image_gif1, result_image_gif1_tg,result_image_gif2, result_image_gif2_tg,result_image_gif3, result_image_gif3_tg
     global result_siroco_gif1,result_siroco_gif2,result_siroco_gif3,result_siroco_gif1_tg,result_siroco_gif2_tg,result_siroco_gif3_tg
 
     result_window = calculator.result_window
@@ -3434,6 +3440,13 @@ def change_rank_type2(in_type):
     res_buf_ex2 = calculator.res_buf_ex[1]
     res_buf_ex3 = calculator.res_buf_ex[2]
 
+    buff_result_image_gif1 = calculator.buff_result_image_gif[0]
+    buff_result_image_gif2 = calculator.buff_result_image_gif[1]
+    buff_result_image_gif3 = calculator.buff_result_image_gif[2]
+    buff_result_image_gif1_tg = calculator.buff_result_image_gif_tg[0]
+    buff_result_image_gif2_tg = calculator.buff_result_image_gif_tg[1]
+    buff_result_image_gif3_tg = calculator.buff_result_image_gif_tg[2]
+
     calculator.now_rank_num = 0
     if in_type==1:
         calculator.rank_type_buf = 1
@@ -3442,8 +3455,8 @@ def change_rank_type2(in_type):
         rank_changed = calculator.rank_buf[0]
         rank_buf_ex_changed = calculator.rank_buf_ex[0]
         type_changed="축복 기준"
-        image_gif_changed=result_image_gif1
-        image_gif_changed_tg=result_image_gif1_tg
+        image_gif_changed=buff_result_image_gif1
+        image_gif_changed_tg=buff_result_image_gif1_tg
         siroco_gif_changed=result_siroco_gif1
         siroco_gif_changed_tg=result_siroco_gif1_tg
         c_rank_wep=rank_wep_name1
@@ -3455,8 +3468,8 @@ def change_rank_type2(in_type):
         rank_changed = calculator.rank_buf[1]
         rank_buf_ex_changed = calculator.rank_buf_ex[1]
         type_changed="1각 기준"
-        image_gif_changed=result_image_gif2
-        image_gif_changed_tg=result_image_gif2_tg
+        image_gif_changed=buff_result_image_gif2
+        image_gif_changed_tg=buff_result_image_gif2_tg
         siroco_gif_changed=result_siroco_gif2
         siroco_gif_changed_tg=result_siroco_gif2_tg
         c_rank_wep=rank_wep_name2
@@ -3468,8 +3481,8 @@ def change_rank_type2(in_type):
         rank_changed = calculator.rank_buf[2]
         rank_buf_ex_changed = calculator.rank_buf_ex[2]
         type_changed="총합 기준"
-        image_gif_changed=result_image_gif3
-        image_gif_changed_tg=result_image_gif3_tg
+        image_gif_changed=buff_result_image_gif3
+        image_gif_changed_tg=buff_result_image_gif3_tg
         siroco_gif_changed=result_siroco_gif3
         siroco_gif_changed_tg=result_siroco_gif3_tg
         c_rank_wep=rank_wep_name3
