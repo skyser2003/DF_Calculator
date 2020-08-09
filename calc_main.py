@@ -149,6 +149,7 @@ class Calculator:
         self.buff_result_image_gif_tg: List[List[List[int]]] = [[], [], []]
         self.buff_result_siroco_gif: List[List[List[int]]] = [[], [], []]
         self.buff_result_siroco_gif_tg: List[List[List[int]]] = [[], [], []]
+        self.rank_neo_buf = [[], [], []]
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2297,8 +2298,6 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     elif job_type=='buf': ########################### 버퍼 ###########################
         load_presetr=load_workbook("preset.xlsx", data_only=True)
         r_preset=load_presetr["custom"]
-        global rank_neo_buf1,rank_neo_buf2,rank_neo_buf3
-
         res_buf = calculator.res_buf
 
         result_image_on1 = calculator.buff_result_image_on[0]
@@ -2346,9 +2345,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         rank_buf_ex1 = calculator.rank_buf_ex[0] = [0, 0, 0, 0, 0]
         rank_buf_ex2 = calculator.rank_buf_ex[1] = [0, 0, 0, 0, 0]
         rank_buf_ex3 = calculator.rank_buf_ex[2] = [0, 0, 0, 0, 0]
-        rank_neo_buf1=[0,0,0,0,0]
-        rank_neo_buf2=[0,0,0,0,0]
-        rank_neo_buf3=[0,0,0,0,0]
+        rank_neo_buf1 = calculator.rank_neo_buf[0] = [0, 0, 0, 0, 0]
+        rank_neo_buf2 = calculator.rank_neo_buf[1] = [0, 0, 0, 0, 0]
+        rank_neo_buf3 = calculator.rank_neo_buf[2] = [0, 0, 0, 0, 0]
 
         rank_wep_name1 = calculator.buff_rank_wep_name[0] = [0, 0, 0, 0, 0]
         rank_wep_name2 = calculator.buff_rank_wep_name[1] = [0, 0, 0, 0, 0]
