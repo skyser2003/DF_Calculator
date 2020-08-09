@@ -150,6 +150,9 @@ class Calculator:
         self.buff_result_siroco_gif: List[List[List[int]]] = [[], [], []]
         self.buff_result_siroco_gif_tg: List[List[List[int]]] = [[], [], []]
         self.rank_neo_buf = [[], [], []]
+        self.buf_jingak_exist = 0
+        self.buf_jingak_tg = 0
+        self.buf_jingak: Button = None
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -2464,11 +2467,12 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
             except IndexError as error:
                 pass
 
-        global buf_jingak_exist,buf_jingak_tg,buf_jingak,buf_jingak_img2
-        buf_jingak_exist=0;buf_jingak_tg=0
+        global buf_jingak_img2
+        calculator.buf_jingak_exist = 0
+        calculator.buf_jingak_tg = 0
         if job_name=='(버프)세인트': ## 진각 전환 하드 코딩
             def change_buf_jingak():
-                global buf_jingak_tg,buf_jingak,buf_jingak_img2
+                global buf_jingak_img2
                 rank_type_buf = calculator.rank_type_buf
 
                 if rank_type_buf==1:
@@ -2480,17 +2484,17 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                 elif rank_type_buf==3:
                     c_rank0_buf=rank_neo_buf3
                     c_rank_buf=rank_buf3
-                if buf_jingak_tg==0:
-                    buf_jingak["image"]=buf_jingak_img1
+                if calculator.buf_jingak_tg == 0:
+                    calculator.buf_jingak["image"] = buf_jingak_img1
                     canvas_res.itemconfig(res_buf,text=c_rank0_buf[calculator.now_rank_num],fill='gray')
-                    buf_jingak_tg=1
-                elif buf_jingak_tg==1:
-                    buf_jingak["image"]=buf_jingak_img2
+                    calculator.buf_jingak_tg = 1
+                elif calculator.buf_jingak_tg == 1:
+                    calculator.buf_jingak["image"] = buf_jingak_img2
                     canvas_res.itemconfig(res_buf,text=c_rank_buf[calculator.now_rank_num],fill='white')
-                    buf_jingak_tg=0
+                    calculator.buf_jingak_tg = 0
 
-            buf_jingak_exist=1
-            buf_jingak=tkinter.Button(result_window,command=change_buf_jingak,image=buf_jingak_img2,bg=dark_main,borderwidth=0,activebackground=dark_main)
+            calculator.buf_jingak_exist = 1
+            buf_jingak = calculator.buf_jingak = tkinter.Button(result_window,command=change_buf_jingak,image=buf_jingak_img2,bg=dark_main,borderwidth=0,activebackground=dark_main)
             buf_jingak.place(x=172,y=7)
             buf_jingak.image=buf_jingak_img2
             buf_jingak.command=change_buf_jingak
@@ -3296,11 +3300,11 @@ def change_rank2(now,job_type,ele_skill):
             canvas_res.itemconfig(res_buf_ex1,text=rank_buf_ex_changed[now][0]) # TODO: non-existing setting causes error
             canvas_res.itemconfig(res_buf_ex2,text=rank_buf_ex_changed[now][1])
             canvas_res.itemconfig(res_buf_ex3,text=rank_buf_ex_changed[now][2])
-            global buf_jingak_exist,buf_jingak_tg,buf_jingak,buf_jingak_img2
-            if buf_jingak_exist==1:
-                buf_jingak["image"]=buf_jingak_img2
+            global buf_jingak_img2
+            if calculator.buf_jingak_exist == 1:
+                calculator.buf_jingak["image"] = buf_jingak_img2
                 canvas_res.itemconfig(calculator.res_buf, fill='white')
-                buf_jingak_tg=0
+                calculator.buf_jingak_tg = 0
 
         except KeyError as error:
             c=1
@@ -3555,11 +3559,11 @@ def change_rank_type2(in_type):
             temp=j-41
             if siroco_gif_changed_tg[i][temp]==1:
                 result_window.after(0,play_gif,0,i,temp,res_img_list[str(i)+str(j)],siroco_gif_changed,1,0,1)
-    global buf_jingak_exist,buf_jingak_tg,buf_jingak,buf_jingak_img2
-    if buf_jingak_exist==1:
-        buf_jingak["image"]=buf_jingak_img2
+    global buf_jingak_img2
+    if calculator.buf_jingak_exist == 1:
+        calculator.buf_jingak["image"] = buf_jingak_img2
         canvas_res.itemconfig(calculator.res_buf, fill='white')
-        buf_jingak_tg=0
+        calculator.buf_jingak_tg = 0
 
 
 
