@@ -185,6 +185,12 @@ class Calculator:
             self.get_photo_image("ext_img/buf_jin_2.png")
         ]
 
+        self.case_count_label: Label = None
+        self.total_count_label: Label = None
+        self.calc_state_label: Label = None
+
+        self.init_ui()
+
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
         self.photo_images.append(photo_image)
@@ -589,6 +595,27 @@ class Calculator:
         except PermissionError as error:
             tkinter.messagebox.showerror("에러", "엑셀을 닫고 다시 시도해주세요.")
 
+    def init_ui(self):
+        self.case_count_label = tkinter.Label(self.window, font=self.guide_font, fg="white", bg=self.dark_sub)
+        self.case_count_label.place(x=700, y=145 - 12)
+
+        self.total_count_label = tkinter.Label(self.window, font=self.guide_font, fg="white", bg=self.dark_sub)
+        self.total_count_label.place(x=430 + 259, y=480 - 287)
+
+        self.calc_state_label = tkinter.Label(self.window, text="상태 표시 칸", font=self.guide_font, fg="white",
+                                   bg=self.dark_sub)
+        self.calc_state_label.place(x=700, y=125 - 12)
+
+    def change_state_text(self, text: str):
+        self.calc_state_label.configure(text=text)
+
+    def change_case_count_text(self, text: str):
+        self.case_count_label.configure(text=text)
+
+    def change_total_count_text(self, text: str, color: str):
+        self.total_count_label.configure(text=text)
+        self.total_count_label["fg"] = color
+
     @staticmethod
     def place_center(toplevel, move_x):
         toplevel.update_idletasks()
@@ -786,9 +813,9 @@ def calc(mode):
             if ask_really == 'yes':
                 pass
             elif ask_really == 'no':
-                showsta(text='중지됨')
+                calculator.change_state_text(text='중지됨')
                 return
-    showsta(text="조합 알고리즘 구동 준비중...")
+    calculator.change_state_text(text="조합 알고리즘 구동 준비중...")
     start_time = time.time()
     load_excel=load_workbook("DATA.xlsx",data_only=True)
 
@@ -922,7 +949,7 @@ def calc(mode):
             cool_pre_calced2[i]=1
         elif wep_pre_calced[i]==0 and jobup_select.get()[0:4]=="(버프)":
             tkinter.messagebox.showerror('에러',"버퍼가 사용할 수 없는 무기입니다.")
-            showsta(text='중지됨')
+            calculator.change_state_text(text='중지됨')
             return
 
     ## 외부모듈: 경우의 수 만들기
@@ -1477,7 +1504,7 @@ def calc(mode):
         all_list_num=len(all_list_god)+len(all_list)
         if all_list_num==0 and select_perfect.get() != '메타몽풀셋모드':
             tkinter.messagebox.showerror('에러',"풀셋이 없습니다.")
-            showsta(text='중지됨')
+            calculator.change_state_text(text='중지됨')
             return
         if all_list_num==0 and select_perfect.get() == '메타몽풀셋모드':
             pass
@@ -1486,7 +1513,7 @@ def calc(mode):
             all_list_list.append([all_list,all_list_god,all_list_num])
 
         if select_perfect.get() == '메타몽풀셋모드':
-            showsta(text='메타몽 계산중(오래걸릴수 있음)')
+            calculator.change_state_text(text='메타몽 계산중(오래걸릴수 있음)')
             evert_list=equip_list["11"]+equip_list["12"]+equip_list["13"]+equip_list["14"]+equip_list["15"]+equip_list["21"]+equip_list["22"]+equip_list["23"]+equip_list["31"]+equip_list["32"]+equip_list["33"]
             result_metamong=calc_fullset.meta_ful(set_num_dict,evert_list,bang_on_dict,list40_0)
             if result_metamong[2]!=0:
@@ -1495,7 +1522,7 @@ def calc(mode):
                 pass
             else:
                 tkinter.messagebox.showerror('에러',"풀셋이 없습니다.")
-                showsta(text='중지됨')
+                calculator.change_state_text(text='중지됨')
                 return
 
     else:
@@ -1687,21 +1714,21 @@ def calc(mode):
 
     if calculator.all_list_list_num > 500000000:
         tkinter.messagebox.showerror('에러',"경우의 수가 5억가지가 넘습니다.\n진행이 불가능합니다.\n안 쓸 에픽 체크를 풀어주세요")
-        showsta(text='중지됨')
+        calculator.change_state_text(text='중지됨')
         return
     elif calculator.all_list_list_num > 100000000:
         ask_msg2=tkinter.messagebox.askquestion('확인',"경우의 수가 1억가지가 넘습니다.\n메모리 과부하가 날 수 있고 30분이상 걸릴 수 있습니다.\n강행으로 인한 PC파손은 책임지지 않습니다.\n진행하시겠습니까?")
         if ask_msg2 == 'no':
-            showsta(text='중지됨')
+            calculator.change_state_text(text='중지됨')
             return
     elif calculator.all_list_list_num > 30000000:
         ask_msg2=tkinter.messagebox.askquestion('확인',"경우의 수가 3천만가지가 넘습니다.\n다소 오래 걸릴 수 있습니다.\n강행으로 인한 PC파손은 책임지지 않습니다.\n진행하시겠습니까?")
         if ask_msg2 == 'no':
-            showsta(text='중지됨')
+            calculator.change_state_text(text='중지됨')
             return
     if set_perfect ==1 and calculator.all_list_list_num > 30000000:
         tkinter.messagebox.showerror('에러',"정확도 높음 기능은 많은 경우의 수를 지원하지 않습니다.")
-        showsta(text='중지됨')
+        calculator.change_state_text(text='중지됨')
         return
     if set_perfect !=1 and calculator.all_list_list_num < 10000:
         set_perfect=1
@@ -1709,7 +1736,7 @@ def calc(mode):
 
     #########################################################################################################################계산 시작
 
-    showsta(text='계산 시작')
+    calculator.change_state_text(text='계산 시작')
     save_list={} #딜러1번
     save_list0={} #딜러2번
     save_list1={} #버퍼1번
@@ -1734,7 +1761,7 @@ def calc(mode):
                 if len(all_list_god)!=0:
                     for calc_now in all_list_god:
                         if calculator.exit_calc==1:
-                            showsta(text='중지됨')
+                            calculator.change_state_text(text='중지됨')
                             return
                         set_list=make_setopt_num(calc_now,1)[0]
                         setopt_num=make_setopt_num(calc_now,1)[1]
@@ -1815,7 +1842,7 @@ def calc(mode):
                 if calculator.max_setopt != 8 or set_perfect==1:
                     for calc_now in all_list:
                         if calculator.exit_calc==1:
-                            showsta(text='중지됨')
+                            calculator.change_state_text(text='중지됨')
                             return
                         set_list=make_setopt_num(calc_now,0)[0]
                         setopt_num=make_setopt_num(calc_now,0)[1]
@@ -1918,7 +1945,7 @@ def calc(mode):
                 if len(all_list_god)!=0:
                     for calc_now in all_list_god:
                         if calculator.exit_calc==1:
-                            showsta(text='중지됨')
+                            calculator.change_state_text(text='중지됨')
                             return
                         set_list=make_setopt_num(calc_now,1)[0]
                         setopt_num=make_setopt_num(calc_now,1)[1]
@@ -2022,7 +2049,7 @@ def calc(mode):
                 if calculator.max_setopt != 8 or set_perfect==1:
                     for calc_now in all_list:
                         if calculator.exit_calc==1:
-                            showsta(text='중지됨')
+                            calculator.change_state_text(text='중지됨')
                             return
                         set_list=make_setopt_num(calc_now,0)[0]
                         setopt_num=make_setopt_num(calc_now,0)[1]
@@ -2132,7 +2159,7 @@ def calc(mode):
     calculator.show_number = 0
 
     if jobup_select.get()[4:7] != "세인트" and jobup_select.get()[4:7] != "세라핌" and jobup_select.get()[4:7] != "헤카테":
-        showsta(text='결과 집계중')
+        calculator.change_state_text(text='결과 집계중')
 
         ranking=[]
         ranking0=[]
@@ -2153,7 +2180,7 @@ def calc(mode):
         ranking=[ranking,ranking0]
         show_result(ranking,'deal',ele_skill,cool_eff)
     else: ##버퍼
-        showsta(text='결과 집계중')
+        calculator.change_state_text(text='결과 집계중')
 
         ranking1=[];ranking2=[];ranking3=[]
         for j in range(0,5):
@@ -2181,7 +2208,7 @@ def calc(mode):
         ranking=[ranking1,ranking2,ranking3]
         show_result(ranking,'buf',ele_skill,cool_eff)
     load_excel.close()
-    showsta(text='출력 완료')
+    calculator.change_state_text(text='출력 완료')
     print("걸린 시간 = "+str(time.time() - start_time)+"초")
 
 def calc_thread():
@@ -4105,10 +4132,9 @@ def save_checklist():
 
 ## 실시간 갱신 카운터 (1: 계산 카운트 / 2: 경우의 수 카운트)
 def update_count():
-    global showcon
-
     while True:
-        showcon(text=str(calculator.count_num)+"유효/"+str(calculator.count_all)+"무효\n"+str(calculator.all_list_list_num)+"전체")
+        text = f"{calculator.count_num}유효/{calculator.count_all}무효\n{calculator.all_list_list_num}전체"
+        calculator.change_case_count_text(text)
         time.sleep(0.1)
 
 def update_count2():
@@ -4184,11 +4210,13 @@ def update_count2():
         wep_num = len(calculator.wep_name_list)
         if wep_num==0: wep_num=1
         calculator.a_num_all = a_num[0]*a_num[1]*a_num[2]*a_num[3]*a_num[4]*a_num[5]*a_num[6]*a_num[7]*a_num[8]*a_num[9]*a_num[10]*wep_num
-        showcon2(text="경우의 수= "+str(calculator.a_num_all))
+        
         if calculator.a_num_all > 10000000:
-            show_count2['fg']="red"
+            total_case_text_color = "red"
         else:
-            show_count2['fg']="white"
+            total_case_text_color = "white"
+
+        calculator.change_total_count_text(f"경우의 수={calculator.a_num_all}", total_case_text_color)
         time.sleep(1)
 
 def update_thread():
@@ -5035,16 +5063,7 @@ change_name_img=calculator.get_photo_image("ext_img/name_change.png")
 change_list_but=tkinter.Button(calculator.window,image=change_name_img,borderwidth=0,activebackground=calculator.dark_main,command=calculator.change_list_name,bg=calculator.dark_sub)
 change_list_but.place(x=435+165,y=405-100)
 
-show_count=tkinter.Label(calculator.window,font=calculator.guide_font,fg="white",bg=calculator.dark_sub)
-show_count.place(x=700,y=145-12)
-showcon=show_count.configure
-show_state=tkinter.Label(calculator.window,text="상태 표시 칸",font=calculator.guide_font,fg="white",bg=calculator.dark_sub)
-show_state.place(x=700,y=125-12)
-showsta=show_state.configure
 
-show_count2=tkinter.Label(calculator.window,font=calculator.guide_font,fg="white",bg=calculator.dark_sub)
-show_count2.place(x=430+259,y=480-287)
-showcon2=show_count2.configure
 
 image_list_set2 = calculator.image_list_set2
 set_buttons["101"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['101'],command=lambda:click_set(101));set_buttons["101"].place(x=29,y=100)
