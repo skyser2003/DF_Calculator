@@ -157,6 +157,7 @@ class Calculator:
         self.save_name_list: List[str] = []  # 프리셋 이름 리스트
         self.selected_weapon_img_list: List[PhotoImage] = []
         self.selected_weapon_label_list: List[Label] = []
+        self.owned_equipments: Dict[str, int] = {}
 
         # 지혜의 산물
         self.know_list = ["13390150", "22390240", "23390450", "33390750", "21390340", "31390540", "32390650",
@@ -4390,7 +4391,8 @@ def guide_speed():
     tkinter.messagebox.showinfo("정확도 선택","매우빠름=세트옵션7개 풀적용 경우의 수만 계산. 중간세팅은 고려하지 않음\n빠름=단일 선택 부위를 전부 제거\n중간=단일은 포함하되, 신화에 우선권 부여\n느림=세트 수 우선권 완화, 신화 우선권 삭제")
 
 ## 장비 선택시 점등
-select_item={}
+select_item = calculator.owned_equipments
+
 def click_equipment(code):
     code = str(code)
 
@@ -4405,7 +4407,7 @@ def click_equipment(code):
 
 ## 실제 저장 토글값과 이미지 표시값 동기화
 def check_equipment():
-    global select_item
+    select_item = calculator.owned_equipments
 
     for i in range(11010,43551):
         try:
@@ -5204,7 +5206,6 @@ select_item['tg21420130']=0;select_item['tg21420140']=0;select_item['tg21420150'
 select_item['tg33430100']=0;select_item['tg33430110']=0;select_item['tg33430120']=0
 select_item['tg33430130']=0;select_item['tg33430140']=0;select_item['tg33430150']=0
 def know_epic():
-    global select_item
     global know_window
 
     image_list_set = calculator.image_list_set
@@ -5220,7 +5221,7 @@ def know_epic():
     know_window.configure(bg=calculator.dark_main)
     know_image_list={}
     for i in calculator.get_all_knowledge_equipment_list():
-        if select_item[f"tg{i}"] == 0:
+        if calculator.owned_equipments[f"tg{i}"] == 0:
             know_image_list[i] = calculator.image_list2[i]
         else:
             know_image_list[i] = calculator.image_list[i]
