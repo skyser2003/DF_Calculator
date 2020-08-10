@@ -1334,7 +1334,6 @@ def capture_screen(toplevel):
 
 
 save_select=0 #세이브 드롭다운 리스트 변수 임시
-all_list_num=0 #해당 사이클 당시 경우의 수
 
 set_buttons = {}
 
