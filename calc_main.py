@@ -846,7 +846,8 @@ class Calculator:
 
     # 타임라인 조회
     def show_timeline(self, name, server):
-
+        apikey = self.get_api_key()
+        
         server_dict = {'안톤': 'anton', '바칼': 'bakal', '카인': 'cain', '카시야스': 'casillas',
                        '디레지에': 'diregie', '힐더': 'hilder', '프레이': 'prey', '시로코': 'siroco'}
         try:
@@ -1297,6 +1298,25 @@ class Calculator:
     def _from_rgb(rgb):
         return "#%02x%02x%02x" % rgb
 
+    @staticmethod
+    def get_api_key():
+        apikey = ""
+
+        try:
+            import calc_api_key
+            apikey = calc_api_key.get_api_key()
+        except:
+            try:
+                api_txt_file = open("API_key.txt", "r")
+                apikey = api_txt_file.readline()
+                if apikey == "":
+                    tkinter.messagebox.showerror("에러", "API 접근 권한 획득 실패.")
+                api_txt_file.close()
+            except:
+                tkinter.messagebox.showerror("에러", "API 접근 권한 획득 실패.")
+
+        return apikey
+
 
 calculator = Calculator()
 
@@ -1317,21 +1337,6 @@ save_select=0 #세이브 드롭다운 리스트 변수 임시
 all_list_num=0 #해당 사이클 당시 경우의 수
 
 set_buttons = {}
-
-## API키 외부 모듈 (API_key.TXT 파일로도 기입 가능)
-try:
-    import calc_api_key
-    apikey=calc_api_key.get_api_key()
-except:
-    try:
-        api_txt_file=open("API_key.txt","r")
-        apikey = api_txt_file.readline()
-        if apikey=="":
-            tkinter.messagebox.showerror("에러","API 접근 권한 획득 실패.")
-        api_txt_file.close()
-    except:
-        tkinter.messagebox.showerror("에러","API 접근 권한 획득 실패.")
-
 
 
 load_excel1=load_workbook("DATA.xlsx", data_only=True)
