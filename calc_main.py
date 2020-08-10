@@ -203,6 +203,7 @@ class Calculator:
         self.weapon_list_num_label: Label = None
         self.void_weapon_img: PhotoImage = None
 
+        self.init_images()
         self.init_ui()
         self.init_equipments()
 
@@ -715,6 +716,42 @@ class Calculator:
                                         "현재 무기와 시로코 에픽은 불러오지 않습니다")
         except urllib.error.HTTPError as error:
             tkinter.messagebox.showerror("에러", "API 접근 실패(네트워크 오류)")
+
+    def init_images(self):
+        file_list = os.listdir("image")
+        file_list_wep = os.listdir("image_wep")
+
+        for i in file_list:
+            if i[-3:] != 'gif':
+                if i[-5] == 'n':
+                    self.image_list[i[:-5]] = self.get_photo_image(f"image/{i}")
+                elif i[-5] == 'f':
+                    self.image_list2[i[:-5]] = self.get_photo_image(f"image/{i}")
+                elif i[-5] == 't':
+                    self.image_list_tag[i[:-5]] = self.get_photo_image(f"image/{i}")
+
+                if i[0] == 'n' and i[-5] == 't':
+                    self.image_list_tag[i[:-5]] = self.get_photo_image(f"image/{i}")
+                elif i[0] == 'n':
+                    self.image_list[i[:-4]] = self.get_photo_image(f"image/{i}")
+
+        for i in range(1, 56):
+            try:
+                self.image_list_set[str(100 + i)] = self.get_photo_image(f"set_name/{i + 100}.png")
+                self.image_list_set2[str(100 + i)] = self.get_photo_image(f"set_name/{i + 100}f.png")
+            except:
+                pass
+
+        for i in range(1, 18):
+            self.image_list_set[str(200 + i)] = self.get_photo_image(f"set_name/{i + 200}.png")
+
+        self.image_list['99990'] = self.get_photo_image("image/99990.png")
+        self.image_list2['99990'] = self.get_photo_image("image/99990.png")
+        self.image_list_tag['99990'] = self.get_photo_image("image/99990.png")
+
+        for i in file_list_wep:
+            self.image_list_wep[calc_list_wep.wep_image_filename.get(i[:-4])] = self.get_photo_image(
+                "image_wep/{}".format(i))
 
     def init_ui(self):
         self.case_count_label = tkinter.Label(self.window, font=self.guide_font, fg="white", bg=self.dark_sub)
@@ -4822,36 +4859,6 @@ def show_profile(name,server):
 
 
 ## GUI ############################################################################################################################
-file_list = os.listdir("image")
-for i in file_list:
-    if i[-3:]!='gif':
-        if i[-5]=='n':
-            calculator.image_list[i[:-5]] = calculator.get_photo_image(f"image/{i}")
-        elif i[-5]=='f':
-            calculator.image_list2[i[:-5]] = calculator.get_photo_image(f"image/{i}")
-        elif i[-5]=='t':
-            calculator.image_list_tag[i[:-5]] = calculator.get_photo_image(f"image/{i}")
-
-        if i[0]=='n' and i[-5]=='t':
-            calculator.image_list_tag[i[:-5]] = calculator.get_photo_image(f"image/{i}")
-        elif i[0]=='n':
-            calculator.image_list[i[:-4]] = calculator.get_photo_image(f"image/{i}")
-
-for i in range(1,56):
-    try:
-        calculator.image_list_set[str(100+i)] = calculator.get_photo_image(f"set_name/{i+100}.png")
-        calculator.image_list_set2[str(100+i)] = calculator.get_photo_image(f"set_name/{i+100}f.png")
-    except:
-        pass
-for i in range(1,18):
-    calculator.image_list_set[str(200+i)] = calculator.get_photo_image(f"set_name/{i+200}.png")
-calculator.image_list['99990']=calculator.get_photo_image("image/99990.png")
-calculator.image_list2['99990']=calculator.get_photo_image("image/99990.png")
-calculator.image_list_tag['99990']=calculator.get_photo_image("image/99990.png")
-
-file_list_wep = os.listdir("image_wep")
-for i in file_list_wep:
-    calculator.image_list_wep[calc_list_wep.wep_image_filename.get(i[:-4])] = calculator.get_photo_image("image_wep/{}".format(i))
 
 sever_list=['카인','디레지에','바칼','힐더','안톤','카시야스','프레이','시로코']
 tkinter.Label(calculator.window,font=calculator.mid_font,fg="white",bg=calculator.dark_sub, text="<딜러 프로필 생성기>").place(x=301,y=401)
