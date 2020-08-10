@@ -204,6 +204,7 @@ class Calculator:
         self.void_weapon_img: PhotoImage = None
 
         self.init_ui()
+        self.init_equipments()
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -737,6 +738,11 @@ class Calculator:
             self.selected_weapon_label_list.append(weapon_label)
 
         self.void_weapon_img = self.get_photo_image("ext_img/00000.png")
+
+    def init_equipments(self):
+        ##지혜의 산물
+        for equip_code in self.get_all_knowledge_equipment_list():
+            self.owned_equipments[f"tg{equip_code}"] = 0
 
     def change_state_text(self, text: str):
         self.calc_state_label.configure(text=text)
@@ -5188,23 +5194,6 @@ equip_buttons["43540"].place(x=710 + 10 + 71 + 62, y=445 + 90 + 95)
 equip_buttons["43550"].place(x=710 + 10 + 71 + 62, y=445 + 120 + 95)
 
 
-##지혜의 산물
-select_item['tg13390150']=0;select_item['tg22400150']=0;select_item['tg31400850']=0
-select_item['tg22390240']=0;select_item['tg22400250']=0;select_item['tg31400950']=0
-select_item['tg23390450']=0;select_item['tg22400350']=0;select_item['tg31401050']=0
-select_item['tg33390750']=0;select_item['tg22400450']=0;select_item['tg31401150']=0
-select_item['tg21390340']=0;select_item['tg22400550']=0;select_item['tg32401240']=0
-select_item['tg31390540']=0;select_item['tg21400640']=0;select_item['tg32401340']=0
-select_item['tg32390650']=0;select_item['tg31400750']=0;select_item['tg32401440']=0
-select_item['tg11390850']=0;select_item['tg12390950']=0;select_item['tg13391050']=0;
-select_item['tg14391150']=0;select_item['tg15391250']=0;
-
-select_item['tg11410100']=0;select_item['tg11410110']=0;select_item['tg11410120']=0
-select_item['tg11410130']=0;select_item['tg11410140']=0;select_item['tg11410150']=0
-select_item['tg21420100']=0;select_item['tg21420110']=0;select_item['tg21420120']=0
-select_item['tg21420130']=0;select_item['tg21420140']=0;select_item['tg21420150']=0
-select_item['tg33430100']=0;select_item['tg33430110']=0;select_item['tg33430120']=0
-select_item['tg33430130']=0;select_item['tg33430140']=0;select_item['tg33430150']=0
 def know_epic():
     global know_window
 
