@@ -2,3 +2,4 @@ beautifulsoup4
 openpyxl
 opencv-python
 pillow
+requests
