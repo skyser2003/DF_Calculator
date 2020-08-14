@@ -261,6 +261,7 @@ class Calculator:
         self.selected_weapon_img_list: List[PhotoImage] = []
         self.selected_weapon_label_list: List[Label] = []
         self.owned_equipments: Dict[str, int] = {} # 장비 선택 시 점등
+        self.auto_custom = 0  # 클라이언트 업데이트 시 preset 업데이트 여부
 
         # 에픽 장비
         self.normal_epic_list: List[str] = []
@@ -1385,7 +1386,6 @@ for row in level_db.rows:
 for i in range(1,21):
     calculator.save_name_list.append(db_custom.cell(i, 5).value)
 
-auto_custom=0 #클라이언트 업데이트 시 preset 업데이트 여부
 ########## 버전 최초 구동 프리셋 업데이트 ###########
 def update_log():
     def donotshow():
@@ -1432,7 +1432,7 @@ try:
     if str(db_custom['K1'].value) != calculator.now_version:
         print("DB 업데이트")
         db_custom['K1'] = calculator.now_version
-        auto_custom=1
+        calculator.auto_custom = 1
         load_preset0.save("preset.xlsx")
         load_preset0.close()
         calc_update.update_preset() ## 업데이트: 외부모듈
@@ -5774,7 +5774,7 @@ version=tkinter.Button(calculator.window, text='현재 '+ calculator.now_version
 maker.place(x=622,y=585)
 version.place(x=630-3,y=645+3)
 
-if auto_custom==1:
+if calculator.auto_custom == 1:
     calculator.create_custom_window(1)
 
 if __name__ == "__main__":
