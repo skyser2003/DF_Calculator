@@ -1289,6 +1289,90 @@ class Calculator:
         self.result_gauge_img = self.get_photo_image('ext_img/result_gauge.png')
         self.result_checklist_img = self.get_photo_image('ext_img/result_show_checklist.png')
 
+        def guide_speed():
+            tkinter.messagebox.showinfo("정확도 선택",
+                                        "매우빠름=세트옵션7개 풀적용 경우의 수만 계산. 중간세팅은 고려하지 않음\n빠름=단일 선택 부위를 전부 제거\n중간=단일은 포함하되, 신화에 우선권 부여\n느림=세트 수 우선권 완화, 신화 우선권 삭제")
+
+        ## 선택한 모든 장비 체크 초기화
+        def reset():
+            select_item = calculator.owned_equipments
+
+            for j in [1000, 2000, 3000, 4000]:
+                if j == 1000:
+                    end_range = 536
+                else:
+                    end_range = 356
+                for i in range(j + 101, j + end_range):
+                    try:
+                        select_item['tg{}0'.format(i)] = 0
+                    except KeyError as error:
+                        passss = 1
+                    try:
+                        select_item['tg{}1'.format(i)] = 0
+                    except KeyError as error:
+                        passss = 1
+
+            for i in calculator.get_all_knowledge_equipment_list():
+                select_item[f"tg{i}"] = 0
+
+            check_equipment()
+            wep_list_reset()
+            for i in range(101, 156):
+                try:
+                    check_set(i)
+                except:
+                    pass
+
+        tkinter.Label(self.window, font=self.mid_font, fg="white", bg=self.dark_sub,
+                      text="<딜러 프로필 생성기>").place(x=301, y=401)
+        tkinter.Label(self.window, fg="white", bg=self.dark_sub, text="서버명=").place(x=296, y=433)
+        tkinter.Label(self.window, fg="white", bg=self.dark_sub, text="캐릭명=").place(x=296, y=460)
+
+        sever_in = tkinter.ttk.Combobox(self.window, width=9, values=self.server_list)
+        sever_in.place(x=346, y=435)
+        sever_in.set('카인')
+
+        cha_Entry = tkinter.Entry(self.window, width=12)
+        cha_Entry.place(x=346, y=462)
+        sever_in.bind('<Return>', lambda e: show_profile(str(cha_Entry.get()), str(sever_in.get())))
+        cha_Entry.bind('<Return>', lambda e: show_profile(str(cha_Entry.get()), str(sever_in.get())))
+
+        generate_cha = self.get_photo_image("ext_img/generate_cha.png")
+        tkinter.Button(self.window, image=generate_cha,
+                       command=lambda: show_profile(str(cha_Entry.get()), str(sever_in.get())), borderwidth=0,
+                       activebackground=self.dark_sub, bg=self.dark_sub).place(x=440, y=434)
+
+        tkinter.Label(self.window, text='엔터로도 조회됩니다', font=self.guide_font, fg='white',
+                      bg=self.dark_sub).place(x=332, y=482)
+        cha_caution_text = """장비%:  12부위장비+칭호클쳐의
+                   수준을 표현한 % (쿨감O)
+                   (계산기 값과 유사)
+
+        세팅%:  위를 제외한 나머지의
+                   투자/세팅 실효율%
+                   (노증극세팅이 100%)"""
+        tkinter.Label(self.window, text=cha_caution_text, font=self.small_font, fg='white',
+                      bg=self.dark_sub, anchor='nw', justify='left').place(x=512, y=405)
+
+        self.preset_values["select_perfect"] = tkinter.ttk.Combobox(self.window,
+                                                                    values=['풀셋모드(매우빠름)',
+                                                                            '메타몽풀셋모드',
+                                                                            '단품제외(보통)',
+                                                                            '단품포함(느림)',
+                                                                            '세트필터↓(매우느림)'],
+                                                                    width=15)
+        select_perfect = self.preset_values["select_perfect"]
+        select_perfect.place(x=145 + 605, y=11)
+        select_perfect.set('단품포함(느림)')
+        select_speed_img = self.get_photo_image("ext_img/select_speed.png")
+
+        tkinter.Button(self.window, command=guide_speed, image=select_speed_img, borderwidth=0,
+                       activebackground=self.dark_main, bg=self.dark_main).place(x=29 + 605, y=7)
+
+        reset_img = self.get_photo_image("ext_img/reset.png")
+        tkinter.Button(self.window, command=reset, image=reset_img, borderwidth=0,
+                       activebackground=self.dark_main, bg=self.dark_main).place(x=302 + 180 + 17 + 135, y=476 - 435)
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -1580,6 +1664,9 @@ def calc(mode):
         result_window.after(500,time_delay3)
     except AttributeError as error:
         pass
+
+    select_perfect: tkinter.ttk.Combobox = calculator.preset_values["select_perfect"]
+
     if select_perfect.get()[0:5] == '세트필터↓' or select_perfect.get()[0:4] == '풀셋모드' or select_perfect.get() == '메타몽풀셋모드':
         set_perfect=1 #세트 필터 하락
     else:
@@ -4945,38 +5032,6 @@ def update_thread():
 def update_thread2():
     threading.Thread(target=update_count2,daemon=True).start()
 
-## 선택한 모든 장비 체크 초기화
-def reset():
-    select_item = calculator.owned_equipments
-
-    for j in [1000,2000,3000,4000]:
-        if j==1000:
-            end_range=536
-        else:
-            end_range=356
-        for i in range(j+101,j+end_range):
-            try:
-                select_item['tg{}0'.format(i)]=0
-            except KeyError as error:
-                passss=1
-            try:
-                select_item['tg{}1'.format(i)]=0
-            except KeyError as error:
-                passss=1
-
-    for i in calculator.get_all_knowledge_equipment_list():
-        select_item[f"tg{i}"] = 0
-
-    check_equipment()
-    wep_list_reset()
-    for i in range(101,156):
-        try:
-            check_set(i)
-        except:
-            pass
-
-def guide_speed():
-    tkinter.messagebox.showinfo("정확도 선택","매우빠름=세트옵션7개 풀적용 경우의 수만 계산. 중간세팅은 고려하지 않음\n빠름=단일 선택 부위를 전부 제거\n중간=단일은 포함하되, 신화에 우선권 부여\n느림=세트 수 우선권 완화, 신화 우선권 삭제")
 
 ## 실제 저장 토글값과 이미지 표시값 동기화
 def check_equipment():
@@ -5354,75 +5409,6 @@ def show_profile2(name,server):
 def show_profile(name,server):
     threading.Thread(target=show_profile2,args=(name,server),daemon=True).start()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-## GUI ############################################################################################################################
-
-tkinter.Label(calculator.window,font=calculator.mid_font,fg="white",bg=calculator.dark_sub, text="<딜러 프로필 생성기>").place(x=301,y=401)
-tkinter.Label(calculator.window,fg="white",bg=calculator.dark_sub, text="서버명=").place(x=296,y=433)
-tkinter.Label(calculator.window,fg="white",bg=calculator.dark_sub, text="캐릭명=").place(x=296,y=460)
-sever_in=tkinter.ttk.Combobox(calculator.window,width=9,values=calculator.server_list);sever_in.place(x=346,y=435)
-sever_in.set('카인')
-cha_Entry=tkinter.Entry(calculator.window,width=12);cha_Entry.place(x=346,y=462)
-sever_in.bind('<Return>',lambda e:show_profile(str(cha_Entry.get()),str(sever_in.get())))
-cha_Entry.bind('<Return>',lambda e:show_profile(str(cha_Entry.get()),str(sever_in.get())))
-generate_cha=calculator.get_photo_image("ext_img/generate_cha.png")
-tkinter.Button(calculator.window,image=generate_cha,command=lambda:show_profile(str(cha_Entry.get()),str(sever_in.get())),borderwidth=0,activebackground=calculator.dark_sub,bg=calculator.dark_sub).place(x=440,y=434)
-
-tkinter.Label(calculator.window,text='엔터로도 조회됩니다',font=calculator.guide_font,fg='white',bg=calculator.dark_sub).place(x=332,y=482)
-cha_caution_text="""장비%:  12부위장비+칭호클쳐의
-           수준을 표현한 % (쿨감O)
-           (계산기 값과 유사)
-          
-세팅%:  위를 제외한 나머지의
-           투자/세팅 실효율%
-           (노증극세팅이 100%)"""
-tkinter.Label(calculator.window,text=cha_caution_text,font=calculator.small_font,fg='white',bg=calculator.dark_sub,anchor='nw',justify='left').place(x=512,y=405)
-
-select_perfect = calculator.preset_values["select_perfect"] = tkinter.ttk.Combobox(calculator.window,values=['풀셋모드(매우빠름)','메타몽풀셋모드','단품제외(보통)','단품포함(느림)','세트필터↓(매우느림)'],width=15)
-select_perfect.place(x=145+605,y=11)
-select_perfect.set('단품포함(느림)')
-select_speed_img=calculator.get_photo_image("ext_img/select_speed.png")
-tkinter.Button(calculator.window,command=guide_speed,image=select_speed_img,borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main).place(x=29+605,y=7)
-reset_img=calculator.get_photo_image("ext_img/reset.png")
-tkinter.Button(calculator.window,command=reset,image=reset_img,borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main).place(x=302+180+17+135,y=476-435)
 
 wep_list=[]
 for i in range(0,75):
