@@ -1402,6 +1402,36 @@ class Calculator:
         tkinter.Button(self.window, command=self.reset_equipments, image=reset_img, borderwidth=0,
                        activebackground=self.dark_main, bg=self.dark_main).place(x=302 + 180 + 17 + 135, y=476 - 435)
 
+        wep_image = self.get_photo_image("ext_img/wep.png")
+        tkinter.Label(self.window, image=wep_image, borderwidth=0, activebackground=self.dark_main,
+                      bg=self.dark_main) \
+            .place(x=29, y=10)
+
+        wep_job_type = list(calc_list_wep.DNF_wep_list.keys())
+        wep_job_select = self.preset_values["wep_job_select"] = tkinter.ttk.Combobox(self.window, width=12,
+                                                                                     values=wep_job_type)
+
+        def wep_job_selected(event):
+            wep_type_select["values"] = list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())].keys())
+            wep_type_select.set(list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())].keys())[0])
+            wep_select["values"] = list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])
+            wep_select.set(list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])[0])
+
+        def wep_job_selected2(event):
+            wep_select["values"] = list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])
+            wep_select.set(list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])[0])
+
+        wep_job_select.place(x=110, y=10)
+        wep_job_select.set('귀검/나이트')
+        wep_job_select.bind("<<ComboboxSelected>>", wep_job_selected)
+
+        wep_type = list(calc_list_wep.DNF_wep_list['귀검/나이트'].keys())
+        wep_type_select = self.preset_values["wep_type_select"] = tkinter.ttk.Combobox(self.window, width=12,
+                                                                                       values=wep_type)
+        wep_type_select.place(x=236, y=10)
+        wep_type_select.set('광검')
+        wep_type_select.bind("<<ComboboxSelected>>", wep_job_selected2)
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -5041,6 +5071,9 @@ def load_checklist():
                 inv_select4_2['values']=['+1/30(상)','+1/20(중)','+1/10(하)']
         update_inv(0)
         def load_wep():
+            wep_job_select = calculator.preset_values["wep_job_select"]
+            wep_type_select = calculator.preset_values["wep_type_select"]
+
             wep_type_select["values"]=list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())].keys())
             wep_select["values"]=list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])
         try:
@@ -5479,17 +5512,6 @@ def show_profile(name,server):
     threading.Thread(target=show_profile2,args=(name,server),daemon=True).start()
 
 
-wep_type_temp=[]
-def wep_job_selected(event):
-    wep_type_select["values"]=list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())].keys())
-    wep_type_select.set(list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())].keys())[0])
-    wep_select["values"]=list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])
-    wep_select.set(list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])[0])
-def wep_job_selected2(event):
-    wep_select["values"]=list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])
-    wep_select.set(list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])[0])
-
-
 def wep_list_select():
     wep_name_list = calculator.wep_name_list
 
@@ -5535,21 +5557,6 @@ def sync_wep_list():
     calculator.change_weapon_list_num_text(len(wep_name_list))
     wep_img_list_refresh(calculator.selected_weapon_img_list)
 
-
-wep_image=calculator.get_photo_image("ext_img/wep.png")
-wep_g=tkinter.Label(calculator.window,image=wep_image,borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main)
-wep_g.place(x=29,y=10)
-wep_job_type=list(calc_list_wep.DNF_wep_list.keys())
-wep_job_select = calculator.preset_values["wep_job_select"] = tkinter.ttk.Combobox(calculator.window,width=12,values=wep_job_type)
-wep_job_select.place(x=110,y=10)
-wep_job_select.set('귀검/나이트')
-wep_job_select.bind("<<ComboboxSelected>>",wep_job_selected)
-
-wep_type=list(calc_list_wep.DNF_wep_list['귀검/나이트'].keys())
-wep_type_select = calculator.preset_values["wep_type_select"] = tkinter.ttk.Combobox(calculator.window,width=12,values=wep_type)
-wep_type_select.place(x=236,y=10)
-wep_type_select.set('광검')
-wep_type_select.bind("<<ComboboxSelected>>",wep_job_selected2)
 
 wep_default=list(calc_list_wep.DNF_wep_list['귀검/나이트']['광검'])
 wep_select = calculator.preset_values["wep_select"] = tkinter.ttk.Combobox(calculator.window,width=30,values=wep_default)
