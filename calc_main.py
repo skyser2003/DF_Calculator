@@ -1502,6 +1502,35 @@ class Calculator:
         req_cool.set('X(지속딜만)')
         req_cool.place(x=390 - 17, y=310 + 52)
 
+        calc_img = self.get_photo_image("ext_img/calc.png")
+        tkinter.Button(self.window, image=calc_img, borderwidth=0, activebackground=self.dark_main,
+                       command=self.calc_thread, bg=self.dark_main).place(x=390 - 35 + 150, y=7)
+
+        stop_img = self.get_photo_image("ext_img/stop.png")
+        tkinter.Button(self.window, image=stop_img, borderwidth=0, activebackground=self.dark_main,
+                       command=self.stop_calc, bg=self.dark_main).place(x=390 - 35 + 150, y=62)
+
+        timeline_img = self.get_photo_image("ext_img/timeline.png")
+        tkinter.Button(self.window, image=timeline_img, borderwidth=0, activebackground=self.dark_main,
+                       command=self.timeline_select, bg=self.dark_sub).place(x=345 + 165, y=340 - 100)
+
+        custom_img = self.get_photo_image("ext_img/custom.png")
+        tkinter.Button(self.window, image=custom_img, borderwidth=0, activebackground=self.dark_main,
+                       command=lambda: self.create_custom_window(0), bg=self.dark_sub).place(x=435 + 165,
+                                                                                                         y=340 - 100)
+
+        save_img = self.get_photo_image("ext_img/SAVE.png")
+        tkinter.Button(self.window, image=save_img, borderwidth=0, activebackground=self.dark_main,
+                       command=self.save_checklist, bg=self.dark_sub).place(x=345 + 165, y=440 - 100)
+
+        load_img = self.get_photo_image("ext_img/LOAD.png")
+        tkinter.Button(self.window, image=load_img, borderwidth=0, activebackground=self.dark_main,
+                       command=self.load_checklist, bg=self.dark_sub).place(x=435 + 165, y=440 - 100)
+
+        change_name_img = self.get_photo_image("ext_img/name_change.png")
+        tkinter.Button(self.window, image=change_name_img, borderwidth=0, activebackground=self.dark_main,
+                       command=self.change_list_name, bg=self.dark_sub).place(x=435 + 165, y=405 - 100)
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -1904,6 +1933,170 @@ class Calculator:
 
     def get_combobox_value(self, name: str):
         return self.preset_values[name]().get()
+
+    def calc_thread(self):
+        threading.Thread(target=calc, args=(0,), daemon=True).start()
+
+    # 정지
+    def stop_calc(self):
+        # TODO: thread fix
+        self.exit_calc = 1
+        time.sleep(1)
+        self.exit_calc = 0
+
+    ## 저장된 preset 불러오기
+    def load_checklist(self):
+        ask_msg1 = tkinter.messagebox.askquestion('확인', "저장된 내역을 불러오겠습니까?")
+        for snum in range(0, 20):
+            if self.save_select.get() == self.save_name_list[snum]:
+                ssnum1 = snum
+        if ask_msg1 == 'yes':
+            load_preset3 = load_workbook("preset.xlsx")
+            db_load_check = load_preset3["one"]
+            db_load_cus = load_preset3["custom"]
+            load_cell = db_load_check.cell
+            load_cus = db_load_cus.cell
+            k = 1
+
+            select_item = self.owned_equipments
+
+            for i in range(1, 316):
+                if load_cell(i, 2 + ssnum1).value == 1:
+                    try:
+                        select_item['tg{}'.format(load_cell(i, 1).value)] = 1
+                    except KeyError as error:
+                        passss = 1
+                elif load_cell(i, 2 + ssnum1).value == 0:
+                    try:
+                        select_item['tg{}'.format(load_cell(i, 1).value)] = 0
+                    except KeyError as error:
+                        passss = 1
+            for i in range(52, 70):
+                temp_opt = str(load_cus(i, 1).value)
+                temp_val = str(load_cus(i, 2 + ssnum1).value)
+                self.set_combobox_value(temp_opt, temp_val)
+            for i in range(1, 20):
+                load_cus(i, 2).value = str(load_cus(i + 25, 2 + ssnum1).value)
+            for i in range(1, 8):
+                load_cus(i, 8).value = str(load_cus(i + 44, 2 + ssnum1).value)
+            load_cus(20, 2).value = str(load_cus(70, 2 + ssnum1).value)
+            saved_wep_str = load_cus(71, 2 + ssnum1).value
+
+            self.wep_name_list = eval(saved_wep_str)
+            if not isinstance(self.wep_name_list, list):
+                self.wep_name_list = []
+
+            sync_wep_list()
+            load_preset3.save("preset.xlsx")
+            load_preset3.close()
+            check_equipment()
+            for i in range(101, 136):
+                check_set(i)
+            for i in range(151, 156):
+                check_set(i)
+
+            def load_inv():
+                if inv_select3_1.get() == "축스탯%/1각":
+                    inv_select3_2['values'] = ['3%/60(상)', '3%/40(중)', '3%/20(하)']
+                elif inv_select3_1.get() == "축스탯%/1각%":
+                    inv_select3_2['values'] = ['4%/3%(상)', '3%/3%(중)', '2%/3%(하)']
+                elif inv_select3_1.get() == "축앞뎀%/1각":
+                    inv_select3_2['values'] = ['4%/25(상)', '3%/25(중)', '2%/25(하)']
+                elif inv_select3_1.get() == "축앞뎀%/1각%":
+                    inv_select3_2['values'] = ['3%/3%(상)', '3%/2%(중)', '3%/1%(하)']
+                elif inv_select3_1.get() == "전직패":
+                    inv_select3_2['values'] = ['+185(상)', '+155(중)', '+125(하)']
+                elif inv_select3_1.get() == "축스탯%/1각+1":
+                    inv_select3_2['values'] = ['3%/+1(상)', '2%/+1(중)', '1%/+1(하)']
+
+            def load_inv2():
+                if inv_select4_1.get() == "축스탯%/1각":
+                    inv_select4_2['values'] = ['3%/40(상)', '3%/30(중)', '3%/20(하)']
+                elif inv_select4_1.get() == "축스탯%/1각%":
+                    inv_select4_2['values'] = ['4%/2%(상)', '3%/2%(중)', '2%/2%(하)']
+                elif inv_select4_1.get() == "축앞뎀%/1각":
+                    inv_select4_2['values'] = ['3%/25(상)', '2%/25(중)', '1%/25(하)']
+                elif inv_select4_1.get() == "축앞뎀%/1각%":
+                    inv_select4_2['values'] = ['2%/3%(상)', '2%/2%(중)', '2%/1%(하)']
+                elif inv_select4_1.get() == "전직패":
+                    inv_select4_2['values'] = ['+145(상)', '+115(중)', '+85(하)']
+                elif inv_select4_1.get() == "축+1/1각":
+                    inv_select4_2['values'] = ['+1/30(상)', '+1/20(중)', '+1/10(하)']
+
+            update_inv(0)
+
+            def load_wep():
+                wep_job_select = self.wep_job_select
+                wep_type_select = self.wep_type_select
+                wep_select = self.wep_select
+
+                wep_type_select["values"] = list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())].keys())
+                wep_select["values"] = list(
+                    calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])
+
+            try:
+                load_inv()
+                load_inv2()
+                load_wep()
+            except:
+                pass
+
+            jobup_select = self.jobup_select
+            jobtype_select = self.jobtype_select
+
+            jobup_select["values"] = list(calc_list_job.DNF_job_list[jobtype_select.get()])
+            tkinter.messagebox.showinfo("알림", "불러오기 완료")
+
+    ## 현재값 preset에 저장하기
+    def save_checklist(self):
+        ask_msg2 = tkinter.messagebox.askquestion('확인', "저장하시겠습니까?")
+        for snum in range(0, 20):
+            if self.save_select.get() == self.save_name_list[snum]:
+                ssnum2 = snum
+        try:
+            if ask_msg2 == 'yes':
+                load_preset4 = load_workbook("preset.xlsx")
+                db_save_check = load_preset4["one"]
+                db_save_cus = load_preset4["custom"]
+                save_cell = db_save_check.cell
+                save_cus = db_save_cus.cell
+                opt_save = {}
+                for i in range(1, 316):
+                    opt_save[save_cell(i, 1).value] = i
+
+                select_item = self.owned_equipments
+
+                for code in opt_save.keys():
+                    try:
+                        if select_item[f"tg{code}"] == 1:
+                            save_cell(opt_save[code], 2 + ssnum2).value = 1
+                    except KeyError as error:
+                        passss1 = 1
+
+                    try:
+                        if select_item[f"tg{code}"] == 0:
+                            save_cell(opt_save[code], 2 + ssnum2).value = 0
+                    except KeyError as error:
+                        passss1 = 1
+
+                    passss = 1
+                for i in range(52, 70):
+                    temp_opt = str(save_cus(i, 1).value)
+                    temp_val = self.get_combobox_value(temp_opt)
+                    save_cus(i, 2 + ssnum2).value = temp_val
+                for i in range(1, 20):
+                    save_cus(i + 25, 2 + ssnum2).value = str(save_cus(i, 2).value)
+                save_cus(70, 2 + ssnum2).value = str(save_cus(20, 2).value)
+                save_cus(71, 2 + ssnum2).value = str(self.wep_name_list)
+                for i in range(1, 8):
+                    save_cus(i + 44, 2 + ssnum2).value = str(save_cus(i, 8).value)
+
+                load_preset4.save("preset.xlsx")
+                load_preset4.close()
+                tkinter.messagebox.showinfo("알림", "저장 완료")
+
+        except PermissionError as error:
+            tkinter.messagebox.showerror("에러", "엑셀을 닫고 다시 시도해주세요.")
 
     @staticmethod
     def place_center(toplevel, move_x):
@@ -3363,8 +3556,6 @@ def calc(mode):
     calculator.change_state_text(text='출력 완료')
     print("걸린 시간 = "+str(time.time() - start_time)+"초")
 
-def calc_thread():
-    threading.Thread(target=calc,args=(0,),daemon=True).start()
 
 def show_result(rank_list,job_type,ele_skill,cool_eff):
     jobup_select = calculator.jobup_select
@@ -5103,157 +5294,6 @@ def change_rank_type2(in_type):
         calculator.buf_jingak_tg = 0
 
 
-## 저장된 preset 불러오기
-def load_checklist():
-    ask_msg1=tkinter.messagebox.askquestion('확인',"저장된 내역을 불러오겠습니까?")
-    for snum in range(0,20):
-        if calculator.save_select.get() == calculator.save_name_list[snum]:
-            ssnum1=snum
-    if ask_msg1 == 'yes':
-        load_preset3=load_workbook("preset.xlsx")
-        db_load_check=load_preset3["one"]
-        db_load_cus=load_preset3["custom"]
-        load_cell=db_load_check.cell
-        load_cus=db_load_cus.cell
-        k=1
-
-        select_item = calculator.owned_equipments
-
-        for i in range(1,316):
-            if load_cell(i,2+ssnum1).value == 1:
-                try:
-                    select_item['tg{}'.format(load_cell(i,1).value)]=1
-                except KeyError as error:
-                    passss=1
-            elif load_cell(i,2+ssnum1).value == 0:
-                try:
-                    select_item['tg{}'.format(load_cell(i,1).value)]=0
-                except KeyError as error:
-                    passss=1
-        for i in range(52,70):
-            temp_opt=str(load_cus(i,1).value)
-            temp_val=str(load_cus(i,2+ssnum1).value)
-            calculator.set_combobox_value(temp_opt, temp_val)
-        for i in range(1,20):
-            load_cus(i,2).value=str(load_cus(i+25,2+ssnum1).value)
-        for i in range(1,8):
-            load_cus(i,8).value=str(load_cus(i+44,2+ssnum1).value)
-        load_cus(20,2).value=str(load_cus(70,2+ssnum1).value)
-        saved_wep_str=load_cus(71,2+ssnum1).value
-
-        calculator.wep_name_list = eval(saved_wep_str)
-        if not isinstance(calculator.wep_name_list, list):
-            calculator.wep_name_list = []
-
-        sync_wep_list()
-        load_preset3.save("preset.xlsx")
-        load_preset3.close()
-        check_equipment()
-        for i in range(101,136):
-            check_set(i)
-        for i in range(151,156):
-            check_set(i)
-        def load_inv():
-            if inv_select3_1.get()=="축스탯%/1각":
-                inv_select3_2['values']=['3%/60(상)','3%/40(중)','3%/20(하)']
-            elif inv_select3_1.get()=="축스탯%/1각%":
-                inv_select3_2['values']=['4%/3%(상)','3%/3%(중)','2%/3%(하)']
-            elif inv_select3_1.get()=="축앞뎀%/1각":
-                inv_select3_2['values']=['4%/25(상)','3%/25(중)','2%/25(하)']
-            elif inv_select3_1.get()=="축앞뎀%/1각%":
-                inv_select3_2['values']=['3%/3%(상)','3%/2%(중)','3%/1%(하)']
-            elif inv_select3_1.get()=="전직패":
-                inv_select3_2['values']=['+185(상)','+155(중)','+125(하)']
-            elif inv_select3_1.get()=="축스탯%/1각+1":
-                inv_select3_2['values']=['3%/+1(상)','2%/+1(중)','1%/+1(하)']
-        def load_inv2():
-            if inv_select4_1.get()=="축스탯%/1각":
-                inv_select4_2['values']=['3%/40(상)','3%/30(중)','3%/20(하)']
-            elif inv_select4_1.get()=="축스탯%/1각%":
-                inv_select4_2['values']=['4%/2%(상)','3%/2%(중)','2%/2%(하)']
-            elif inv_select4_1.get()=="축앞뎀%/1각":
-                inv_select4_2['values']=['3%/25(상)','2%/25(중)','1%/25(하)']
-            elif inv_select4_1.get()=="축앞뎀%/1각%":
-                inv_select4_2['values']=['2%/3%(상)','2%/2%(중)','2%/1%(하)']
-            elif inv_select4_1.get()=="전직패":
-                inv_select4_2['values']=['+145(상)','+115(중)','+85(하)']
-            elif inv_select4_1.get()=="축+1/1각":
-                inv_select4_2['values']=['+1/30(상)','+1/20(중)','+1/10(하)']
-        update_inv(0)
-        def load_wep():
-            wep_job_select = calculator.wep_job_select
-            wep_type_select = calculator.wep_type_select
-            wep_select = calculator.wep_select
-
-            wep_type_select["values"] = list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())].keys())
-            wep_select["values"] = list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])
-        try:
-            load_inv()
-            load_inv2()
-            load_wep()
-        except:
-            pass
-
-        jobup_select = calculator.jobup_select
-        jobtype_select = calculator.jobtype_select
-
-        jobup_select["values"] = list(calc_list_job.DNF_job_list[jobtype_select.get()])
-        tkinter.messagebox.showinfo("알림","불러오기 완료")
-
-## 현재값 preset에 저장하기
-def save_checklist():
-    ask_msg2=tkinter.messagebox.askquestion('확인',"저장하시겠습니까?")
-    for snum in range(0,20):
-        if calculator.save_select.get() == calculator.save_name_list[snum]:
-            ssnum2=snum
-    try:
-        if ask_msg2 == 'yes':
-            load_preset4=load_workbook("preset.xlsx")
-            db_save_check=load_preset4["one"]
-            db_save_cus=load_preset4["custom"]
-            save_cell=db_save_check.cell
-            save_cus=db_save_cus.cell
-            opt_save={}
-            for i in range(1,316):
-                opt_save[save_cell(i,1).value]=i
-
-            select_item = calculator.owned_equipments
-
-            for code in opt_save.keys():
-                try:
-                    if select_item[f"tg{code}"] == 1:
-                        save_cell(opt_save[code],2+ssnum2).value=1
-                except KeyError as error:
-                    passss1=1
-
-                try:
-                    if select_item[f"tg{code}"] == 0:
-                        save_cell(opt_save[code],2+ssnum2).value=0
-                except KeyError as error:
-                    passss1=1
-
-                passss=1
-            for i in range(52,70):
-                temp_opt=str(save_cus(i,1).value)
-                temp_val = calculator.get_combobox_value(temp_opt)
-                save_cus(i,2+ssnum2).value=temp_val
-            for i in range(1,20):
-                save_cus(i+25,2+ssnum2).value=str(save_cus(i,2).value)
-            save_cus(70,2+ssnum2).value=str(save_cus(20,2).value)
-            save_cus(71,2+ssnum2).value = str(calculator.wep_name_list)
-            for i in range(1,8):
-                save_cus(i+44,2+ssnum2).value=str(save_cus(i,8).value)
-
-            load_preset4.save("preset.xlsx")
-            load_preset4.close()
-            tkinter.messagebox.showinfo("알림","저장 완료")
-
-    except PermissionError as error:
-        tkinter.messagebox.showerror("에러","엑셀을 닫고 다시 시도해주세요.")
-
-
-
-
 ## 실시간 갱신 카운터 (1: 계산 카운트 / 2: 경우의 수 카운트)
 def update_count():
     while True:
@@ -5424,34 +5464,6 @@ def check_set(code):
             set_buttons[str(code)]['image']=image_list_set[str(code)]
         else:
             set_buttons[str(code)]['image']=image_list_set2[str(code)]
-
-
-# 정지
-def stop_calc():
-    # TODO: thread fix
-    calculator.exit_calc = 1
-    time.sleep(1)
-    calculator.exit_calc = 0
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 ## 딜러 프로필 보기 기능
@@ -5644,30 +5656,6 @@ def sync_wep_list():
 
     calculator.change_weapon_list_num_text(len(wep_name_list))
     wep_img_list_refresh(calculator.selected_weapon_img_list)
-
-
-calc_img=calculator.get_photo_image("ext_img/calc.png")
-select_all=tkinter.Button(calculator.window,image=calc_img,borderwidth=0,activebackground=calculator.dark_main,command=calc_thread,bg=calculator.dark_main)
-select_all.place(x=390-35+150,y=7)
-stop_img=calculator.get_photo_image("ext_img/stop.png")
-tkinter.Button(calculator.window,image=stop_img,borderwidth=0,activebackground=calculator.dark_main,command=stop_calc,bg=calculator.dark_main).place(x=390-35+150,y=62)
-
-timeline_img=calculator.get_photo_image("ext_img/timeline.png")
-select_custom=tkinter.Button(calculator.window,image=timeline_img,borderwidth=0,activebackground=calculator.dark_main,command=calculator.timeline_select,bg=calculator.dark_sub)
-select_custom.place(x=345+165,y=340-100)
-custom_img=calculator.get_photo_image("ext_img/custom.png")
-select_custom2=tkinter.Button(calculator.window,image=custom_img,borderwidth=0,activebackground=calculator.dark_main,command=lambda:calculator.create_custom_window(0),bg=calculator.dark_sub)
-select_custom2.place(x=435+165,y=340-100)
-
-save_img=calculator.get_photo_image("ext_img/SAVE.png")
-save=tkinter.Button(calculator.window,image=save_img,borderwidth=0,activebackground=calculator.dark_main,command=save_checklist,bg=calculator.dark_sub)
-save.place(x=345+165,y=440-100)
-load_img=calculator.get_photo_image("ext_img/LOAD.png")
-load=tkinter.Button(calculator.window,image=load_img,borderwidth=0,activebackground=calculator.dark_main,command=load_checklist,bg=calculator.dark_sub)
-load.place(x=435+165,y=440-100)
-change_name_img=calculator.get_photo_image("ext_img/name_change.png")
-change_list_but=tkinter.Button(calculator.window,image=change_name_img,borderwidth=0,activebackground=calculator.dark_main,command=calculator.change_list_name,bg=calculator.dark_sub)
-change_list_but.place(x=435+165,y=405-100)
 
 
 ##잔향부여
