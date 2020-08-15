@@ -2395,7 +2395,6 @@ class Calculator:
 
 calculator = Calculator()
 
-
 def capture_screen(toplevel):
     nowx=toplevel.winfo_x()+8
     nowy=toplevel.winfo_y()
@@ -5928,14 +5927,11 @@ def sync_wep_list():
     wep_img_list_refresh(calculator.selected_weapon_img_list)
 
 
-if calculator.auto_custom == 1:
-    calculator.create_custom_window(1)
-
 if __name__ == "__main__":
+    if calculator.auto_custom == 1:
+        calculator.create_custom_window(1)
+
     update_thread()
     update_thread2()
 
-calculator.window.mainloop()
-
-
-
+    calculator.window.mainloop()
