@@ -291,6 +291,7 @@ class Calculator:
         self.opt_leveling: Dict[str, str] = {}
         self.server_list = ["카인", "디레지에", "바칼", "힐더", "안톤", "카시야스", "프레이", "시로코"]
         self.wep_list: List[str] = []
+        self.inv_type_list = ["증뎀", "크증", "추뎀", "모공", "공%", "스탯"]
 
         # 에픽 장비
         self.normal_epic_list: List[str] = []
@@ -1530,6 +1531,58 @@ class Calculator:
         tkinter.Button(self.window, image=change_name_img, borderwidth=0, activebackground=self.dark_main,
                        command=self.change_list_name, bg=self.dark_sub).place(x=435 + 165, y=405 - 100)
 
+        inv_mod_list = ["미부여", "선택부여", "최적부여(버퍼X)"]
+        inv_mod = self.inv_mod = tkinter.ttk.Combobox(self.window, width=10, values=inv_mod_list)
+        inv_mod.place(x=785, y=285)
+        inv_mod.set("미부여")
+        inv_mod.bind("<<ComboboxSelected>>", self.update_inv)
+
+        inv_type_list = self.inv_type_list
+        inv_value_list1 = [6, 8, 10]
+        inv_value_list2 = [3, 4, 5]
+
+        inv_select1_1 = self.inv_select1_1 = tkinter.ttk.Combobox(self.window, width=4,
+                                                                        values=inv_type_list)
+        inv_select1_1.place(x=785, y=315)
+        inv_select1_1.set("증뎀")
+        inv_select1_2 = self.inv_select1_2 = tkinter.ttk.Combobox(self.window, width=3,
+                                                                        values=inv_value_list1)
+        inv_select1_2.place(x=842, y=315)
+        inv_select1_2.set(10)
+        inv_select2_1 = self.inv_select2_1 = tkinter.ttk.Combobox(self.window, width=4,
+                                                                        values=inv_type_list)
+        inv_select2_1.place(x=785, y=345)
+        inv_select2_1.set("증뎀")
+        inv_select2_2 = self.inv_select2_2 = tkinter.ttk.Combobox(self.window, width=3,
+                                                                        values=inv_value_list2)
+        inv_select2_2.place(x=842, y=345)
+        inv_select2_2.set(5)
+
+        inv_type_list2 = ["축스탯%/1각", "축스탯%/1각%", "축앞뎀%/1각", "축앞뎀%/1각%", "전직패", "축스탯%/1각+1"]
+        inv_type_list2_1 = ["축스탯%/1각", "축스탯%/1각%", "축앞뎀%/1각", "축앞뎀%/1각%", "전직패", "축+1/1각"]
+        inv_value_list3 = ['3%/60(상)', '3%/40(중)', '3%/20(하)']
+        inv_value_list3_1 = ['3%/40(상)', '3%/30(중)', '3%/20(하)']
+        inv_select3_1 = self.inv_select3_1 = tkinter.ttk.Combobox(self.window, width=12,
+                                                                        values=inv_type_list2)
+        inv_select3_1.place(x=785, y=385)
+        inv_select3_1.set("축스탯%/1각")
+        inv_select3_2 = self.inv_select3_2 = tkinter.ttk.Combobox(self.window, width=12,
+                                                                        values=inv_value_list3)
+        inv_select3_2.place(x=785, y=412)
+        inv_select3_2.set('3%/60(상)')
+        inv_select4_1 = self.inv_select4_1 = tkinter.ttk.Combobox(self.window, width=12,
+                                                                        values=inv_type_list2_1)
+        inv_select4_1.place(x=785, y=440)
+        inv_select4_1.set("축스탯%/1각")
+        inv_select4_2 = self.inv_select4_2 = tkinter.ttk.Combobox(self.window, width=12,
+                                                                        values=inv_value_list3_1)
+        inv_select4_2.place(x=785, y=467)
+        inv_select4_2.set('3%/40(상)')
+        inv_select3_1.bind("<<ComboboxSelected>>", self.update_inv_buf)
+        inv_select4_1.bind("<<ComboboxSelected>>", self.update_inv_buf2)
+
+        self.update_inv(0)
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -1995,6 +2048,9 @@ class Calculator:
                 check_set(i)
 
             def load_inv():
+                inv_select3_1 = self.inv_select3_1
+                inv_select3_2 = self.inv_select3_2
+
                 if inv_select3_1.get() == "축스탯%/1각":
                     inv_select3_2['values'] = ['3%/60(상)', '3%/40(중)', '3%/20(하)']
                 elif inv_select3_1.get() == "축스탯%/1각%":
@@ -2009,6 +2065,9 @@ class Calculator:
                     inv_select3_2['values'] = ['3%/+1(상)', '2%/+1(중)', '1%/+1(하)']
 
             def load_inv2():
+                inv_select4_1 = self.inv_select4_1
+                inv_select4_2 = self.inv_select4_2
+
                 if inv_select4_1.get() == "축스탯%/1각":
                     inv_select4_2['values'] = ['3%/40(상)', '3%/30(중)', '3%/20(하)']
                 elif inv_select4_1.get() == "축스탯%/1각%":
@@ -2022,7 +2081,7 @@ class Calculator:
                 elif inv_select4_1.get() == "축+1/1각":
                     inv_select4_2['values'] = ['+1/30(상)', '+1/20(중)', '+1/10(하)']
 
-            update_inv(0)
+            self.update_inv(0)
 
             def load_wep():
                 wep_job_select = self.wep_job_select
@@ -2096,6 +2155,90 @@ class Calculator:
 
         except PermissionError as error:
             tkinter.messagebox.showerror("에러", "엑셀을 닫고 다시 시도해주세요.")
+
+    ##잔향부여
+    def update_inv(self, event):
+        inv_mod = self.inv_mod
+
+        inv_select1_1 = self.inv_select1_1
+        inv_select1_2 = self.inv_select1_2
+        inv_select2_1 = self.inv_select2_1
+        inv_select2_2 = self.inv_select2_2
+        inv_select3_1 = self.inv_select3_1
+        inv_select3_2 = self.inv_select3_2
+        inv_select4_1 = self.inv_select4_1
+        inv_select4_2 = self.inv_select4_2
+
+        if inv_mod.get() == "미부여" or inv_mod.get() == "최적부여(버퍼X)":
+            if inv_mod.get() == "미부여":
+                self.inv_tg = 0
+            elif inv_mod.get() == "최적부여(버퍼X)":
+                self.inv_tg = 2
+
+            inv_select1_1['state'] = 'disabled'
+            inv_select1_2['state'] = 'disabled'
+            inv_select2_1['state'] = 'disabled'
+            inv_select2_2['state'] = 'disabled'
+            inv_select3_1['state'] = 'disabled'
+            inv_select3_2['state'] = 'disabled'
+            inv_select4_1['state'] = 'disabled'
+            inv_select4_2['state'] = 'disabled'
+        elif inv_mod.get() == "선택부여":
+            self.inv_tg = 1
+            inv_select1_1['state'] = 'normal'
+            inv_select1_2['state'] = 'normal'
+            inv_select2_1['state'] = 'normal'
+            inv_select2_2['state'] = 'normal'
+            inv_select3_1['state'] = 'normal'
+            inv_select3_2['state'] = 'normal'
+            inv_select4_1['state'] = 'normal'
+            inv_select4_2['state'] = 'normal'
+
+    def update_inv_buf(self, event):
+        inv_select3_1 = self.inv_select3_1
+        inv_select3_2 = self.inv_select3_2
+
+        if inv_select3_1.get() == "축스탯%/1각":
+            inv_select3_2['values'] = ['3%/60(상)', '3%/40(중)', '3%/20(하)']
+            inv_select3_2.set('3%/60(상)')
+        elif inv_select3_1.get() == "축스탯%/1각%":
+            inv_select3_2['values'] = ['4%/3%(상)', '3%/3%(중)', '2%/3%(하)']
+            inv_select3_2.set('4%/3%(상)')
+        elif inv_select3_1.get() == "축앞뎀%/1각":
+            inv_select3_2['values'] = ['4%/25(상)', '3%/25(중)', '2%/25(하)']
+            inv_select3_2.set('4%/25(상)')
+        elif inv_select3_1.get() == "축앞뎀%/1각%":
+            inv_select3_2['values'] = ['3%/3%(상)', '3%/2%(중)', '3%/1%(하)']
+            inv_select3_2.set('3%/3%(상)')
+        elif inv_select3_1.get() == "전직패":
+            inv_select3_2['values'] = ['+185(상)', '+155(중)', '+125(하)']
+            inv_select3_2.set('+185(상)')
+        elif inv_select3_1.get() == "축스탯%/1각+1":
+            inv_select3_2['values'] = ['3%/+1(상)', '2%/+1(중)', '1%/+1(하)']
+            inv_select3_2.set('3%/+1(상)')
+
+    def update_inv_buf2(self, event):
+        inv_select4_1 = self.inv_select4_1
+        inv_select4_2 = self.inv_select4_2
+
+        if inv_select4_1.get() == "축스탯%/1각":
+            inv_select4_2['values'] = ['3%/40(상)', '3%/30(중)', '3%/20(하)']
+            inv_select4_2.set('3%/40(상)')
+        elif inv_select4_1.get() == "축스탯%/1각%":
+            inv_select4_2['values'] = ['4%/2%(상)', '3%/2%(중)', '2%/2%(하)']
+            inv_select4_2.set('4%/2%(상)')
+        elif inv_select4_1.get() == "축앞뎀%/1각":
+            inv_select4_2['values'] = ['3%/25(상)', '2%/25(중)', '1%/25(하)']
+            inv_select4_2.set('3%/25(상)')
+        elif inv_select4_1.get() == "축앞뎀%/1각%":
+            inv_select4_2['values'] = ['2%/3%(상)', '2%/2%(중)', '2%/1%(하)']
+            inv_select4_2.set('2%/3%(상)')
+        elif inv_select4_1.get() == "전직패":
+            inv_select4_2['values'] = ['+145(상)', '+115(중)', '+85(하)']
+            inv_select4_2.set('+145(상)')
+        elif inv_select4_1.get() == "축+1/1각":
+            inv_select4_2['values'] = ['+1/30(상)', '+1/20(중)', '+1/10(하)']
+            inv_select4_2.set('+1/30(상)')
 
     @staticmethod
     def place_center(toplevel, move_x):
@@ -2436,6 +2579,11 @@ def calc(mode):
 
     #잔향 부여 선기입 (직접 선택)
     if calculator.inv_tg ==1:
+        inv_select1_1 = calculator.inv_select1_1
+        inv_select1_2 = calculator.inv_select1_2
+        inv_select2_1 = calculator.inv_select2_1
+        inv_select2_2 = calculator.inv_select2_2
+
         inv1_opt=inv_select1_1.get()
         inv1_val=int(inv_select1_2.get())
         inv2_opt=inv_select2_1.get()
@@ -2466,6 +2614,10 @@ def calc(mode):
         elif inv_select2_1.get()=="스탯" and inv2_on_tg==1:
             extra_sta=extra_sta+int(inv_select2_2.get())
 
+        inv_select3_1 = calculator.inv_select3_1
+        inv_select3_2 = calculator.inv_select3_2
+        inv_select4_1 = calculator.inv_select4_1
+        inv_select4_2 = calculator.inv_select4_2
 
         inv3_opt=inv_select3_1.get()
         inv3_val=inv_select3_2.get()[:-3]
@@ -3133,7 +3285,7 @@ def calc(mode):
                             actlvl2=base_array[22]*(0.5-silmari*0.06)*0.0213+base_array[24]*(0.5-silmari*0.06)*0.04+base_array[24]*(0.1484-silmari*0.0284)*0.0674+1
                             paslvl=((100+base_array[16]*job_pas0)/100)*((100+base_array[17]*job_pas1)/100)*((100+base_array[18]*job_pas2)/100)*((100+base_array[19]*job_pas3)/100)
                             if calculator.inv_tg == 2:
-                                inv_auto=inv_auto_dealer(base_array,only_bon,inv2_on_tg,inv_type_list)
+                                inv_auto = inv_auto_dealer(base_array, only_bon, inv2_on_tg, calculator.inv_type_list)
                                 base_array=inv_auto[0]
                                 only_bon=inv_auto[1]
                                 inv1_opt=inv_auto[2]
@@ -3213,7 +3365,7 @@ def calc(mode):
                             actlvl2=base_array[22]*(0.5-silmari*0.06)*0.0213+base_array[24]*(0.5-silmari*0.06)*0.04+base_array[24]*(0.1484-silmari*0.0284)*0.0674+1
                             paslvl=((100+base_array[16]*job_pas0)/100)*((100+base_array[17]*job_pas1)/100)*((100+base_array[18]*job_pas2)/100)*((100+base_array[19]*job_pas3)/100)
                             if calculator.inv_tg == 2:
-                                inv_auto=inv_auto_dealer(base_array,only_bon,inv2_on_tg,inv_type_list)
+                                inv_auto = inv_auto_dealer(base_array, only_bon, inv2_on_tg, calculator.inv_type_list)
                                 base_array=inv_auto[0]
                                 only_bon=inv_auto[1]
                                 inv1_opt=inv_auto[2]
@@ -5656,95 +5808,6 @@ def sync_wep_list():
     calculator.change_weapon_list_num_text(len(wep_name_list))
     wep_img_list_refresh(calculator.selected_weapon_img_list)
 
-
-##잔향부여
-
-def update_inv(event):
-    if inv_mod.get()=="미부여" or inv_mod.get()=="최적부여(버퍼X)":
-        if inv_mod.get()=="미부여":
-            calculator.inv_tg = 0
-        elif inv_mod.get()=="최적부여(버퍼X)":
-            calculator.inv_tg = 2
-        inv_select1_1['state']='disabled'
-        inv_select1_2['state']='disabled'
-        inv_select2_1['state']='disabled'
-        inv_select2_2['state']='disabled'
-        inv_select3_1['state']='disabled'
-        inv_select3_2['state']='disabled'
-        inv_select4_1['state']='disabled'
-        inv_select4_2['state']='disabled'
-    elif inv_mod.get()=="선택부여":
-        calculator.inv_tg = 1
-        inv_select1_1['state']='normal'
-        inv_select1_2['state']='normal'
-        inv_select2_1['state']='normal'
-        inv_select2_2['state']='normal'
-        inv_select3_1['state']='normal'
-        inv_select3_2['state']='normal'
-        inv_select4_1['state']='normal'
-        inv_select4_2['state']='normal'
-
-def update_inv_buf(event):
-    if inv_select3_1.get()=="축스탯%/1각":
-        inv_select3_2['values']=['3%/60(상)','3%/40(중)','3%/20(하)']
-        inv_select3_2.set('3%/60(상)')
-    elif inv_select3_1.get()=="축스탯%/1각%":
-        inv_select3_2['values']=['4%/3%(상)','3%/3%(중)','2%/3%(하)']
-        inv_select3_2.set('4%/3%(상)')
-    elif inv_select3_1.get()=="축앞뎀%/1각":
-        inv_select3_2['values']=['4%/25(상)','3%/25(중)','2%/25(하)']
-        inv_select3_2.set('4%/25(상)')
-    elif inv_select3_1.get()=="축앞뎀%/1각%":
-        inv_select3_2['values']=['3%/3%(상)','3%/2%(중)','3%/1%(하)']
-        inv_select3_2.set('3%/3%(상)')
-    elif inv_select3_1.get()=="전직패":
-        inv_select3_2['values']=['+185(상)','+155(중)','+125(하)']
-        inv_select3_2.set('+185(상)')
-    elif inv_select3_1.get()=="축스탯%/1각+1":
-        inv_select3_2['values']=['3%/+1(상)','2%/+1(중)','1%/+1(하)']
-        inv_select3_2.set('3%/+1(상)')
-def update_inv_buf2(event):
-    if inv_select4_1.get()=="축스탯%/1각":
-        inv_select4_2['values']=['3%/40(상)','3%/30(중)','3%/20(하)']
-        inv_select4_2.set('3%/40(상)')
-    elif inv_select4_1.get()=="축스탯%/1각%":
-        inv_select4_2['values']=['4%/2%(상)','3%/2%(중)','2%/2%(하)']
-        inv_select4_2.set('4%/2%(상)')
-    elif inv_select4_1.get()=="축앞뎀%/1각":
-        inv_select4_2['values']=['3%/25(상)','2%/25(중)','1%/25(하)']
-        inv_select4_2.set('3%/25(상)')
-    elif inv_select4_1.get()=="축앞뎀%/1각%":
-        inv_select4_2['values']=['2%/3%(상)','2%/2%(중)','2%/1%(하)']
-        inv_select4_2.set('2%/3%(상)')
-    elif inv_select4_1.get()=="전직패":
-        inv_select4_2['values']=['+145(상)','+115(중)','+85(하)']
-        inv_select4_2.set('+145(상)')
-    elif inv_select4_1.get()=="축+1/1각":
-        inv_select4_2['values']=['+1/30(상)','+1/20(중)','+1/10(하)']
-        inv_select4_2.set('+1/30(상)')
-inv_mod_list=["미부여","선택부여","최적부여(버퍼X)"]
-inv_mod = calculator.inv_mod = tkinter.ttk.Combobox(calculator.window,width=10,values=inv_mod_list);inv_mod.place(x=785,y=285);inv_mod.set("미부여")
-inv_mod.bind("<<ComboboxSelected>>",update_inv)
-
-inv_type_list=["증뎀","크증","추뎀","모공","공%","스탯"]
-inv_value_list1=[6,8,10]
-inv_value_list2=[3,4,5]
-inv_select1_1 = calculator.inv_select1_1 = tkinter.ttk.Combobox(calculator.window,width=4,values=inv_type_list);inv_select1_1.place(x=785,y=315);inv_select1_1.set("증뎀")
-inv_select1_2 = calculator.inv_select1_2 = tkinter.ttk.Combobox(calculator.window,width=3,values=inv_value_list1);inv_select1_2.place(x=842,y=315);inv_select1_2.set(10)
-inv_select2_1 = calculator.inv_select2_1 = tkinter.ttk.Combobox(calculator.window,width=4,values=inv_type_list);inv_select2_1.place(x=785,y=345);inv_select2_1.set("증뎀")
-inv_select2_2 = calculator.inv_select2_2 = tkinter.ttk.Combobox(calculator.window,width=3,values=inv_value_list2);inv_select2_2.place(x=842,y=345);inv_select2_2.set(5)
-
-inv_type_list2=["축스탯%/1각","축스탯%/1각%","축앞뎀%/1각","축앞뎀%/1각%","전직패","축스탯%/1각+1"]
-inv_type_list2_1=["축스탯%/1각","축스탯%/1각%","축앞뎀%/1각","축앞뎀%/1각%","전직패","축+1/1각"]
-inv_value_list3=['3%/60(상)','3%/40(중)','3%/20(하)']
-inv_value_list3_1=['3%/40(상)','3%/30(중)','3%/20(하)']
-inv_select3_1 = calculator.inv_select3_1 = tkinter.ttk.Combobox(calculator.window,width=12,values=inv_type_list2);inv_select3_1.place(x=785,y=385);inv_select3_1.set("축스탯%/1각")
-inv_select3_2 = calculator.inv_select3_2 = tkinter.ttk.Combobox(calculator.window,width=12,values=inv_value_list3);inv_select3_2.place(x=785,y=412);inv_select3_2.set('3%/60(상)')
-inv_select4_1 = calculator.inv_select4_1 = tkinter.ttk.Combobox(calculator.window,width=12,values=inv_type_list2_1);inv_select4_1.place(x=785,y=440);inv_select4_1.set("축스탯%/1각")
-inv_select4_2 = calculator.inv_select4_2 = tkinter.ttk.Combobox(calculator.window,width=12,values=inv_value_list3_1);inv_select4_2.place(x=785,y=467);inv_select4_2.set('3%/40(상)')
-inv_select3_1.bind("<<ComboboxSelected>>",update_inv_buf)
-inv_select4_1.bind("<<ComboboxSelected>>",update_inv_buf2)
-update_inv(0)
 
 know_image=calculator.get_photo_image("set_name/know_name.png")
 tkinter.Button(calculator.window,bg=calculator.dark_main,image=know_image,command=calculator.create_knowledge_window).place(x=302,y=520)
