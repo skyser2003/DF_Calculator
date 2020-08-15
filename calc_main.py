@@ -1467,6 +1467,19 @@ class Calculator:
         jobup_select.set('검신(진각)')
         jobup_select.place(x=390 - 17, y=220 + 52)
 
+        style_list = ['증뎀15%', '속강32', '증뎀10%', '추뎀10%', '크증10%', '기타(직접비교)']
+        style_select = self.preset_values["style_select"] = tkinter.ttk.Combobox(self.window, width=13,
+                                                                                       values=style_list)
+        style_select.set('증뎀15%')
+        style_select.place(x=390 - 17, y=250 + 52)
+
+        creature_list = ['증뎀10%', '모공15%', '크증18%', '물마독공18%', '기타(직접비교)']
+        creature_select = self.preset_values["creature_select"] = tkinter.ttk.Combobox(self.window,
+                                                                                             width=13,
+                                                                                             values=creature_list)
+        creature_select.set('크증18%')
+        creature_select.place(x=390 - 17, y=280 + 52)
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -2172,6 +2185,9 @@ def calc(mode):
     extra_stat=0
 
     #칭호
+    style_select = calculator.preset_values["style_select"]
+    creature_select = calculator.preset_values["creature_select"]
+
     style_calced = calculator.style_calced = style_select.get()
     creature_calced = calculator.creature_calced = creature_select.get()
 
@@ -5600,16 +5616,6 @@ def sync_wep_list():
     calculator.change_weapon_list_num_text(len(wep_name_list))
     wep_img_list_refresh(calculator.selected_weapon_img_list)
 
-
-style_list=['증뎀15%','속강32','증뎀10%','추뎀10%','크증10%','기타(직접비교)']
-style_select = calculator.preset_values["style_select"] = tkinter.ttk.Combobox(calculator.window,width=13,values=style_list)
-style_select.set('증뎀15%')
-style_select.place(x=390-17,y=250+52)
-
-creature_list=['증뎀10%','모공15%','크증18%','물마독공18%','기타(직접비교)']
-creature_select = calculator.preset_values["creature_select"] = tkinter.ttk.Combobox(calculator.window,width=13,values=creature_list)
-creature_select.set('크증18%')
-creature_select.place(x=390-17,y=280+52)
 
 req_cool = calculator.preset_values["req_cool"] = tkinter.ttk.Combobox(calculator.window,width=13,values=['X(지속딜만)','O(그로기포함)'])
 req_cool.set('X(지속딜만)')
