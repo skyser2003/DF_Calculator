@@ -309,6 +309,7 @@ class Calculator:
             self.get_photo_image("ext_img/buf_jin_1.png"),
             self.get_photo_image("ext_img/buf_jin_2.png")
         ]
+        self.save_select: tkinter.ttk.Combobox = None
 
         self.case_count_label: Label = None
         self.total_count_label: Label = None
@@ -825,8 +826,8 @@ class Calculator:
             self.save_name_list.extend(changed_savelist_name)
             load_preset5.save("preset.xlsx")
             load_preset5.close()
-            save_select.set(self.save_name_list[0])
-            save_select['values'] = self.save_name_list
+            self.save_select.set(self.save_name_list[0])
+            self.save_select['values'] = self.save_name_list
             self.change_window.destroy()
             tkinter.messagebox.showinfo("알림", "저장 완료")
         except PermissionError as error:
@@ -1263,6 +1264,10 @@ class Calculator:
         equip_buttons[se[13]].place(x=710 + 10 + 71 + 62, y=445 + 90 + 95)
         equip_buttons[se[14]].place(x=710 + 10 + 71 + 62, y=445 + 120 + 95)
 
+        self.save_select = tkinter.ttk.Combobox(self.window, width=8, values=self.save_name_list)
+        self.save_select.place(x=345 + 165, y=410 - 100)
+        self.save_select.set(self.save_name_list[0])
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -1537,10 +1542,6 @@ def capture_screen(toplevel):
     im=ImageGrab.grab((nowx, nowy, nowx+xsize, nowy+ysize))
     im.save('Screenshots/'+str(time.strftime('%y%m%d%H%M%S', time.localtime(time.time())))+'.png')
 
-
-
-
-save_select=0 #세이브 드롭다운 리스트 변수 임시
 
 set_buttons = {}
 
@@ -4732,7 +4733,7 @@ def change_rank_type2(in_type):
 def load_checklist():
     ask_msg1=tkinter.messagebox.askquestion('확인',"저장된 내역을 불러오겠습니까?")
     for snum in range(0,20):
-        if save_select.get() == calculator.save_name_list[snum]:
+        if calculator.save_select.get() == calculator.save_name_list[snum]:
             ssnum1=snum
     if ask_msg1 == 'yes':
         load_preset3=load_workbook("preset.xlsx")
@@ -4821,7 +4822,7 @@ def load_checklist():
 def save_checklist():
     ask_msg2=tkinter.messagebox.askquestion('확인',"저장하시겠습니까?")
     for snum in range(0,20):
-        if save_select.get() == calculator.save_name_list[snum]:
+        if calculator.save_select.get() == calculator.save_name_list[snum]:
             ssnum2=snum
     try:
         if ask_msg2 == 'yes':
@@ -5577,9 +5578,6 @@ custom_img=calculator.get_photo_image("ext_img/custom.png")
 select_custom2=tkinter.Button(calculator.window,image=custom_img,borderwidth=0,activebackground=calculator.dark_main,command=lambda:calculator.create_custom_window(0),bg=calculator.dark_sub)
 select_custom2.place(x=435+165,y=340-100)
 
-save_select = tkinter.ttk.Combobox(calculator.window, width=8, values=calculator.save_name_list)
-save_select.place(x=345+165, y=410-100)
-save_select.set(calculator.save_name_list[0])
 save_img=calculator.get_photo_image("ext_img/SAVE.png")
 save=tkinter.Button(calculator.window,image=save_img,borderwidth=0,activebackground=calculator.dark_main,command=save_checklist,bg=calculator.dark_sub)
 save.place(x=345+165,y=440-100)
