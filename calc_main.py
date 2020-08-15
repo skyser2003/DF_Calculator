@@ -1480,6 +1480,11 @@ class Calculator:
         creature_select.set('크증18%')
         creature_select.place(x=390 - 17, y=280 + 52)
 
+        req_cool = self.preset_values["req_cool"] = tkinter.ttk.Combobox(self.window, width=13,
+                                                                               values=['X(지속딜만)', 'O(그로기포함)'])
+        req_cool.set('X(지속딜만)')
+        req_cool.place(x=390 - 17, y=310 + 52)
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -1928,6 +1933,7 @@ def capture_screen(toplevel):
 def calc(mode):
     select_item = calculator.owned_equipments
     jobup_select = calculator.preset_values["jobup_select"]
+    req_cool = calculator.preset_values["req_cool"]
 
     try:
         result_window = calculator.result_window
@@ -5616,10 +5622,6 @@ def sync_wep_list():
     calculator.change_weapon_list_num_text(len(wep_name_list))
     wep_img_list_refresh(calculator.selected_weapon_img_list)
 
-
-req_cool = calculator.preset_values["req_cool"] = tkinter.ttk.Combobox(calculator.window,width=13,values=['X(지속딜만)','O(그로기포함)'])
-req_cool.set('X(지속딜만)')
-req_cool.place(x=390-17,y=310+52)
 
 calc_img=calculator.get_photo_image("ext_img/calc.png")
 select_all=tkinter.Button(calculator.window,image=calc_img,borderwidth=0,activebackground=calculator.dark_main,command=calc_thread,bg=calculator.dark_main)
