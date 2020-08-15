@@ -5341,7 +5341,7 @@ def show_profile2(name,server):
 
     show_detail.image=show_detail_img
     canvas.image=cha_bg,cha_img,plt_img[0],plt_img[1],tal_img[0],tal_img[1]
-    place_center(profile_window,0)
+    calculator.place_center(profile_window, 0)
     def exit_p(e):
         profile_window.destroy()
     profile_window.focus_set()
