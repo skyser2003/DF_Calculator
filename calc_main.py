@@ -1620,6 +1620,71 @@ class Calculator:
         default_tag_img = self.get_photo_image("ext_img/default_tag.png")
         tkinter.Label(self.window, bg=self.dark_main, image=default_tag_img).place(x=431, y=515)
 
+        def donate():
+            webbrowser.open('https://twip.kr/dawnclass16')
+
+        donate_image = self.get_photo_image('ext_img/donate.png')
+        donate_bt = tkinter.Button(self.window, image=donate_image, command=donate, borderwidth=0,
+                                   bg=self.dark_main, activebackground=self.dark_main)
+        donate_bt.place(x=622, y=520)
+
+        def dunfaoff():
+            webbrowser.open('https://dunfaoff.com/')
+
+        dunfaoff_image = self.get_photo_image('ext_img/dunfaoff.png')
+        dunfaoff_url = tkinter.Button(self.window, image=dunfaoff_image, command=dunfaoff, borderwidth=0,
+                                      bg=self.dark_main, activebackground=self.dark_main)
+        dunfaoff_url.place(x=535 + 219, y=410 - 402 + 32)
+
+        def blog():
+            webbrowser.open('https://blog.naver.com/dawnclass16/221837654941')
+
+        blog_image = self.get_photo_image('ext_img/blog.png')
+        blog_url = tkinter.Button(self.window, image=blog_image, command=blog, borderwidth=0,
+                                  bg=self.dark_main, activebackground=self.dark_main)
+        blog_url.place(x=615 + 219, y=410 - 402 + 32)
+
+        def hamjung():
+            tkinter.messagebox.showinfo("제작자 크레딧",
+                                        "총제작자=Dawnclass(새벽반)\n이미지/그래픽=경철부동산\n직업/버퍼DB=대략볼록할철\n기타조언=히든 도비 4,5,6,7호\n\n오류 제보는 블로그 덧글이나 던조 쪽지로")
+
+        maker_image = self.get_photo_image('ext_img/maker.png')
+        maker = tkinter.Button(self.window, image=maker_image, command=hamjung, borderwidth=0,
+                               bg=self.dark_main, activebackground=self.dark_main)
+
+        def check_update(event):
+            try:
+                now_version_num = int(self.now_version[0] + self.now_version[2] + self.now_version[4])
+                if event == 1:
+                    html = urllib.request.urlopen("https://drive.google.com/open?id=1p8ZdzW_NzGKHHOtfPTuZSr1YgSEVtYCj")
+                    bsObject = BeautifulSoup(html, "html.parser")
+                    for meta in bsObject.head.find_all('meta'):
+                        if meta.get('content').count('zip') == 1:
+                            net_version = str(meta.get('content'))[-9:-4]
+                            print(f"최신 업데이트 버전 = {net_version}")
+
+                    return net_version
+
+                if event == 0:
+                    net_version = net_latest_version
+                    net_version_num = int(net_version[0] + net_version[2] + net_version[4])
+                    if now_version_num < net_version_num:
+                        webbrowser.open('https://drive.google.com/open?id=1p8ZdzW_NzGKHHOtfPTuZSr1YgSEVtYCj')
+                    else:
+                        tkinter.messagebox.showinfo('버전확인', "최신버전입니다.")
+            except:
+                if event == 0:
+                    tkinter.messagebox.showerror('에러', "업데이트 체크 실패(네트워크 오류)")
+                if event == 1:
+                    return "-"
+
+        net_latest_version = check_update(1)
+        version = tkinter.Button(self.window,
+                                 text='현재 ' + self.now_version + '\n최신 ' + str(net_latest_version) + '\n업데이트',
+                                 font=self.small_font, command=lambda: check_update(0))
+        maker.place(x=622, y=585)
+        version.place(x=630 - 3, y=645 + 3)
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -5862,55 +5927,6 @@ def sync_wep_list():
     calculator.change_weapon_list_num_text(len(wep_name_list))
     wep_img_list_refresh(calculator.selected_weapon_img_list)
 
-
-def donate():
-    webbrowser.open('https://twip.kr/dawnclass16')
-donate_image=calculator.get_photo_image('ext_img/donate.png')
-donate_bt=tkinter.Button(calculator.window,image=donate_image, command=donate,borderwidth=0,bg=calculator.dark_main,activebackground=calculator.dark_main)
-donate_bt.place(x=622,y=520)
-def dunfaoff():
-    webbrowser.open('https://dunfaoff.com/')
-dunfaoff_image=calculator.get_photo_image('ext_img/dunfaoff.png')
-dunfaoff_url=tkinter.Button(calculator.window,image=dunfaoff_image, command=dunfaoff,borderwidth=0,bg=calculator.dark_main,activebackground=calculator.dark_main)
-dunfaoff_url.place(x=535+219,y=410-402+32)
-
-def blog():
-    webbrowser.open('https://blog.naver.com/dawnclass16/221837654941')
-blog_image=calculator.get_photo_image('ext_img/blog.png')
-blog_url=tkinter.Button(calculator.window,image=blog_image, command=blog,borderwidth=0,bg=calculator.dark_main,activebackground=calculator.dark_main)
-blog_url.place(x=615+219,y=410-402+32)
-
-def hamjung():
-    tkinter.messagebox.showinfo("제작자 크레딧","총제작자=Dawnclass(새벽반)\n이미지/그래픽=경철부동산\n직업/버퍼DB=대략볼록할철\n기타조언=히든 도비 4,5,6,7호\n\n오류 제보는 블로그 덧글이나 던조 쪽지로")
-maker_image=calculator.get_photo_image('ext_img/maker.png')
-maker=tkinter.Button(calculator.window,image=maker_image, command=hamjung,borderwidth=0,bg=calculator.dark_main,activebackground=calculator.dark_main)
-def check_update(event):
-    try:
-        now_version_num = int(calculator.now_version[0] + calculator.now_version[2] + calculator.now_version[4])
-        if event==1:
-            html = urllib.request.urlopen("https://drive.google.com/open?id=1p8ZdzW_NzGKHHOtfPTuZSr1YgSEVtYCj")
-            bsObject = BeautifulSoup(html, "html.parser")
-            for meta in bsObject.head.find_all('meta'):
-                if meta.get('content').count('zip')==1:
-                    net_version=str(meta.get('content'))[-9:-4]
-                    print(f"최신 업데이트 버전 = {net_version}")
-            return net_version
-        if event==0:
-            net_version=net_latest_version
-            net_version_num=int(net_version[0]+net_version[2]+net_version[4])
-            if now_version_num < net_version_num:
-                webbrowser.open('https://drive.google.com/open?id=1p8ZdzW_NzGKHHOtfPTuZSr1YgSEVtYCj')
-            else:
-                tkinter.messagebox.showinfo('버전확인',"최신버전입니다.")
-    except:
-        if event==0:
-            tkinter.messagebox.showerror('에러',"업데이트 체크 실패(네트워크 오류)")
-        if event==1:
-            return "-"
-net_latest_version=check_update(1)
-version=tkinter.Button(calculator.window, text='현재 '+ calculator.now_version + '\n최신 ' + str(net_latest_version) + '\n업데이트', font=calculator.small_font, command=lambda: check_update(0))
-maker.place(x=622,y=585)
-version.place(x=630-3,y=645+3)
 
 if calculator.auto_custom == 1:
     calculator.create_custom_window(1)
