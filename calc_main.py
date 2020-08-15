@@ -1271,6 +1271,19 @@ class Calculator:
         self.tg_groggy_img1 = self.get_photo_image("ext_img/groggy_swi1.png")
         self.tg_groggy_img2 = self.get_photo_image("ext_img/groggy_swi2.png")
 
+        self.type1_img = self.get_photo_image('ext_img/type_bless.png')
+        self.type2_img = self.get_photo_image('ext_img/type_crux.png')
+        self.type3_img = self.get_photo_image('ext_img/type_all.png')
+        self.show_detail_img = self.get_photo_image('ext_img/show_detail.png')
+        self.show_tag_img = self.get_photo_image('ext_img/show_set_tag.png')
+        self.capture_img = self.get_photo_image('ext_img/capture_img.png')
+        self.style_compare_img = self.get_photo_image('ext_img/style_compare.png')
+
+        self.result_upbox_img = self.get_photo_image('ext_img/bg_result_upbox.png')
+        self.result_downbox_img = self.get_photo_image('ext_img/bg_result_downbox.png')
+        self.result_sidebox_img = self.get_photo_image('ext_img/bg_result_sidebox.png')
+        self.result_showbox_img = self.get_photo_image('ext_img/bg_result_showbox.png')
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -2954,19 +2967,6 @@ def calc(mode):
 def calc_thread():
     threading.Thread(target=calc,args=(0,),daemon=True).start()
 
-type1_img=calculator.get_photo_image('ext_img/type_bless.png')
-type2_img=calculator.get_photo_image('ext_img/type_crux.png')
-type3_img=calculator.get_photo_image('ext_img/type_all.png')
-show_detail_img=calculator.get_photo_image('ext_img/show_detail.png')
-show_tag_img=calculator.get_photo_image('ext_img/show_set_tag.png')
-capture_img=calculator.get_photo_image('ext_img/capture_img.png')
-style_compare_img=calculator.get_photo_image('ext_img/style_compare.png')
-
-result_upbox_img=calculator.get_photo_image('ext_img/bg_result_upbox.png')
-result_downbox_img=calculator.get_photo_image('ext_img/bg_result_downbox.png')
-result_sidebox_img=calculator.get_photo_image('ext_img/bg_result_sidebox.png')
-result_showbox_img=calculator.get_photo_image('ext_img/bg_result_showbox.png')
-
 def show_result(rank_list,job_type,ele_skill,cool_eff):
     result_window = calculator.result_window = tkinter.Toplevel(calculator.window)
     result_window.attributes("-topmost", True)
@@ -3431,9 +3431,9 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
         canvas_res.create_text(217, 382, text="버전=\n" + calculator.now_version, fill='white', anchor='c')
 
         calculator.result_cool_canvas_list = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-        canvas_res.create_image(210,455,image=result_upbox_img)
-        canvas_res.create_image(210,606,image=result_downbox_img)
-        canvas_res.create_image(59,558,image=result_sidebox_img)
+        canvas_res.create_image(210,455,image=calculator.result_upbox_img)
+        canvas_res.create_image(210,606,image=calculator.result_downbox_img)
+        canvas_res.create_image(59,558,image=calculator.result_sidebox_img)
         show_result_dealer()
 
     elif job_type=='buf': ########################### 버퍼 ###########################
@@ -3690,12 +3690,13 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
                 cn6=5
         length=len(rank_list[0])
 
-        rank_type_but1=tkinter.Button(result_window,command=lambda:change_rank_type(1),image=type1_img,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main);rank_type_but1.place(x=8,y=337)
-        rank_type_but2=tkinter.Button(result_window,command=lambda:change_rank_type(2),image=type2_img,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main);rank_type_but2.place(x=84,y=337)
-        rank_type_but3=tkinter.Button(result_window,command=lambda:change_rank_type(3),image=type3_img,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main);rank_type_but3.place(x=160,y=337)
-        rank_type_but1.image=type1_img
-        rank_type_but2.image=type2_img
-        rank_type_but3.image=type3_img
+        rank_type_but1=tkinter.Button(result_window,command=lambda:change_rank_type(1),image=calculator.type1_img,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main)
+        rank_type_but1.place(x=8,y=337)
+        rank_type_but2=tkinter.Button(result_window,command=lambda:change_rank_type(2),image=calculator.type2_img,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main)
+        rank_type_but2.place(x=84,y=337)
+        rank_type_but3=tkinter.Button(result_window,command=lambda:change_rank_type(3),image=calculator.type3_img,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main)
+        rank_type_but3.place(x=160,y=337)
+
         if buff_result_image_gif3_tg[0][0]==1:
             play_gif( 0,0,0,gif_images["11"],buff_result_image_gif3,0,1,1)
         if buff_result_image_gif3_tg[0][1]==1:
@@ -3721,11 +3722,12 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
 
         load_presetr.close()
 
-    res_bt1=tkinter.Button(result_window,command=lambda:change_rank(0,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue);res_bt1.place(x=486,y=20+78*0)
-    res_bt2=tkinter.Button(result_window,command=lambda:change_rank(1,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
-    res_bt3=tkinter.Button(result_window,command=lambda:change_rank(2,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
-    res_bt4=tkinter.Button(result_window,command=lambda:change_rank(3,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
-    res_bt5=tkinter.Button(result_window,command=lambda:change_rank(4,job_type,ele_skill,rank_setting,rank_ult),image=show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
+    res_bt1=tkinter.Button(result_window,command=lambda:change_rank(0,job_type,ele_skill,rank_setting,rank_ult),image=calculator.show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue);res_bt1.place(x=486,y=20+78*0)
+    res_bt2=tkinter.Button(result_window,command=lambda:change_rank(1,job_type,ele_skill,rank_setting,rank_ult),image=calculator.show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
+    res_bt3=tkinter.Button(result_window,command=lambda:change_rank(2,job_type,ele_skill,rank_setting,rank_ult),image=calculator.show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
+    res_bt4=tkinter.Button(result_window,command=lambda:change_rank(3,job_type,ele_skill,rank_setting,rank_ult),image=calculator.show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
+    res_bt5=tkinter.Button(result_window,command=lambda:change_rank(4,job_type,ele_skill,rank_setting,rank_ult),image=calculator.show_detail_img,bg=calculator.dark_blue,borderwidth=0,activebackground=calculator.dark_blue)
+
     if length>1:
         res_bt2.place(x=486,y=20+78*1)
     if length>2:
@@ -3735,15 +3737,15 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     if length>4:
         res_bt5.place(x=486,y=20+78*4)
 
-    show_tag_but=tkinter.Button(result_window,command=lambda:show_set_name(job_type),image=show_tag_img,bg=calculator.dark_sub,borderwidth=0,activebackground=calculator.dark_sub)
+    show_tag_but=tkinter.Button(result_window,command=lambda:show_set_name(job_type),image=calculator.show_tag_img,bg=calculator.dark_sub,borderwidth=0,activebackground=calculator.dark_sub)
     show_tag_but.place(x=173,y=158-26)
-    show_tag_but.image=show_tag_img
+    show_tag_but.image=calculator.show_tag_img
 
-    capture_but=tkinter.Button(result_window,command=lambda:capture_screen(result_window),image=capture_img,bg=calculator.dark_sub,borderwidth=0,activebackground=calculator.dark_sub)
+    capture_but=tkinter.Button(result_window,command=lambda:capture_screen(result_window),image=calculator.capture_img,bg=calculator.dark_sub,borderwidth=0,activebackground=calculator.dark_sub)
     capture_but.place(x=173-164,y=158-26)
-    capture_but.image=capture_img
+    capture_but.image=calculator.capture_img
     canvas_res.image=result_bg,random_npc_img
-    res_bt1.image=show_detail_img
+    res_bt1.image=calculator.show_detail_img
     calculator.place_center(result_window, 0)
 
 
@@ -3906,7 +3908,7 @@ def show_result_dealer():
     def del_check_style(event): del_check_list('style')
 
     def show_check_list(num):
-        canvas_res.create_image(445,560,image=result_showbox_img,tags=('not_overlap','mouse_overlap'))
+        canvas_res.create_image(445,560,image=calculator.result_showbox_img,tags=('not_overlap','mouse_overlap'))
         try:
             canvas_res.create_text(340,560,text=calc_result.result_check_list_explain[num-1],tags=('not_overlap','mouse_overlap'),anchor='w',width=210)
         except:
@@ -3985,7 +3987,7 @@ def show_result_dealer():
 
         return result_explain+result_str
 
-    style_compare_bt=tkinter.Label(result_window,image=style_compare_img,bd=0,bg=calculator.result_sub)
+    style_compare_bt=tkinter.Label(result_window,image=calculator.style_compare_img,bd=0,bg=calculator.result_sub)
     style_compare_bt.place(x=255,y=508)
     style_compare_bt.bind("<Enter>",show_check_style);style_compare_bt.bind("<Leave>",del_check_style)
 
@@ -5327,8 +5329,7 @@ def show_profile2(name,server):
     canvas.create_text(254+83+30,22+210,text=setting_dict['스위칭최대'],font=calculator.guide_font,fill='white',anchor='w')
 
 
-    capture_img=calculator.get_photo_image('ext_img/capture_img.png')
-    capture_but=tkinter.Button(profile_window,command=lambda:calc_profile.make_profile_image(name,server,def_result),image=capture_img,bg=calculator.dark_sub,borderwidth=0,activebackground=calculator.dark_sub,anchor='nw')
+    capture_but=tkinter.Button(profile_window,command=lambda:calc_profile.make_profile_image(name,server,def_result),image=calculator.capture_img,bg=calculator.dark_sub,borderwidth=0,activebackground=calculator.dark_sub,anchor='nw')
     capture_but.place(x=378,y=248)
     def profile_detail():
         tkinter.messagebox.showinfo('세부보기',setting_str,parent=profile_window)
@@ -5338,7 +5339,6 @@ def show_profile2(name,server):
 
     canvas.create_text(255,262,text='[ESC키로 닫기 가능]',font=calculator.guide_font,fill='white',anchor='w')
 
-    capture_but.image=capture_img
     show_detail.image=show_detail_img
     canvas.image=cha_bg,cha_img,plt_img[0],plt_img[1],tal_img[0],tal_img[1]
     place_center(profile_window,0)
