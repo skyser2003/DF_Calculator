@@ -1516,8 +1516,7 @@ class Calculator:
 
         custom_img = self.get_photo_image("ext_img/custom.png")
         tkinter.Button(self.window, image=custom_img, borderwidth=0, activebackground=self.dark_main,
-                       command=lambda: self.create_custom_window(0), bg=self.dark_sub).place(x=435 + 165,
-                                                                                                         y=340 - 100)
+                       command=lambda: self.create_custom_window(0), bg=self.dark_sub).place(x=435 + 165, y=340 - 100)
 
         save_img = self.get_photo_image("ext_img/SAVE.png")
         tkinter.Button(self.window, image=save_img, borderwidth=0, activebackground=self.dark_main,
