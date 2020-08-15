@@ -1587,6 +1587,8 @@ class Calculator:
         tkinter.Button(self.window, bg=self.dark_main, image=know_image,
                        command=self.create_knowledge_window).place(x=302, y=520)
 
+        self.legend_on_tg = IntVar()
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -3024,7 +3026,7 @@ def calc(mode):
         elif calculator.default_base_equip == 2:
             df11='11470';df12='12470';df13='13470';df14='14470';df15='15470'
             df21='21480';df22='22480';df23='23480';df31='31490';df32='32490';df33='33490'
-        if legend_on_tg.get()==1:
+        if calculator.legend_on_tg.get() == 1:
             if len(equip_list["11_0"])==0 or len(equip_list["12"])==0 or len(equip_list["13"])==0 or len(equip_list["14"])==0 or len(equip_list["15"])==0 or max(set_max_list1) < 3:
                 equip_list["11"].append(df11);equip_list["12"].append(df12);equip_list["13"].append(df13);equip_list["14"].append(df14);equip_list["15"].append(df15);equip_list["11_0"].append(df11)
             if len(equip_list["21_0"])==0 or len(equip_list["22"])==0 or len(equip_list["23"])==0 or max(set_max_list2) < 3:
@@ -5814,13 +5816,13 @@ def sync_wep_list():
 
 
 ##디폴트 변경
-legend_on_tg=IntVar()
 default_img1n=calculator.get_photo_image("ext_img/default1n.png")
 default_img1f=calculator.get_photo_image("ext_img/default1f.png")
 default_img2n=calculator.get_photo_image("ext_img/default2n.png")
 default_img2f=calculator.get_photo_image("ext_img/default2f.png")
 default_img3n=calculator.get_photo_image("ext_img/default3n.png")
 default_img3f=calculator.get_photo_image("ext_img/default3f.png")
+
 def change_default(value):
     if value==0:
         calculator.default_base_equip = 0
@@ -5837,13 +5839,14 @@ def change_default(value):
         select_default_lengend['image']=default_img1f
         select_default_chawon['image']=default_img2f
         select_default_old['image']=default_img3n
+
 select_default_lengend=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=default_img1n,command=lambda:change_default(0))
 select_default_lengend.place(x=492+15,y=516)
 select_default_chawon=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=default_img2f,command=lambda:change_default(1))
 select_default_chawon.place(x=522+15,y=516)
 select_default_old=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=default_img3f,command=lambda:change_default(2))
 select_default_old.place(x=552+15,y=516)
-select_legend_on=tkinter.Checkbutton(calculator.window,variable=legend_on_tg,bg=calculator.dark_main,activebackground=calculator.dark_main,bd=0)
+select_legend_on=tkinter.Checkbutton(calculator.window,variable=calculator.legend_on_tg,bg=calculator.dark_main,activebackground=calculator.dark_main,bd=0)
 select_legend_on.place(x=432,y=547)
 tkinter.Label(calculator.window,text="레전 적극 반영 여부(느려짐)",font=calculator.small_font,fg='white',bg=calculator.dark_main,bd=0).place(x=450,y=551)
 
