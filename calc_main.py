@@ -1284,6 +1284,10 @@ class Calculator:
         self.result_sidebox_img = self.get_photo_image('ext_img/bg_result_sidebox.png')
         self.result_showbox_img = self.get_photo_image('ext_img/bg_result_showbox.png')
 
+        self.result_gauge_bar_img = self.get_photo_image('ext_img/result_gauge_bar.png')
+        self.result_gauge_img = self.get_photo_image('ext_img/result_gauge.png')
+        self.result_checklist_img = self.get_photo_image('ext_img/result_show_checklist.png')
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -3749,9 +3753,6 @@ def show_result(rank_list,job_type,ele_skill,cool_eff):
     calculator.place_center(result_window, 0)
 
 
-result_gauge_bar_img=calculator.get_photo_image('ext_img/result_gauge_bar.png')
-result_gauge_img=calculator.get_photo_image('ext_img/result_gauge.png')
-result_checklist_img=calculator.get_photo_image('ext_img/result_show_checklist.png')
 def show_result_dealer():
     result_window = calculator.result_window
     canvas_res = calculator.canvas_res
@@ -3826,9 +3827,9 @@ def show_result_dealer():
             if cool_list[i]==0: fg='gray'
             else: fg='white'
             result_cool_canvas_list[i]=canvas_res.create_text(98,450+i*14,text=str(cool_list[i])+"%",fill=fg,anchor='e')
-        canvas_res.create_image(210,445,image=result_gauge_bar_img)
+        canvas_res.create_image(210,445,image=calculator.result_gauge_bar_img)
 
-    canvas_res.create_image(210+int(move_gauge),445,image=result_gauge_img,tags=('not_overlap',))
+    canvas_res.create_image(210+int(move_gauge),445,image=calculator.result_gauge_img,tags=('not_overlap',))
     canvas_res.create_text(130,424,text="지속딜",fill='sky blue',anchor='w',tags=('not_overlap',))
     canvas_res.create_text(290,424,text="그로기",fill='pink1',anchor='e',tags=('not_overlap',))
     if 120>groggy_sustain_ratio>100 and ratio_tg=='groggy': ratio_color='pink1'
@@ -3917,6 +3918,8 @@ def show_result_dealer():
                 canvas_res.create_text(340,560,text=style_check_list,tags=('not_overlap','mouse_overlap'),anchor='w',width=210)
     def del_check_list(num):
         canvas_res.delete("mouse_overlap")
+
+    result_checklist_img = calculator.result_checklist_img
 
     explain_ratio_bt=tkinter.Label(result_window,image=result_checklist_img,font=calculator.small_font,bd=0,bg=calculator.result_sub);
     explain_ratio_bt.place(x=265,y=470)
