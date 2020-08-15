@@ -654,36 +654,36 @@ class Calculator:
         equip_buttons["14391150"].place(x=484 - 290 + 170, y=20)
         equip_buttons["15391250"].place(x=484 - 290 + 200, y=20)
 
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['201']).place(x=303 - 290, y=70)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['201']).place(x=303 - 290, y=70)
         equip_buttons["22400150"].place(x=303 - 290 + 63, y=70)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['202']).place(x=303 - 290, y=70 + 40)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['202']).place(x=303 - 290, y=70 + 40)
         equip_buttons["22400250"].place(x=303 - 290 + 63, y=70 + 40)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['203']).place(x=303 - 290, y=70 + 80)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['203']).place(x=303 - 290, y=70 + 80)
         equip_buttons["22400350"].place(x=303 - 290 + 63, y=70 + 80)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['204']).place(x=303 - 290, y=70 + 120)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['204']).place(x=303 - 290, y=70 + 120)
         equip_buttons["22400450"].place(x=303 - 290 + 63, y=70 + 120)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['205']).place(x=303 - 290, y=70 + 160)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['205']).place(x=303 - 290, y=70 + 160)
         equip_buttons["22400550"].place(x=303 - 290 + 63, y=70 + 160)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['206']).place(x=303 - 290, y=70 + 200)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['206']).place(x=303 - 290, y=70 + 200)
         equip_buttons["21400640"].place(x=303 - 290 + 63, y=70 + 200)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['207']).place(x=303 - 290, y=70 + 240)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['207']).place(x=303 - 290, y=70 + 240)
         equip_buttons["31400750"].place(x=303 - 290 + 63, y=70 + 240)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['208']).place(x=120, y=70)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['208']).place(x=120, y=70)
         equip_buttons["31400850"].place(x=120 + 63, y=70)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['209']).place(x=120, y=70 + 40)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['209']).place(x=120, y=70 + 40)
         equip_buttons["31400950"].place(x=120 + 63, y=70 + 40)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['210']).place(x=120, y=70 + 80)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['210']).place(x=120, y=70 + 80)
         equip_buttons["31401050"].place(x=120 + 63, y=70 + 80)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['211']).place(x=120, y=70 + 120)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['211']).place(x=120, y=70 + 120)
         equip_buttons["31401150"].place(x=120 + 63, y=70 + 120)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['212']).place(x=120, y=70 + 160)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['212']).place(x=120, y=70 + 160)
         equip_buttons["32401240"].place(x=120 + 63, y=70 + 160)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['213']).place(x=120, y=70 + 200)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['213']).place(x=120, y=70 + 200)
         equip_buttons["32401340"].place(x=120 + 63, y=70 + 200)
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['214']).place(x=120, y=70 + 240)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['214']).place(x=120, y=70 + 240)
         equip_buttons["32401440"].place(x=120 + 63, y=70 + 240)
 
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['215']).place(x=250, y=69 + 200)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['215']).place(x=250, y=69 + 200)
         equip_buttons["11410100"].place(x=280 + 45, y=70 + 200)
         equip_buttons["11410110"].place(x=280 + 75, y=70 + 200)
         equip_buttons["11410120"].place(x=280 + 105, y=70 + 200)
@@ -691,7 +691,7 @@ class Calculator:
         equip_buttons["11410140"].place(x=280 + 165, y=70 + 200)
         equip_buttons["11410150"].place(x=280 + 195, y=70 + 200)
 
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['216']).place(x=250, y=69 + 240)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['216']).place(x=250, y=69 + 240)
         equip_buttons["21420100"].place(x=280 + 45, y=70 + 240)
         equip_buttons["21420110"].place(x=280 + 75, y=70 + 240)
         equip_buttons["21420120"].place(x=280 + 105, y=70 + 240)
@@ -699,7 +699,7 @@ class Calculator:
         equip_buttons["21420140"].place(x=280 + 165, y=70 + 240)
         equip_buttons["21420150"].place(x=280 + 195, y=70 + 240)
 
-        tkinter.Label(know_window, bg=calculator.dark_main, image=image_list_set['217']).place(x=250, y=69 + 280)
+        tkinter.Label(know_window, bg=self.dark_main, image=image_list_set['217']).place(x=250, y=69 + 280)
         equip_buttons["33430100"].place(x=280 + 45, y=70 + 280)
         equip_buttons["33430110"].place(x=280 + 75, y=70 + 280)
         equip_buttons["33430120"].place(x=280 + 105, y=70 + 280)
@@ -707,7 +707,7 @@ class Calculator:
         equip_buttons["33430140"].place(x=280 + 165, y=70 + 280)
         equip_buttons["33430150"].place(x=280 + 195, y=70 + 280)
 
-        tkinter.Label(know_window, bg=calculator.dark_main, fg='white',
+        tkinter.Label(know_window, bg=self.dark_main, fg='white',
                       text=("세트 산물은 증/크증이 겹치는 경우가 있습니다.\n칭호/크리쳐 선택에 유의하세요.\n(중복안되게 계산식 처리 해놨음)\n\n"
                             + "불마/엘드 셋의 '마딜 전용'옵션은\n따로 구분되어 계산되지 않습니다.\n알아서 빼주세요.\n\n"
                             + "스탯 옵션은 버프+가호 받은 기준입니다.\n가호 미적용 스탯이 많은 산물 특성상,\n수련방 솔플 효율과 굉장히 다를수 있습니다.")).place(x=250,
@@ -851,7 +851,7 @@ class Calculator:
         cha_name.place(x=80, y=12)
         tkinter.Label(timeline_window, text="서버명=", font=self.guide_font).place(x=10, y=59)
 
-        serv_name = tkinter.ttk.Combobox(timeline_window, values=calculator.server_list, width=11)
+        serv_name = tkinter.ttk.Combobox(timeline_window, values=self.server_list, width=11)
         serv_name.place(x=80, y=62)
         serv_name.set('카인')
         load_timeline = tkinter.Button(timeline_window, command=lambda: self.show_timeline(cha_name.get(), serv_name.get()),
@@ -925,12 +925,12 @@ class Calculator:
             xl = openpyxl.load_workbook("DATA.xlsx", data_only=True)
             sh = xl['one']
 
-            calculator.reset_equipments()
+            self.reset_equipments()
 
             for i in range(76, 257):
                 api_cod = sh.cell(i, 40).value
                 if all_item.count(api_cod) != 0:
-                    calculator.owned_equipments['tg{}'.format(str(sh.cell(i, 1).value))] = 1
+                    self.owned_equipments['tg{}'.format(str(sh.cell(i, 1).value))] = 1
             xl.close()
             check_equipment()
             for i in range(101, 136):
