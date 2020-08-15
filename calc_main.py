@@ -1583,6 +1583,10 @@ class Calculator:
 
         self.update_inv(0)
 
+        know_image = self.get_photo_image("set_name/know_name.png")
+        tkinter.Button(self.window, bg=self.dark_main, image=know_image,
+                       command=self.create_knowledge_window).place(x=302, y=520)
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -5808,9 +5812,6 @@ def sync_wep_list():
     calculator.change_weapon_list_num_text(len(wep_name_list))
     wep_img_list_refresh(calculator.selected_weapon_img_list)
 
-
-know_image=calculator.get_photo_image("set_name/know_name.png")
-tkinter.Button(calculator.window,bg=calculator.dark_main,image=know_image,command=calculator.create_knowledge_window).place(x=302,y=520)
 
 ##디폴트 변경
 default_chawon=0
