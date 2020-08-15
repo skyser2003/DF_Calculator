@@ -1042,6 +1042,13 @@ class Calculator:
             self.image_list_wep[calc_list_wep.wep_image_filename.get(i[:-4])] = self.get_photo_image(
                 "image_wep/{}".format(i))
 
+        self.default_img1n = self.get_photo_image("ext_img/default1n.png")
+        self.default_img1f = self.get_photo_image("ext_img/default1f.png")
+        self.default_img2n = self.get_photo_image("ext_img/default2n.png")
+        self.default_img2f = self.get_photo_image("ext_img/default2f.png")
+        self.default_img3n = self.get_photo_image("ext_img/default3n.png")
+        self.default_img3f = self.get_photo_image("ext_img/default3f.png")
+
     def init_ui(self):
         self.case_count_label = tkinter.Label(self.window, font=self.guide_font, fg="white", bg=self.dark_sub)
         self.case_count_label.place(x=700, y=145 - 12)
@@ -5816,35 +5823,29 @@ def sync_wep_list():
 
 
 ##디폴트 변경
-default_img1n=calculator.get_photo_image("ext_img/default1n.png")
-default_img1f=calculator.get_photo_image("ext_img/default1f.png")
-default_img2n=calculator.get_photo_image("ext_img/default2n.png")
-default_img2f=calculator.get_photo_image("ext_img/default2f.png")
-default_img3n=calculator.get_photo_image("ext_img/default3n.png")
-default_img3f=calculator.get_photo_image("ext_img/default3f.png")
 
 def change_default(value):
     if value==0:
         calculator.default_base_equip = 0
-        select_default_lengend['image']=default_img1n
-        select_default_chawon['image']=default_img2f
-        select_default_old['image']=default_img3f
+        select_default_lengend['image'] = calculator.default_img1n
+        select_default_chawon['image'] = calculator.default_img2f
+        select_default_old['image'] = calculator.default_img3f
     elif value==1:
         calculator.default_base_equip = 1
-        select_default_lengend['image']=default_img1f
-        select_default_chawon['image']=default_img2n
-        select_default_old['image']=default_img3f
+        select_default_lengend['image'] = calculator.default_img1f
+        select_default_chawon['image'] = calculator.default_img2n
+        select_default_old['image'] = calculator.default_img3f
     elif value==2:
         calculator.default_base_equip = 2
-        select_default_lengend['image']=default_img1f
-        select_default_chawon['image']=default_img2f
-        select_default_old['image']=default_img3n
+        select_default_lengend['image'] = calculator.default_img1f
+        select_default_chawon['image'] = calculator.default_img2f
+        select_default_old['image'] = calculator.default_img3n
 
-select_default_lengend=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=default_img1n,command=lambda:change_default(0))
+select_default_lengend=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=calculator.default_img1n,command=lambda:change_default(0))
 select_default_lengend.place(x=492+15,y=516)
-select_default_chawon=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=default_img2f,command=lambda:change_default(1))
+select_default_chawon=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=calculator.default_img2f,command=lambda:change_default(1))
 select_default_chawon.place(x=522+15,y=516)
-select_default_old=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=default_img3f,command=lambda:change_default(2))
+select_default_old=tkinter.Button(calculator.window,relief='flat',borderwidth=0,activebackground=calculator.dark_main,bg=calculator.dark_main,image=calculator.default_img3f,command=lambda:change_default(2))
 select_default_old.place(x=552+15,y=516)
 select_legend_on=tkinter.Checkbutton(calculator.window,variable=calculator.legend_on_tg,bg=calculator.dark_main,activebackground=calculator.dark_main,bd=0)
 select_legend_on.place(x=432,y=547)
