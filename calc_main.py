@@ -924,7 +924,7 @@ class Calculator:
             xl = openpyxl.load_workbook("DATA.xlsx", data_only=True)
             sh = xl['one']
 
-            reset()
+            calculator.reset_equipments()
 
             for i in range(76, 257):
                 api_cod = sh.cell(i, 40).value
@@ -1293,36 +1293,6 @@ class Calculator:
             tkinter.messagebox.showinfo("정확도 선택",
                                         "매우빠름=세트옵션7개 풀적용 경우의 수만 계산. 중간세팅은 고려하지 않음\n빠름=단일 선택 부위를 전부 제거\n중간=단일은 포함하되, 신화에 우선권 부여\n느림=세트 수 우선권 완화, 신화 우선권 삭제")
 
-        ## 선택한 모든 장비 체크 초기화
-        def reset():
-            select_item = calculator.owned_equipments
-
-            for j in [1000, 2000, 3000, 4000]:
-                if j == 1000:
-                    end_range = 536
-                else:
-                    end_range = 356
-                for i in range(j + 101, j + end_range):
-                    try:
-                        select_item['tg{}0'.format(i)] = 0
-                    except KeyError as error:
-                        passss = 1
-                    try:
-                        select_item['tg{}1'.format(i)] = 0
-                    except KeyError as error:
-                        passss = 1
-
-            for i in calculator.get_all_knowledge_equipment_list():
-                select_item[f"tg{i}"] = 0
-
-            check_equipment()
-            wep_list_reset()
-            for i in range(101, 156):
-                try:
-                    check_set(i)
-                except:
-                    pass
-
         tkinter.Label(self.window, font=self.mid_font, fg="white", bg=self.dark_sub,
                       text="<딜러 프로필 생성기>").place(x=301, y=401)
         tkinter.Label(self.window, fg="white", bg=self.dark_sub, text="서버명=").place(x=296, y=433)
@@ -1370,7 +1340,7 @@ class Calculator:
                        activebackground=self.dark_main, bg=self.dark_main).place(x=29 + 605, y=7)
 
         reset_img = self.get_photo_image("ext_img/reset.png")
-        tkinter.Button(self.window, command=reset, image=reset_img, borderwidth=0,
+        tkinter.Button(self.window, command=self.reset_equipments, image=reset_img, borderwidth=0,
                        activebackground=self.dark_main, bg=self.dark_main).place(x=302 + 180 + 17 + 135, y=476 - 435)
 
     def init_equipments(self):
@@ -1608,6 +1578,37 @@ class Calculator:
 
         if len(code) == 5:
             check_set(int('1' + code[2:4]))
+
+    ## 선택한 모든 장비 체크 초기화
+    def reset_equipments(self):
+        select_item = self.owned_equipments
+
+        for j in [1000, 2000, 3000, 4000]:
+            if j == 1000:
+                end_range = 536
+            else:
+                end_range = 356
+            for i in range(j + 101, j + end_range):
+                try:
+                    select_item['tg{}0'.format(i)] = 0
+                except KeyError as error:
+                    passss = 1
+                try:
+                    select_item['tg{}1'.format(i)] = 0
+                except KeyError as error:
+                    passss = 1
+
+        for i in calculator.get_all_knowledge_equipment_list():
+            select_item[f"tg{i}"] = 0
+
+        check_equipment()
+        wep_list_reset()
+
+        for i in range(101, 156):
+            try:
+                check_set(i)
+            except:
+                pass
 
     @staticmethod
     def place_center(toplevel, move_x):
