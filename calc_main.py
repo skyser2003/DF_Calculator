@@ -26,7 +26,7 @@ import numpy as np
 import openpyxl
 from PIL import ImageGrab
 from bs4 import BeautifulSoup
-from openpyxl import load_workbook
+from openpyxl import load_workbook, Workbook
 
 import calc_fullset
 import calc_gif
@@ -262,6 +262,13 @@ class Calculator:
         self.selected_weapon_label_list: List[Label] = []
         self.owned_equipments: Dict[str, int] = {} # 장비 선택 시 점등
         self.auto_custom = 0  # 클라이언트 업데이트 시 preset 업데이트 여부
+        self.opt_one: Dict[str, str] = {}
+        self.name_one: Dict[str, str] = {}
+        self.opt_job: Dict[str, str] = {}
+        self.opt_job_ele: Dict[str, str] = {}
+        self.opt_buf: Dict[str, str] = {}
+        self.opt_buflvl: Dict[str, str] = {}
+        self.opt_leveling: Dict[str, str] = {}
 
         # 에픽 장비
         self.normal_epic_list: List[str] = []
@@ -310,9 +317,14 @@ class Calculator:
         self.void_weapon_img: PhotoImage = None
         self.equip_buttons: Dict[str, Button] = {}
 
+        self.refresh_db()
+        self.load_preset_name()
+
         self.init_images()
         self.init_equipments()
         self.init_ui()
+
+        self.update_preset_version()
 
     def get_photo_image(self, file: str):
         photo_image = PhotoImage(file=file)
@@ -927,6 +939,48 @@ class Calculator:
         except urllib.error.HTTPError as error:
             tkinter.messagebox.showerror("에러", "API 접근 실패(네트워크 오류)")
 
+    ########## 버전 최초 구동 프리셋 업데이트 ###########
+    def create_update_window(self):
+        def donotshow():
+            load_show = load_workbook("preset.xlsx", data_only=True)
+            load_show["custom"]['K2'] = 1
+            load_show.save("preset.xlsx")
+            load_show.close()
+            update_window.destroy()
+
+        update_window = tkinter.Toplevel(self.window)
+        update_window.attributes("-topmost", True)
+        update_window.geometry("300x320+0+0")
+        update_window.resizable(False, False)
+        self.place_center(update_window, 0)
+        update_window.configure(bg=self.dark_main)
+
+        def _on_mousewheel(event):  # 마우스 휠 스크롤링
+            update_canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+
+        scrollbar = Scrollbar(update_window)
+        scrollbar.pack(side=RIGHT, fill=Y)
+        update_text = ''
+        try:
+            update_file = open(self.now_version + " 패치노트.txt", 'r', encoding='UTF8')
+            lines = update_file.readlines()
+            for line in lines:
+                update_text = update_text + '\n' + line
+            update_file.close()
+        except:
+            update_text = '업데이트 텍스트 파일 누락'
+
+        update_canvas = tkinter.Canvas(update_window, width=276, height=250, bg=self.dark_main, bd=0)
+        update_canvas.pack()
+        update_canvas.create_text(5, 0, text=update_text, fill='white', font=self.guide_font, anchor='nw',
+                                  width=280)
+        update_canvas.bind("<MouseWheel>", _on_mousewheel)
+        tkinter.Label(update_window, bg=self.dark_main, font=self.guide_font, fg='red',
+                      text="2.X.X 버전이랑 계수 호환 X", anchor='w').pack()
+        tkinter.Button(update_window, font=self.small_font, command=donotshow, text="업데이트 전까지 보지않기").pack()
+
+        scrollbar.config(command=update_canvas.yview)
+
     def init_images(self):
         file_list = os.listdir("image")
         file_list_wep = os.listdir("image_wep")
@@ -1251,6 +1305,158 @@ class Calculator:
         for equip_code in all_equipments:
             self.owned_equipments[f"tg{equip_code}"] = 0
 
+    def refresh_db(self, load_excel_ext: Workbook = None, load_preset_ext: Workbook = None):
+        load_excel = load_excel_ext
+        load_preset = load_preset_ext
+
+        if load_excel is None:
+            load_excel = load_workbook("DATA.xlsx", data_only=True)
+        if load_preset is None:
+            load_preset = load_workbook("preset.xlsx", data_only=True)
+
+        db_custom = load_preset["custom"]
+
+        ## 초기 구동 엑셀
+        db_one = load_excel["one"]
+
+        opt_one = self.opt_one
+        name_one = self.name_one
+
+        opt_one.clear()
+        name_one.clear()
+        a = 1
+
+        for row in db_one.rows:
+            row_value = []
+            row_value_cut = []
+
+            for cell in row:
+                row_value.append(cell.value)
+                row_value_cut = row_value[2:]
+
+            opt_one[db_one.cell(a, 1).value] = row_value_cut
+            name_one[db_one.cell(a, 1).value] = row_value
+            a = a + 1
+
+        db_job = load_excel["lvl"]
+
+        opt_job = self.opt_job
+        opt_job_ele = self.opt_job_ele
+
+        opt_job.clear()
+        opt_job_ele.clear()
+        u = 1
+
+        for row in db_job.rows:
+            row_value = []
+
+            for cell in row:
+                row_value.append(cell.value)
+
+            opt_job[db_job.cell(u, 1).value] = row_value[3:]
+            opt_job_ele[db_job.cell(u, 1).value] = row_value[:3]
+            u = u + 1
+
+        del opt_job["empty"]
+        del opt_job["직업명"]
+
+        c = 1
+        db_buf = load_excel["buf"]
+
+        opt_buf = self.opt_buf
+        opt_buf.clear()
+
+        for row in db_buf.rows:
+            row_value = []
+            row_value_cut = []
+
+            for cell in row:
+                row_value.append(cell.value)
+                row_value_cut = row_value[2:]
+
+            opt_buf[db_buf.cell(c, 1).value] = row_value_cut
+            c = c + 1
+
+        d = 1
+        db_buflvl = load_excel["buflvl"]
+
+        opt_buflvl = self.opt_buflvl
+        opt_buflvl.clear()
+
+        for row in db_buflvl.rows:
+            row_value = []
+            row_value_cut = []
+
+            for cell in row:
+                row_value.append(cell.value)
+                row_value_cut = [0] + row_value[1:]
+
+            opt_buflvl[db_buflvl.cell(d, 1).value] = row_value_cut
+            d = d + 1
+
+        level_db = load_excel["leveling"]
+        jk = 1
+        opt_leveling = self.opt_leveling
+        opt_leveling.clear()
+
+        for row in level_db.rows:
+            row_value = []
+
+            for cell in row:
+                row_value.append(cell.value)
+
+            row_value_cut = row_value[2:]
+            opt_leveling[level_db.cell(jk, 1).value] = row_value_cut  ## DB 불러오기 ##
+            jk = jk + 1
+
+        if load_excel_ext is None:
+            load_preset.close()
+        if load_excel_ext is None:
+            load_excel.close()
+
+    def load_preset_name(self, load_preset_ext: Workbook = None):
+        load_preset = load_preset_ext
+
+        if load_preset is None:
+            load_preset = load_workbook("preset.xlsx", data_only=True)
+
+        db_custom = load_preset["custom"]
+
+        for i in range(0, 20):
+            self.save_name_list.append(db_custom.cell(i + 1, 5).value)
+
+        if load_preset_ext is None:
+            load_preset.close()
+
+    def update_preset_version(self, load_preset_ext: Workbook = None):
+        load_preset = load_preset_ext
+
+        if load_preset is None:
+            load_preset = load_workbook("preset.xlsx", data_only=True)
+
+        db_custom = load_preset["custom"]
+
+        try:
+            if str(db_custom['K2'].value) != '1':
+                self.create_update_window()
+
+            print(f"Preset 엑셀 버전 = {db_custom['K1'].value}")
+            print(f"클라이언트 버전 = {self.now_version}")
+
+            if str(db_custom['K1'].value) != self.now_version:
+                print("DB 업데이트")
+                db_custom['K1'] = self.now_version
+                self.auto_custom = 1
+                load_preset.save("preset.xlsx")
+                load_preset.close()
+                calc_update.update_preset()  ## 업데이트: 외부모듈
+        except PermissionError as error:
+            tkinter.messagebox.showerror("에러", "업데이트 실패. 엑셀을 닫고 다시 실행해주세요.")
+            self.window.destroy()
+
+        if load_preset_ext is None:
+            load_preset.close()
+
     def change_state_text(self, text: str):
         self.calc_state_label.configure(text=text)
 
@@ -1339,129 +1545,6 @@ save_select=0 #세이브 드롭다운 리스트 변수 임시
 set_buttons = {}
 
 
-load_excel1=load_workbook("DATA.xlsx", data_only=True)
-load_preset0=load_workbook("preset.xlsx", data_only=True)
-db_custom=load_preset0["custom"]
-db_save=load_preset0["one"]
-## 초기 구동 엑셀
-db_one=load_excel1["one"]
-opt_one={}
-name_one={}
-a=1
-for row in db_one.rows:
-    row_value=[]
-    row_value_cut=[]
-    for cell in row:
-        row_value.append(cell.value)
-        row_value_cut = row_value[2:]
-    opt_one[db_one.cell(a,1).value]=row_value_cut
-    name_one[db_one.cell(a,1).value]=row_value
-    a=a+1
-
-db_job=load_excel1["lvl"]
-opt_job={}
-opt_job_ele={}
-u=1
-for row in db_job.rows:
-    row_value=[]
-    for cell in row:
-        row_value.append(cell.value)
-    opt_job[db_job.cell(u,1).value]=row_value[3:]
-    opt_job_ele[db_job.cell(u,1).value]=row_value[:3]
-    u=u+1
-del opt_job["empty"]
-del opt_job["직업명"]
-jobs=list(opt_job.keys())
-
-level_db=load_excel1["leveling"]
-jk=1;opt_leveling={}
-for row in level_db.rows:
-    row_value=[]
-    for cell in row:
-        row_value.append(cell.value)
-    row_value_cut = row_value[2:]
-    opt_leveling[level_db.cell(jk,1).value]=row_value_cut ## DB 불러오기 ##
-    jk=jk+1
-
-for i in range(1,21):
-    calculator.save_name_list.append(db_custom.cell(i, 5).value)
-
-########## 버전 최초 구동 프리셋 업데이트 ###########
-def update_log():
-    def donotshow():
-        load_show=load_workbook("preset.xlsx", data_only=True)
-        load_show["custom"]['K2']=1
-        load_show.save("preset.xlsx")
-        load_show.close()
-        update_window.destroy()
-
-    update_window = tkinter.Toplevel(calculator.window)
-    update_window.attributes("-topmost", True)
-    update_window.geometry("300x320+0+0")
-    update_window.resizable(False, False)
-    calculator.place_center(update_window, 0)
-    update_window.configure(bg=calculator.dark_main)
-    def _on_mousewheel(event): #마우스 휠 스크롤링
-        update_canvas.yview_scroll(int(-1*(event.delta/120)), "units")
-    scrollbar=Scrollbar(update_window)
-    scrollbar.pack(side=RIGHT,fill=Y)
-    update_text=''
-    try:
-        update_file = open(calculator.now_version + " 패치노트.txt", 'r', encoding='UTF8')
-        lines = update_file.readlines()
-        for line in lines:
-            update_text=update_text+'\n'+line
-        update_file.close()
-    except:
-        update_text='업데이트 텍스트 파일 누락'
-
-    update_canvas=tkinter.Canvas(update_window,width=276,height=250,bg=calculator.dark_main,bd=0)
-    update_canvas.pack()
-    update_canvas.create_text(5,0,text=update_text,fill='white',font=calculator.guide_font,anchor='nw',width=280)
-    update_canvas.bind("<MouseWheel>", _on_mousewheel)
-    tkinter.Label(update_window,bg=calculator.dark_main,font=calculator.guide_font,fg='red',text="2.X.X 버전이랑 계수 호환 X",anchor='w').pack()
-    tkinter.Button(update_window,font=calculator.small_font,command=donotshow,text="업데이트 전까지 보지않기").pack()
-
-    scrollbar.config(command=update_canvas.yview)
-
-try:
-    if str(db_custom['K2'].value) != '1':
-        update_log()
-    print(f"Preset 엑셀 버전 = {db_custom['K1'].value}")
-    print(f"클라이언트 버전 = {calculator.now_version}")
-    if str(db_custom['K1'].value) != calculator.now_version:
-        print("DB 업데이트")
-        db_custom['K1'] = calculator.now_version
-        calculator.auto_custom = 1
-        load_preset0.save("preset.xlsx")
-        load_preset0.close()
-        calc_update.update_preset() ## 업데이트: 외부모듈
-except PermissionError as error:
-    tkinter.messagebox.showerror("에러","업데이트 실패. 엑셀을 닫고 다시 실행해주세요.")
-    calculator.window.destroy()
-load_excel1.close()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 ## 계산 함수 ##
 def calc(mode):
     select_item = calculator.owned_equipments
@@ -1489,53 +1572,21 @@ def calc(mode):
                 return
     calculator.change_state_text(text="조합 알고리즘 구동 준비중...")
     start_time = time.time()
-    load_excel=load_workbook("DATA.xlsx",data_only=True)
 
     ## 갱신된 DB 불러오기 ##
-    db_one=load_excel["one"]
-    opt_one={}
-    name_one={}
-    a=1
-    for row in db_one.rows:
-        row_value=[]
-        row_value_cut=[]
-        for cell in row:
-            row_value.append(cell.value)
-            row_value_cut = row_value[2:]
-        opt_one[db_one.cell(a,1).value]=row_value_cut
-        name_one[db_one.cell(a,1).value]=row_value
-        a=a+1
+    load_excel = load_workbook("DATA.xlsx", data_only=True)
+    load_presetc = load_workbook("preset.xlsx", data_only=True)
 
-    c=1
-    db_buf=load_excel["buf"]
-    opt_buf={}
-    name_buf={}
-    for row in db_buf.rows:
-        row_value=[]
-        row_value_cut=[]
-        for cell in row:
-            row_value.append(cell.value)
-            row_value_cut = row_value[2:]
-        opt_buf[db_buf.cell(c,1).value]=row_value_cut
-        name_buf[db_buf.cell(c,1).value]=row_value
-        c=c+1
+    calculator.refresh_db(load_excel_ext=load_excel, load_preset_ext=load_presetc)
 
-    d=1
-    db_buflvl=load_excel["buflvl"]
-    opt_buflvl={}
-    for row in db_buflvl.rows:
-        row_value=[]
-        row_value_cut=[]
-        for cell in row:
-            row_value.append(cell.value)
-            row_value_cut = [0] + row_value[1:]
-        opt_buflvl[db_buflvl.cell(d,1).value]=row_value_cut
-        d=d+1
+    db_job = load_excel["lvl"]
+    db_one = load_excel["one"]
+
+    betterang = int(db_one["J86"].value)
 
     #속강 커스텀 계산
-    load_presetc=load_workbook("preset.xlsx", data_only=True)
     db_preset=load_presetc["custom"]
-    ele_skill=int(opt_job_ele[jobup_select.get()][1])
+    ele_skill=int(calculator.opt_job_ele[jobup_select.get()][1])
     ele_in=(int(db_preset["B14"].value)+int(db_preset["B15"].value)+int(db_preset["B16"].value)+
             int(ele_skill)-int(db_preset["B18"].value)+int(db_preset["B19"].value)+13)
     cool_eff=float(db_preset["B2"].value)/100
@@ -1544,8 +1595,6 @@ def calc(mode):
         cool_on=0
     else:
         cool_on=1
-
-    betterang=int(db_one["J86"].value)
 
     #아리아 증폭 판정
     if db_preset["H7"].value == "항상증폭":
@@ -1575,6 +1624,8 @@ def calc(mode):
         cool_eff_dictnum=27
 
     # 직업별 레벨링 효율차
+    opt_job = calculator.opt_job
+
     job_lv1=opt_job[jobup_select.get()][11]
     job_lv2=opt_job[jobup_select.get()][12]
     job_lv3=opt_job[jobup_select.get()][13]
@@ -2423,7 +2474,7 @@ def calc(mode):
             print(str(loop_counter)+'회차 : '+str(all_list_num))
 
             if jobup_select.get()[4:7] != "세인트" and jobup_select.get()[4:7] != "세라핌" and jobup_select.get()[4:7] != "헤카테":
-                getone=opt_one.get
+                getone=calculator.opt_one.get
 
                 if len(all_list_god)!=0:
                     for calc_now in all_list_god:
@@ -2597,7 +2648,7 @@ def calc(mode):
                 base_stat_h=4405+int(db_preset['H1'].value)+extra_stat-40  ##2각 꺼지면 -528, 진각 추가로 40 제거
                 base_pas0_1=0
                 load_presetc.close()
-                lvlget=opt_buflvl.get
+                lvlget = calculator.opt_buflvl.get
                 inv_string="1옵션= "+inv3_opt+" ["+str(inv3_val)+"]\n2옵션= "+inv4_opt+" ["+str(inv4_val)+"]"
                 #코드 이름
                 #0 체정 1 지능
@@ -2608,7 +2659,7 @@ def calc(mode):
                 #11 전직패 12 보징/크크 13 각패1 14 각패2 15 2각 16 각패3
                 #17 깡신념 18 깡신실 19 아리아쿨 20 하베쿨 21 1각시특수피증(시로코옵션) 22 진각렙
 
-                setget=opt_buf.get
+                setget = calculator.opt_buf.get
                 if len(all_list_god)!=0:
                     for calc_now in all_list_god:
                         if calculator.exit_calc==1:
@@ -3774,7 +3825,7 @@ def show_result_dealer():
         elif set_list.count(str(i))==5: now_list_list.append(str(i)+'3')
     penalty_score=0;bonus_score=0;utility_score=0
     for now_equ in now_list_list:
-        now_equ_opt=opt_leveling.get(now_equ)
+        now_equ_opt=calculator.opt_leveling.get(now_equ)
         for i in range(0,18):
             penalty_score+=now_equ_opt[54]
             bonus_score+=now_equ_opt[55]
@@ -5399,8 +5450,8 @@ tkinter.Button(calculator.window,command=reset,image=reset_img,borderwidth=0,act
 
 wep_list=[]
 for i in range(0,75):
-    wep_list.append(name_one[str(i+111001)][1])
-wep_list.append(name_one["111076"][1])
+    wep_list.append(calculator.name_one[str(i+111001)][1])
+wep_list.append(calculator.name_one["111076"][1])
 
 wep_type_temp=[]
 def wep_job_selected(event):
