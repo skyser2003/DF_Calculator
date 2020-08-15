@@ -269,6 +269,7 @@ class Calculator:
         self.opt_buf: Dict[str, str] = {}
         self.opt_buflvl: Dict[str, str] = {}
         self.opt_leveling: Dict[str, str] = {}
+        self.server_list = ["카인", "디레지에", "바칼", "힐더", "안톤", "카시야스", "프레이", "시로코"]
 
         # 에픽 장비
         self.normal_epic_list: List[str] = []
@@ -848,8 +849,8 @@ class Calculator:
         cha_name = tkinter.Entry(timeline_window, width=13)
         cha_name.place(x=80, y=12)
         tkinter.Label(timeline_window, text="서버명=", font=self.guide_font).place(x=10, y=59)
-        sever_list = ['카인', '디레지에', '바칼', '힐더', '안톤', '카시야스', '프레이', '시로코']
-        serv_name = tkinter.ttk.Combobox(timeline_window, values=sever_list, width=11)
+
+        serv_name = tkinter.ttk.Combobox(timeline_window, values=calculator.server_list, width=11)
         serv_name.place(x=80, y=62)
         serv_name.set('카인')
         load_timeline = tkinter.Button(timeline_window, command=lambda: self.show_timeline(cha_name.get(), serv_name.get()),
@@ -5394,11 +5395,10 @@ def show_profile(name,server):
 
 ## GUI ############################################################################################################################
 
-sever_list=['카인','디레지에','바칼','힐더','안톤','카시야스','프레이','시로코']
 tkinter.Label(calculator.window,font=calculator.mid_font,fg="white",bg=calculator.dark_sub, text="<딜러 프로필 생성기>").place(x=301,y=401)
 tkinter.Label(calculator.window,fg="white",bg=calculator.dark_sub, text="서버명=").place(x=296,y=433)
 tkinter.Label(calculator.window,fg="white",bg=calculator.dark_sub, text="캐릭명=").place(x=296,y=460)
-sever_in=tkinter.ttk.Combobox(calculator.window,width=9,values=sever_list);sever_in.place(x=346,y=435)
+sever_in=tkinter.ttk.Combobox(calculator.window,width=9,values=calculator.server_list);sever_in.place(x=346,y=435)
 sever_in.set('카인')
 cha_Entry=tkinter.Entry(calculator.window,width=12);cha_Entry.place(x=346,y=462)
 sever_in.bind('<Return>',lambda e:show_profile(str(cha_Entry.get()),str(sever_in.get())))
