@@ -318,6 +318,7 @@ class Calculator:
         self.weapon_list_num_label: Label = None
         self.void_weapon_img: PhotoImage = None
         self.equip_buttons: Dict[str, Button] = {}
+        self.set_buttons: Dict[str, Button] = {}
 
         self.refresh_db()
         self.load_preset_name()
@@ -1265,6 +1266,64 @@ class Calculator:
         equip_buttons[se[13]].place(x=710 + 10 + 71 + 62, y=445 + 90 + 95)
         equip_buttons[se[14]].place(x=710 + 10 + 71 + 62, y=445 + 120 + 95)
 
+        # 세트 버튼
+        set_buttons = self.set_buttons
+        set_list: List[int] = []
+
+        for i in range(101, 136):
+            set_list.append(i)
+
+        for i in range(151, 156):
+            set_list.append(i)
+
+        for i in set_list:
+            str_i = str(i)
+            set_buttons[str_i] = tkinter.Button(self.window, bg=self.dark_main, borderwidth=0,
+                                                activebackground=self.dark_main, image=self.image_list_set2[str_i],
+                                                command=partial(self.click_set, i))
+
+        set_buttons["101"].place(x=29, y=100)
+        set_buttons["102"].place(x=29, y=130)
+        set_buttons["103"].place(x=29, y=160)
+        set_buttons["104"].place(x=29, y=190)
+        set_buttons["105"].place(x=29, y=220)
+        set_buttons["106"].place(x=29, y=250)
+        set_buttons["107"].place(x=29, y=280)
+        set_buttons["108"].place(x=29, y=310)
+        set_buttons["109"].place(x=29, y=340)
+        set_buttons["110"].place(x=29, y=370)
+        set_buttons["111"].place(x=29, y=400)
+        set_buttons["112"].place(x=29, y=430)
+        set_buttons["113"].place(x=29, y=460)
+        set_buttons["114"].place(x=29, y=490)
+        set_buttons["115"].place(x=29, y=520)
+        set_buttons["116"].place(x=320 - 33, y=100)
+        set_buttons["117"].place(x=320 - 33, y=130)
+        set_buttons["118"].place(x=320 - 33, y=160)
+        set_buttons["119"].place(x=320 - 33, y=190)
+        set_buttons["120"].place(x=500 - 17, y=100)
+        set_buttons["121"].place(x=500 - 17, y=130)
+        set_buttons["122"].place(x=500 - 17, y=160)
+        set_buttons["123"].place(x=500 - 17, y=190)
+        set_buttons["124"].place(x=225, y=570)
+        set_buttons["125"].place(x=225, y=600)
+        set_buttons["126"].place(x=225, y=630)
+        set_buttons["127"].place(x=225, y=660)
+        set_buttons["128"].place(x=29, y=570)
+        set_buttons["129"].place(x=29, y=600)
+        set_buttons["130"].place(x=29, y=630)
+        set_buttons["131"].place(x=29, y=660)
+        set_buttons["132"].place(x=421, y=570)
+        set_buttons["133"].place(x=421, y=600)
+        set_buttons["134"].place(x=421, y=630)
+        set_buttons["135"].place(x=421, y=660)
+
+        set_buttons["151"].place(x=710 + 10, y=445 + 95)
+        set_buttons["152"].place(x=710 + 10, y=475 + 95)
+        set_buttons["153"].place(x=710 + 10, y=505 + 95)
+        set_buttons["154"].place(x=710 + 10, y=535 + 95)
+        set_buttons["155"].place(x=710 + 10, y=565 + 95)
+
         self.save_select = tkinter.ttk.Combobox(self.window, width=8, values=self.save_name_list)
         self.save_select.place(x=345 + 165, y=410 - 100)
         self.save_select.set(self.save_name_list[0])
@@ -1598,7 +1657,7 @@ class Calculator:
                 except KeyError as error:
                     passss = 1
 
-        for i in calculator.get_all_knowledge_equipment_list():
+        for i in self.get_all_knowledge_equipment_list():
             select_item[f"tg{i}"] = 0
 
         check_equipment()
@@ -1609,6 +1668,110 @@ class Calculator:
                 check_set(i)
             except:
                 pass
+
+    ## 세트태그 선택시 풀셋 전부 온오프
+    def click_set(self, code: int):
+        select_item = self.owned_equipments
+        set_buttons = self.set_buttons
+        equip_buttons = self.equip_buttons
+
+        code_add = code - 100
+        code_str = str(code)[1:3]
+        set_checked = 0
+        if code >= 116:  ##악세/특장/스까면
+            if 116 <= code <= 119:
+                for i in range(21, 24):  ## 악세부위에서
+                    try:
+                        if select_item['tg' + str(i) + code_str + '0'] == 1:  ##채택된 숫자를 찾는다
+                            set_checked = set_checked + 1  ##그럼 변수에 +1을 더함
+                    except KeyError as error:
+                        c = 1
+            elif 123 >= code >= 120:
+                for i in range(31, 34):  ## 특장부위에서
+                    try:
+                        if select_item['tg' + str(i) + code_str + '0'] == 1:  ##채택된 숫자를 찾는다
+                            set_checked = set_checked + 1  ##그럼 변수에 +1을 더함
+                    except KeyError as error:
+                        c = 1
+            elif 131 >= code >= 128:
+                for i in [11, 22, 31]:  ## 상목보부위에서
+                    try:
+                        if select_item['tg' + str(i) + code_str + '0'] == 1:  ##채택된 숫자를 찾는다
+                            set_checked = set_checked + 1  ##그럼 변수에 +1을 더함
+                    except KeyError as error:
+                        c = 1
+            elif 127 >= code >= 124:
+                for i in [12, 21, 32]:  ## 하팔법부위에서
+                    try:
+                        if select_item['tg' + str(i) + code_str + '0'] == 1:  ##채택된 숫자를 찾는다
+                            set_checked = set_checked + 1  ##그럼 변수에 +1을 더함
+                    except KeyError as error:
+                        c = 1
+            elif 135 >= code >= 132:
+                for i in [15, 23, 33]:  ## 신반귀부위에서
+                    try:
+                        if select_item['tg' + str(i) + code_str + '0'] == 1:  ##채택된 숫자를 찾는다
+                            set_checked = set_checked + 1  ##그럼 변수에 +1을 더함
+                    except KeyError as error:
+                        c = 1
+            elif 155 >= code >= 151:
+                for i in [41, 42, 43]:  ##융합부위에서
+                    try:
+                        if select_item['tg' + str(i) + code_str + '0'] == 1:  ##채택된 숫자를 찾는다
+                            set_checked = set_checked + 1  ##그럼 변수에 +1을 더함
+                    except KeyError as error:
+                        c = 1
+
+            if set_checked == 3:  ## 채택 숫자가 3이면
+                for i in range(11, 44):  ##모든 부위에서
+                    try:
+                        str_i = str(i)
+                        equip_buttons[str_i + code_str + '0']['image'] = self.image_list2[
+                            str_i + code_str + '0']  ##이미지도 오프로 바꿈
+                        select_item['tg' + str_i + code_str + '0'] = 0  ##모든 체크를 0으로 만듬
+                    except KeyError as error:
+                        c = 1
+                set_buttons[str(code)]['image'] = self.image_list_set2[str(code)]  ##세트이미지도 오프로 바꿈
+            else:  ## 채택 숫자가 3미만이면
+                for i in range(11, 44):  ##모든 부위에서
+                    try:
+                        str_i = str(i)
+                        equip_buttons[str_i + code_str + '0']['image'] = self.image_list[
+                            str_i + code_str + '0']  ##이미지도 온으로 바꿈
+                        select_item['tg' + str_i + code_str + '0'] = 1  ##모든 체크를 1으로 만듬
+                    except KeyError as error:
+                        c = 1
+                set_buttons[str(code)]['image'] = self.image_list_set[str(code)]  ##세트이미지도 온으로 바꿈
+
+
+        else:
+            for i in range(11, 16):  ## 방어구 부위에서
+                try:
+                    if select_item['tg' + str(i) + code_str + '0'] == 1:  ##채택된 숫자를 찾는다
+                        set_checked = set_checked + 1  ##그럼 변수에 +1을 더함
+                except KeyError as error:
+                    c = 1
+
+            if set_checked == 5:  ## 채택 숫자가 5이면
+                for i in range(11, 16):  ## 방어구 부위에서
+                    try:
+                        equip_buttons[str(i) + code_str + '0']['image'] = self.image_list2[
+                            str(i) + code_str + '0']  ##이미지도 오프로 바꿈
+                        select_item['tg' + str(i) + code_str + '0'] = 0  ##모든 체크를 0으로 만듬
+                    except KeyError as error:
+                        c = 1
+                set_buttons[str(code)]['image'] = self.image_list_set2[str(code)]  ##세트이미지도 오프로 바꿈
+
+            else:  ## 채택 숫자가 5미만이면
+                for i in range(11, 16):  ## 방어구 부위에서
+                    try:
+                        str_i = str(i)
+                        equip_buttons[str_i + code_str + '0']['image'] = self.image_list[
+                            str_i + code_str + '0']  ##이미지도 온으로 바꿈
+                        select_item['tg' + str_i + code_str + '0'] = 1  ##모든 체크를 1으로 만듬
+                    except KeyError as error:
+                        c = 1
+                set_buttons[str(code)]['image'] = self.image_list_set[str(code)]  ##세트이미지도 온으로 바꿈
 
     @staticmethod
     def place_center(toplevel, move_x):
@@ -1655,9 +1818,6 @@ def capture_screen(toplevel):
     #im=grab(bbox=(nowx, nowy, nowx+xsize, nowy+ysize))
     im=ImageGrab.grab((nowx, nowy, nowx+xsize, nowy+ysize))
     im.save('Screenshots/'+str(time.strftime('%y%m%d%H%M%S', time.localtime(time.time())))+'.png')
-
-
-set_buttons = {}
 
 
 ## 계산 함수 ##
@@ -5067,113 +5227,13 @@ def check_equipment():
         except:
             pass
 
-## 세트태그 선택시 풀셋 전부 온오프
-def click_set(code):
-    select_item = calculator.owned_equipments
-
-    code_add=code-100
-    code_str=str(code)[1:3]
-    set_checked=0
-    if code >=116: ##악세/특장/스까면
-        if 116<= code <=119:
-            for i in range(21,24): ## 악세부위에서
-                try:
-                    if select_item['tg'+str(i)+code_str+'0']==1: ##채택된 숫자를 찾는다
-                        set_checked=set_checked+1 ##그럼 변수에 +1을 더함
-                except KeyError as error:
-                    c=1
-        elif 123>= code >=120:
-            for i in range(31,34): ## 특장부위에서
-                try:
-                    if select_item['tg'+str(i)+code_str+'0']==1: ##채택된 숫자를 찾는다
-                        set_checked=set_checked+1 ##그럼 변수에 +1을 더함
-                except KeyError as error:
-                    c=1
-        elif 131>= code >=128:
-            for i in [11,22,31]: ## 상목보부위에서
-                try:
-                    if select_item['tg'+str(i)+code_str+'0']==1: ##채택된 숫자를 찾는다
-                        set_checked=set_checked+1 ##그럼 변수에 +1을 더함
-                except KeyError as error:
-                    c=1
-        elif 127>= code >=124:
-            for i in [12,21,32]: ## 하팔법부위에서
-                try:
-                    if select_item['tg'+str(i)+code_str+'0']==1: ##채택된 숫자를 찾는다
-                        set_checked=set_checked+1 ##그럼 변수에 +1을 더함
-                except KeyError as error:
-                    c=1
-        elif 135>= code >=132:
-            for i in [15,23,33]: ## 신반귀부위에서
-                try:
-                    if select_item['tg'+str(i)+code_str+'0']==1: ##채택된 숫자를 찾는다
-                        set_checked=set_checked+1 ##그럼 변수에 +1을 더함
-                except KeyError as error:
-                    c=1
-        elif 155>= code >=151:
-            for i in [41,42,43]: ##융합부위에서
-                try:
-                    if select_item['tg'+str(i)+code_str+'0']==1: ##채택된 숫자를 찾는다
-                        set_checked=set_checked+1 ##그럼 변수에 +1을 더함
-                except KeyError as error:
-                    c=1
-
-        equip_buttons = calculator.equip_buttons
-
-        if set_checked==3: ## 채택 숫자가 3이면
-            for i in range(11,44): ##모든 부위에서
-                try:
-                    str_i = str(i)
-                    equip_buttons[str_i + code_str + '0']['image'] = calculator.image_list2[str_i + code_str + '0'] ##이미지도 오프로 바꿈
-                    select_item['tg'+str_i+code_str+'0']=0 ##모든 체크를 0으로 만듬
-                except KeyError as error:
-                    c=1
-            set_buttons[str(code)]['image'] = calculator.image_list_set2[str(code)] ##세트이미지도 오프로 바꿈
-        else: ## 채택 숫자가 3미만이면
-            for i in range(11,44): ##모든 부위에서
-                try:
-                    str_i = str(i)
-                    equip_buttons[str_i + code_str + '0']['image'] = calculator.image_list[str_i + code_str + '0'] ##이미지도 온으로 바꿈
-                    select_item['tg'+str_i+code_str+'0']=1 ##모든 체크를 1으로 만듬
-                except KeyError as error:
-                    c=1
-            set_buttons[str(code)]['image'] = calculator.image_list_set[str(code)] ##세트이미지도 온으로 바꿈
-
-
-    else:
-        for i in range(11,16): ## 방어구 부위에서
-            try:
-                if select_item['tg'+str(i)+code_str+'0']==1: ##채택된 숫자를 찾는다
-                    set_checked=set_checked+1 ##그럼 변수에 +1을 더함
-            except KeyError as error:
-                c=1
-
-        equip_buttons = calculator.equip_buttons
-
-        if set_checked==5: ## 채택 숫자가 5이면
-            for i in range(11,16): ## 방어구 부위에서
-                try:
-                    equip_buttons[str(i) + code_str + '0']['image'] = calculator.image_list2[str(i) + code_str + '0'] ##이미지도 오프로 바꿈
-                    select_item['tg'+str(i)+code_str+'0']=0 ##모든 체크를 0으로 만듬
-                except KeyError as error:
-                    c=1
-            set_buttons[str(code)]['image'] = calculator.image_list_set2[str(code)] ##세트이미지도 오프로 바꿈
-
-        else: ## 채택 숫자가 5미만이면
-            for i in range(11,16): ## 방어구 부위에서
-                try:
-                    str_i = str(i)
-                    equip_buttons[str_i + code_str + '0']['image'] = calculator.image_list[str_i + code_str + '0'] ##이미지도 온으로 바꿈
-                    select_item['tg'+str_i+code_str+'0']=1 ##모든 체크를 1으로 만듬
-                except KeyError as error:
-                    c=1
-            set_buttons[str(code)]['image'] = calculator.image_list_set[str(code)] ##세트이미지도 온으로 바꿈
 
 ## 세트명 태그 점등 여부와 실제 토글값 동기화
 def check_set(code):
     select_item = calculator.owned_equipments
     image_list_set = calculator.image_list_set
     image_list_set2 = calculator.image_list_set2
+    set_buttons = calculator.set_buttons
 
     code_str=str(code)[1:3]
     set_checked=0
@@ -5554,45 +5614,6 @@ change_list_but=tkinter.Button(calculator.window,image=change_name_img,borderwid
 change_list_but.place(x=435+165,y=405-100)
 
 
-
-image_list_set2 = calculator.image_list_set2
-set_buttons["101"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['101'],command=lambda:click_set(101));set_buttons["101"].place(x=29,y=100)
-set_buttons["102"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['102'],command=lambda:click_set(102));set_buttons["102"].place(x=29,y=130)
-set_buttons["103"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['103'],command=lambda:click_set(103));set_buttons["103"].place(x=29,y=160)
-set_buttons["104"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['104'],command=lambda:click_set(104));set_buttons["104"].place(x=29,y=190)
-set_buttons["105"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['105'],command=lambda:click_set(105));set_buttons["105"].place(x=29,y=220)
-set_buttons["106"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['106'],command=lambda:click_set(106));set_buttons["106"].place(x=29,y=250)
-set_buttons["107"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['107'],command=lambda:click_set(107));set_buttons["107"].place(x=29,y=280)
-set_buttons["108"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['108'],command=lambda:click_set(108));set_buttons["108"].place(x=29,y=310)
-set_buttons["109"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['109'],command=lambda:click_set(109));set_buttons["109"].place(x=29,y=340)
-set_buttons["110"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['110'],command=lambda:click_set(110));set_buttons["110"].place(x=29,y=370)
-set_buttons["111"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['111'],command=lambda:click_set(111));set_buttons["111"].place(x=29,y=400)
-set_buttons["112"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['112'],command=lambda:click_set(112));set_buttons["112"].place(x=29,y=430)
-set_buttons["113"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['113'],command=lambda:click_set(113));set_buttons["113"].place(x=29,y=460)
-set_buttons["114"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['114'],command=lambda:click_set(114));set_buttons["114"].place(x=29,y=490)
-set_buttons["115"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['115'],command=lambda:click_set(115));set_buttons["115"].place(x=29,y=520) ##
-set_buttons["116"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['116'],command=lambda:click_set(116));set_buttons["116"].place(x=320-33,y=100)
-set_buttons["117"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['117'],command=lambda:click_set(117));set_buttons["117"].place(x=320-33,y=130)
-set_buttons["118"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['118'],command=lambda:click_set(118));set_buttons["118"].place(x=320-33,y=160)
-set_buttons["119"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['119'],command=lambda:click_set(119));set_buttons["119"].place(x=320-33,y=190) ##
-set_buttons["120"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['120'],command=lambda:click_set(120));set_buttons["120"].place(x=500-17,y=100)
-set_buttons["121"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['121'],command=lambda:click_set(121));set_buttons["121"].place(x=500-17,y=130)
-set_buttons["122"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['122'],command=lambda:click_set(122));set_buttons["122"].place(x=500-17,y=160)
-set_buttons["123"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['123'],command=lambda:click_set(123));set_buttons["123"].place(x=500-17,y=190) ##
-set_buttons["128"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['128'],command=lambda:click_set(128));set_buttons["128"].place(x=29,y=570)
-set_buttons["129"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['129'],command=lambda:click_set(129));set_buttons["129"].place(x=29,y=600)
-set_buttons["130"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['130'],command=lambda:click_set(130));set_buttons["130"].place(x=29,y=630)
-set_buttons["131"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['131'],command=lambda:click_set(131));set_buttons["131"].place(x=29,y=660) ##
-set_buttons["124"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['124'],command=lambda:click_set(124));set_buttons["124"].place(x=225,y=570)
-set_buttons["125"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['125'],command=lambda:click_set(125));set_buttons["125"].place(x=225,y=600)
-set_buttons["126"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['126'],command=lambda:click_set(126));set_buttons["126"].place(x=225,y=630)
-set_buttons["127"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['127'],command=lambda:click_set(127));set_buttons["127"].place(x=225,y=660) ##
-set_buttons["132"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['132'],command=lambda:click_set(132));set_buttons["132"].place(x=421,y=570)
-set_buttons["133"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['133'],command=lambda:click_set(133));set_buttons["133"].place(x=421,y=600)
-set_buttons["134"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['134'],command=lambda:click_set(134));set_buttons["134"].place(x=421,y=630)
-set_buttons["135"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['135'],command=lambda:click_set(135));set_buttons["135"].place(x=421,y=660) ##
-
-
 ##잔향부여
 
 def update_inv(event):
@@ -5681,20 +5702,6 @@ inv_select4_2 = calculator.preset_values["inv_select4_2"] = tkinter.ttk.Combobox
 inv_select3_1.bind("<<ComboboxSelected>>",update_inv_buf)
 inv_select4_1.bind("<<ComboboxSelected>>",update_inv_buf2)
 update_inv(0)
-##장비융합
-image_list_set2 = calculator.image_list_set2
-
-set_buttons["151"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['151'],command=lambda:click_set(151))
-set_buttons["151"].place(x=710+10,y=445+95) ##
-set_buttons["152"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['152'],command=lambda:click_set(152))
-set_buttons["152"].place(x=710+10,y=475+95) ##
-set_buttons["153"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['153'],command=lambda:click_set(153))
-set_buttons["153"].place(x=710+10,y=505+95) ##
-set_buttons["154"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['154'],command=lambda:click_set(154))
-set_buttons["154"].place(x=710+10,y=535+95) ##
-set_buttons["155"]=tkinter.Button(calculator.window,bg=calculator.dark_main,borderwidth=0,activebackground=calculator.dark_main,image=image_list_set2['155'],command=lambda:click_set(155))
-set_buttons["155"].place(x=710+10,y=565+95) ##
-
 
 know_image=calculator.get_photo_image("set_name/know_name.png")
 tkinter.Button(calculator.window,bg=calculator.dark_main,image=know_image,command=calculator.create_knowledge_window).place(x=302,y=520)
