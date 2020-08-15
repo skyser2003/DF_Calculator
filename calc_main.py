@@ -148,7 +148,7 @@ class Calculator:
         self.all_list_list_num = 0  # 계산 전체 경우의 수
         self.a_num_all = 0
         self.equip_list = {}
-        self.preset_values = {
+        self.preset_values: Dict[str, tkinter.ttk.Combobox] = {
             "jobtype_select": None,
             "jobup_select": None,
             "wep_job_select": None,
@@ -1432,6 +1432,41 @@ class Calculator:
         wep_type_select.set('광검')
         wep_type_select.bind("<<ComboboxSelected>>", wep_job_selected2)
 
+        wep_default = list(calc_list_wep.DNF_wep_list['귀검/나이트']['광검'])
+        wep_select = self.preset_values["wep_select"] = tkinter.ttk.Combobox(self.window, width=30,
+                                                                             values=wep_default)
+        wep_select.place(x=110, y=38)
+        wep_select.set('(광검)별의 바다 : 바드나후')
+
+        wep_select_image = self.get_photo_image("ext_img/wep_select.png")
+        wep_reset_image = self.get_photo_image("ext_img/wep_reset.png")
+        wep_select_bt = tkinter.Button(self.window, image=wep_select_image, fg="white", borderwidth=0,
+                                       activebackground=self.dark_main, command=self.wep_list_select,
+                                       bg=self.dark_main, font=self.mid_font)
+        wep_select_bt.place(x=350, y=10)
+        wep_select_bt = tkinter.Button(self.window, image=wep_reset_image, fg="white", borderwidth=0,
+                                       activebackground=self.dark_main, command=self.wep_list_reset,
+                                       bg=self.dark_main)
+        wep_select_bt.place(x=440, y=10)
+
+        def job_type_selected(event):
+            jobup_select["values"] = list(calc_list_job.DNF_job_list[jobtype_select.get()])
+            jobup_select.set(list(calc_list_job.DNF_job_list[jobtype_select.get()])[0])
+
+        jobtype_select = self.preset_values["jobtype_select"] = tkinter.ttk.Combobox(self.window, width=13,
+                                                                                           values=list(
+                                                                                               calc_list_job.DNF_job_list.keys()))
+        jobtype_select.bind("<<ComboboxSelected>>", job_type_selected)
+        jobtype_select.set('귀검사(남)')
+        jobtype_select.place(x=390 - 17, y=190 + 52)
+
+        jobup_select = self.preset_values["jobup_select"] = tkinter.ttk.Combobox(self.window, width=13,
+                                                                                       values=list(
+                                                                                           calc_list_job.DNF_job_list[
+                                                                                               '귀검사(남)']))
+        jobup_select.set('검신(진각)')
+        jobup_select.place(x=390 - 17, y=220 + 52)
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -1803,6 +1838,32 @@ class Calculator:
                         c = 1
                 set_buttons[str(code)]['image'] = self.image_list_set[str(code)]  ##세트이미지도 온으로 바꿈
 
+    def wep_list_select(self):
+        wep_name_list = self.wep_name_list
+        wep_select = self.preset_values["wep_select"]
+
+        if wep_name_list.count(wep_select.get()) != 0:
+            tkinter.messagebox.showerror('에러', "중복된 무기 선택")
+            return
+
+        if len(wep_name_list) != 10:
+            wep_name_list.append(wep_select.get())
+            self.selected_weapon_img_list.append(self.image_list_wep[wep_select.get()])
+            self.change_weapon_list_num_text(len(wep_name_list))
+            wep_img_list_refresh(self.selected_weapon_img_list)
+        else:
+            tkinter.messagebox.showerror('에러', "무기는 최대 10가지만 선택 가능합니다")
+            return
+
+    def wep_list_reset(self):
+        wep_name_list = self.wep_name_list
+
+        wep_name_list.clear()
+        self.change_weapon_list_num_text(len(wep_name_list))
+
+        self.selected_weapon_img_list.clear()
+        wep_img_list_refresh(self.selected_weapon_img_list)
+
     @staticmethod
     def place_center(toplevel, move_x):
         toplevel.update_idletasks()
@@ -1853,6 +1914,7 @@ def capture_screen(toplevel):
 ## 계산 함수 ##
 def calc(mode):
     select_item = calculator.owned_equipments
+    jobup_select = calculator.preset_values["jobup_select"]
 
     try:
         result_window = calculator.result_window
@@ -1954,7 +2016,8 @@ def calc(mode):
     wep_pre_calced=[];cool_pre_calced=[];cool_pre_calced2=[];wep_num=[]
 
     if len(calculator.wep_name_list) == 0:
-        wep_name_list_temp=[wep_select.get()]
+        wep_select = calculator.preset_values["wep_select"]
+        wep_name_list_temp = [wep_select.get()]
     else:
         wep_name_list_temp = calculator.wep_name_list
     for now_wep in wep_name_list_temp:
@@ -3259,6 +3322,8 @@ def calc_thread():
     threading.Thread(target=calc,args=(0,),daemon=True).start()
 
 def show_result(rank_list,job_type,ele_skill,cool_eff):
+    jobup_select = calculator.preset_values["jobup_select"]
+
     result_window = calculator.result_window = tkinter.Toplevel(calculator.window)
     result_window.attributes("-topmost", True)
     result_window.geometry("585x402")
@@ -5073,16 +5138,21 @@ def load_checklist():
         def load_wep():
             wep_job_select = calculator.preset_values["wep_job_select"]
             wep_type_select = calculator.preset_values["wep_type_select"]
+            wep_select = calculator.preset_values["wep_select"]
 
-            wep_type_select["values"]=list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())].keys())
-            wep_select["values"]=list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])
+            wep_type_select["values"] = list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())].keys())
+            wep_select["values"] = list(calc_list_wep.DNF_wep_list[str(wep_job_select.get())][str(wep_type_select.get())])
         try:
             load_inv()
             load_inv2()
             load_wep()
         except:
             pass
-        jobup_select["values"]=list(calc_list_job.DNF_job_list[jobtype_select.get()])
+
+        jobup_select = calculator.preset_values["jobup_select"]
+        jobtype_select = calculator.preset_values["jobtype_select"]
+
+        jobup_select["values"] = list(calc_list_job.DNF_job_list[jobtype_select.get()])
         tkinter.messagebox.showinfo("알림","불러오기 완료")
 
 ## 현재값 preset에 저장하기
@@ -5512,33 +5582,6 @@ def show_profile(name,server):
     threading.Thread(target=show_profile2,args=(name,server),daemon=True).start()
 
 
-def wep_list_select():
-    wep_name_list = calculator.wep_name_list
-
-    if wep_name_list.count(wep_select.get())!=0:
-        tkinter.messagebox.showerror('에러',"중복된 무기 선택")
-        return
-
-    if len(wep_name_list)!=10:
-        wep_name_list.append(wep_select.get())
-        calculator.selected_weapon_img_list.append(calculator.image_list_wep[wep_select.get()])
-        calculator.change_weapon_list_num_text(len(wep_name_list))
-        wep_img_list_refresh(calculator.selected_weapon_img_list)
-    else:
-        tkinter.messagebox.showerror('에러',"무기는 최대 10가지만 선택 가능합니다")
-        return
-
-
-def wep_list_reset():
-    wep_name_list = calculator.wep_name_list
-
-    wep_name_list.clear()
-    calculator.change_weapon_list_num_text(len(wep_name_list))
-
-    calculator.selected_weapon_img_list.clear()
-    wep_img_list_refresh(calculator.selected_weapon_img_list)
-
-
 def wep_img_list_refresh(weapon_img_list: List[PhotoImage]):
     for i in range(0, 10):
         try:
@@ -5557,31 +5600,6 @@ def sync_wep_list():
     calculator.change_weapon_list_num_text(len(wep_name_list))
     wep_img_list_refresh(calculator.selected_weapon_img_list)
 
-
-wep_default=list(calc_list_wep.DNF_wep_list['귀검/나이트']['광검'])
-wep_select = calculator.preset_values["wep_select"] = tkinter.ttk.Combobox(calculator.window,width=30,values=wep_default)
-wep_select.place(x=110,y=38)
-wep_select.set('(광검)별의 바다 : 바드나후')
-
-wep_select_image=calculator.get_photo_image("ext_img/wep_select.png")
-wep_reset_image=calculator.get_photo_image("ext_img/wep_reset.png")
-wep_select_bt=tkinter.Button(calculator.window,image=wep_select_image,fg="white",borderwidth=0,activebackground=calculator.dark_main,command=wep_list_select,bg=calculator.dark_main,font=calculator.mid_font)
-wep_select_bt.place(x=350,y=10)
-wep_select_bt=tkinter.Button(calculator.window,image=wep_reset_image,fg="white",borderwidth=0,activebackground=calculator.dark_main,command=wep_list_reset,bg=calculator.dark_main)
-wep_select_bt.place(x=440,y=10)
-
-def job_type_selected(event):
-    jobup_select["values"]=list(calc_list_job.DNF_job_list[jobtype_select.get()])
-    jobup_select.set(list(calc_list_job.DNF_job_list[jobtype_select.get()])[0])
-
-jobtype_select = calculator.preset_values["jobtype_select"] = tkinter.ttk.Combobox(calculator.window,width=13,values=list(calc_list_job.DNF_job_list.keys()))
-jobtype_select.bind("<<ComboboxSelected>>",job_type_selected)
-jobtype_select.set('귀검사(남)')
-jobtype_select.place(x=390-17,y=190+52)
-
-jobup_select = calculator.preset_values["jobup_select"] = tkinter.ttk.Combobox(calculator.window,width=13,values=list(calc_list_job.DNF_job_list['귀검사(남)']))
-jobup_select.set('검신(진각)')
-jobup_select.place(x=390-17,y=220+52)
 
 style_list=['증뎀15%','속강32','증뎀10%','추뎀10%','크증10%','기타(직접비교)']
 style_select = calculator.preset_values["style_select"] = tkinter.ttk.Combobox(calculator.window,width=13,values=style_list)
