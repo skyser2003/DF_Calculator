@@ -1,9 +1,10 @@
+from __future__ import annotations
+
 ver_time='200812'
 
 #-*- coding: utf-8 -*-
 ## 코드를 무단으로 복제하여 개조 및 배포하지 말 것##
 ## Copyright ⓒ 2020 Dawnclass(새벽반) dawnclass16@naver.com
-
 import itertools
 import os
 import random
@@ -15,12 +16,14 @@ import tkinter.ttk
 import urllib.request
 import webbrowser
 from enum import IntEnum
-from functools import partial
+from functools import partial, reduce
 from collections import Counter
 from json import loads
 from tkinter import *
 from typing import List, Dict, Tuple, Callable
 from urllib import parse
+from concurrent.futures import ProcessPoolExecutor, Future, as_completed
+from multiprocessing import Value, Manager
 
 import numpy as np
 import openpyxl
@@ -140,6 +143,677 @@ class GodCheckCode(IntEnum):
     GOD = 1
 
 
+exit_calc: Value = None
+count_num: Value = None
+count_all: Value = None
+
+
+def init_global(calc_exit_calc: Value, calc_count_num: Value, calc_count_all: Value):
+    global exit_calc
+    global count_num
+    global count_all
+
+    exit_calc = calc_exit_calc
+    count_num = calc_count_num
+    count_all = calc_count_all
+
+
+def calc_per_thread(calc_list: List[Tuple[List[str], bool]], thread_id: int, calc_wep_num: int,
+                    job_name: str, opt_one: Dict[str, str], opt_buf: Dict[str, str], opt_buflvl: Dict[str, str],
+                    inv_tg: int, inv_type_list: List[str], set_perfect: int, wep_num: List, extra_dam: int, extra_cri: int, extra_bon: int, extra_all: int, extra_att: int, extra_sta: int,
+                    ele_in: int, fixed_dam: int, fixed_cri: int, extra_pas2: int, cool_eff_dictnum: int, betterang: int,
+                    active_eff_one: int,
+                    job_lv1,
+                    job_lv2,
+                    job_lv3,
+                    job_lv4,
+                    job_lv5,
+                    job_lv6,
+                    silmari: int,
+                    job_pas0,
+                    job_pas1,
+                    job_pas2,
+                    job_pas3,
+                    inv2_on_tg: int,
+                    job_ult1,
+                    job_ult2,
+                    job_ult3,
+                    ele_skill: int,
+                    wep_pre_calced: List[float],
+                    cool_eff: float,
+                    cool_eff2: float,
+                    cool_on: int,
+                    cool_pre_calced: List[float],
+                    cool_pre_calced2: List[float],
+                    wep_name_list_temp: List[str],
+                    db_preset,
+                    extra_clvl: int,
+                    extra_stat: int,
+                    inv1_opt: str,
+                    inv1_val: str,
+                    inv2_opt: str,
+                    inv2_val: str,
+                    inv3_opt: str,
+                    inv3_val: str,
+                    inv4_opt: str,
+                    inv4_val: str,
+                    extra_blvl: int,
+                    extra_cstat: int,
+                    extra_bstat: float,
+                    extra_batt: float,
+                    extra_cper: float):
+    max_setopt = 0
+
+    thread_save_list = {}  # 딜러1번
+    thread_save_list0 = {}  # 딜러2번
+    thread_save_list1 = {}  # 버퍼1번
+    thread_save_list2 = {}  # 버퍼2번
+    thread_save_list3 = {}  # 버퍼3번
+
+    loop_counter = 0
+
+    all_list_god = []
+    all_list = []
+
+    for now_all_list, has_god in calc_list:
+        loop_counter += 1
+
+        if has_god:
+            all_list_god.append(now_all_list)
+        else:
+            all_list.append(now_all_list)
+
+    print(f"{thread_id} 쓰레드 {loop_counter} 회차 : {len(all_list_god) + len(all_list)}")
+
+    if job_name != "세인트" and job_name != "세라핌" and job_name != "헤카테":
+        getone = opt_one.get
+
+        for calc_now in all_list_god:
+            if exit_calc.value == 1:
+                print(f"Thread {thread_id} stopped")
+                return
+
+            set_list, setopt_num = make_setopt_num(calc_now, 1)
+
+            if setopt_num >= max_setopt - set_perfect:
+                if setopt_num >= max_setopt: max_setopt = setopt_num
+                base_array = np.array(
+                    [0, 0, extra_dam, extra_cri, extra_bon, 0, extra_all, extra_att, extra_sta, ele_in,
+                     0, 1, 0, 0, 0, 0, 0, 0, extra_pas2, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+                max_damper = fixed_dam
+                max_criper = fixed_cri
+                skiper = 0
+                damage = 0
+                coolper = 0
+                ult_1 = 0
+                ult_2 = 0
+                ult_3 = 0
+                ult_skiper = 0
+                calc_wep = wep_num[calc_wep_num] + calc_now
+                for_calc = wep_num[calc_wep_num] + make_set_list(calc_now, set_list)
+                hard_coding = for_calc.count
+                oneone = len(for_calc)
+                oneonelist = []
+                for i in range(oneone):
+                    no_cut = getone(for_calc[i])  ## 11번 스증 ## 20번 쿨감
+
+                    cut = np.array(no_cut[0:20] + no_cut[22:23] + no_cut[34:35] + no_cut[38:44])
+                    skiper = (skiper / 100 + 1) * (cut[11] / 100 + 1) * 100 - 100
+                    coolper = (1 - (100 - coolper) / 100 * (
+                            100 - no_cut[22 + cool_eff_dictnum]) / 100) * 100
+                    max_damper = max([no_cut[44], max_damper])
+                    max_criper = max([no_cut[45], max_criper])
+                    ult_1 = (no_cut[46] / 100 + 1) * (ult_1 / 100 + 1) * 100 - 100
+                    ult_2 = (no_cut[47] / 100 + 1) * (ult_2 / 100 + 1) * 100 - 100
+                    ult_3 = (no_cut[48] / 100 + 1) * (ult_3 / 100 + 1) * 100 - 100
+                    oneonelist.append(cut)
+                for i in range(oneone):
+                    base_array = base_array + oneonelist[i]
+
+                hard_code_result = hard_coding_dealer(base_array, betterang, for_calc, coolper, skiper)
+                base_array = hard_code_result[0]
+                coolper = hard_code_result[1]
+                skiper = hard_code_result[2]
+
+                base_array[11] = skiper
+                base_array[2] = max_damper + base_array[2]
+                base_array[3] = max_criper + base_array[3]
+                only_bon = base_array[4]
+                base_array[4] = base_array[4] + base_array[5] * (base_array[9] * 0.0045 + 1.05)
+                actlvl = ((base_array[active_eff_one] + base_array[22] * job_lv1 + base_array[
+                    23] * job_lv2 + base_array[24] * job_lv3 +
+                           base_array[25] * job_lv4 + base_array[26] * job_lv5 + base_array[
+                               27] * job_lv6) / 100 + 1)
+                actlvl2 = base_array[22] * (0.5 - silmari * 0.06) * 0.0213 + base_array[24] * (
+                        0.5 - silmari * 0.06) * 0.04 + base_array[24] * (
+                                  0.1484 - silmari * 0.0284) * 0.0674 + 1
+                paslvl = ((100 + base_array[16] * job_pas0) / 100) * (
+                        (100 + base_array[17] * job_pas1) / 100) * (
+                                 (100 + base_array[18] * job_pas2) / 100) * (
+                                 (100 + base_array[19] * job_pas3) / 100)
+                if inv_tg == 2:
+                    inv_auto = inv_auto_dealer(base_array, only_bon, inv2_on_tg, inv_type_list)
+                    base_array = inv_auto[0]
+                    only_bon = inv_auto[1]
+                    inv1_opt = inv_auto[2]
+                    inv2_opt = inv_auto[3]
+                    inv1_val = inv_auto[4]
+                    inv2_val = inv_auto[5]
+                if ult_2 != 0:
+                    ult1_per = job_ult1 * (1 + base_array[23] * 0.0653) / actlvl * (ult_1 / 100)
+                    ult2_per = job_ult2 * (1 + (base_array[25] * 0.1203 + 0.04348 * base_array[
+                        27] * silmari)) / actlvl * (ult_2 / 100)
+                    ult3_per = job_ult3 * (1 + base_array[27] * 0.1883) / actlvl * (ult_3 / 100)
+                    ult_skiper = (ult1_per + ult2_per + ult3_per) * 100
+                real_bon_not_ele = only_bon + base_array[5] * (
+                        (base_array[9] - int(ele_skill)) * 0.0045 + 1.05)
+                damage = ((base_array[2] / 100 + 1) * (base_array[3] / 100 + 1) * (
+                        base_array[4] / 100 + 1) * (base_array[6] / 100 + 1) * (
+                                  base_array[7] / 100 + 1) *
+                          (base_array[8] / 100 + 1) * (base_array[9] * 0.0045 + 1.05) * (
+                                  base_array[10] / 100 + 1) * (skiper / 100 + 1) *
+                          paslvl * ((54500 + 3.31 * base_array[0]) / 54500) * (
+                                  (4800 + base_array[1]) / 4800) / (
+                                  1.05 + 0.0045 * int(ele_skill))) * wep_pre_calced[calc_wep_num]
+                final_damage = damage * ((100 / (100 - coolper) - 1) * cool_eff * cool_on + 1) * (
+                        (base_array[12] + (actlvl - 1) * 100 + ult_skiper) / 100 + 1) * \
+                               cool_pre_calced[calc_wep_num]
+                final_damage2 = damage * ((100 / (100 - coolper) - 1) * cool_eff2 + 1) * (
+                        (base_array[12] + (actlvl2 - 1) * 100) / 100 + 1) * cool_pre_calced2[
+                                    calc_wep_num]
+                damage_not_ele = final_damage * (1.05 + 0.0045 * int(ele_skill)) / (
+                        base_array[9] * 0.0045 + 1.05) * ((base_array[9] - int(
+                    ele_skill)) * 0.0045 + 1.05) / 1.05 * (real_bon_not_ele / 100 + 1) / (
+                                         base_array[4] / 100 + 1)
+                damage_not_ele2 = final_damage2 * (1.05 + 0.0045 * int(ele_skill)) / (
+                        base_array[9] * 0.0045 + 1.05) * ((base_array[9] - int(
+                    ele_skill)) * 0.0045 + 1.05) / 1.05 * (real_bon_not_ele / 100 + 1) / (
+                                          base_array[4] / 100 + 1)
+                damage_only_equ = damage / paslvl / wep_pre_calced[calc_wep_num]
+
+                inv_string = "잔향부여= " + inv1_opt + "(" + str(inv1_val) + "%) / " + inv2_opt + "(" + str(
+                    inv2_val) + "%)"
+                thread_save_list[final_damage] = [calc_wep, base_array, damage, damage_not_ele, inv_string,
+                                                  [ult_1, ult_2, ult_3, ult_skiper], damage_only_equ,
+                                                  final_damage2, wep_name_list_temp[calc_wep_num]]
+                thread_save_list0[final_damage2] = [calc_wep, base_array, damage, damage_not_ele2, inv_string,
+                                                    [ult_1, ult_2, ult_3, ult_skiper], damage_only_equ,
+                                                    final_damage, wep_name_list_temp[calc_wep_num]]
+                with count_num.get_lock():
+                    count_num.value += 1
+            else:
+                with count_all.get_lock():
+                    count_all.value += 1
+        # 코드 이름
+        # 0추스탯 1추공 2증 3크 4추 5속추
+        # 6모 7공 8스탯 9속강 10지속 11스증 12특수
+        # 13공속 14크확 / 15 특수액티브 / 16~19 패시브 /20 그로기포함/21 2각캐특수액티브 /22~27 액티브레벨링/
+        if max_setopt != 8 or set_perfect == 1:
+            for calc_now in all_list:
+                if exit_calc.value == 1:
+                    print(f"Thread {thread_id} stopped")
+                    return
+
+                set_list, setopt_num = make_setopt_num(calc_now, 0)
+
+                if setopt_num >= max_setopt - set_perfect:
+                    if setopt_num >= max_setopt: max_setopt = setopt_num
+                    base_array = np.array(
+                        [0, 0, extra_dam, extra_cri, extra_bon, 0, extra_all, extra_att, extra_sta, ele_in,
+                         0, 1, 0, 0, 0, 0, 0, 0, extra_pas2, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+                    ult_1 = 0
+                    ult_2 = 0
+                    ult_3 = 0
+                    ult_skiper = 0
+                    skiper = 0
+                    damage = 0
+                    coolper = 0
+                    calc_wep = wep_num[calc_wep_num] + calc_now
+                    for_calc = wep_num[calc_wep_num] + make_set_list(calc_now, set_list)
+                    hard_coding = for_calc.count
+                    oneone = len(for_calc)
+                    oneonelist = []
+                    max_damper = fixed_dam
+                    max_criper = fixed_cri
+                    for i in range(oneone):
+                        no_cut = getone(for_calc[i])  ## 11번 스증
+                        cut = np.array(no_cut[0:20] + no_cut[22:23] + no_cut[34:35] + no_cut[38:44])
+                        skiper = (skiper / 100 + 1) * (cut[11] / 100 + 1) * 100 - 100
+                        coolper = (1 - (100 - coolper) / 100 * (
+                                100 - no_cut[22 + cool_eff_dictnum]) / 100) * 100
+                        max_damper = max([no_cut[44], max_damper])
+                        max_criper = max([no_cut[45], max_criper])
+                        ult_1 = (no_cut[46] / 100 + 1) * (ult_1 / 100 + 1) * 100 - 100
+                        ult_2 = (no_cut[47] / 100 + 1) * (ult_2 / 100 + 1) * 100 - 100
+                        ult_3 = (no_cut[48] / 100 + 1) * (ult_3 / 100 + 1) * 100 - 100
+                        oneonelist.append(cut)
+                    for i in range(oneone):
+                        base_array = base_array + oneonelist[i]
+
+                    hard_code_result = hard_coding_dealer(base_array, betterang, for_calc, coolper, skiper)
+                    base_array = hard_code_result[0]
+                    coolper = hard_code_result[1]
+                    skiper = hard_code_result[2]
+
+                    base_array[11] = skiper
+                    base_array[2] = max_damper + base_array[2]
+                    base_array[3] = max_criper + base_array[3]
+                    only_bon = base_array[4]
+                    base_array[4] = base_array[4] + base_array[5] * (base_array[9] * 0.0045 + 1.05)
+                    actlvl = ((base_array[active_eff_one] + base_array[22] * job_lv1 + base_array[
+                        23] * job_lv2 + base_array[24] * job_lv3 +
+                               base_array[25] * job_lv4 + base_array[26] * job_lv5 + base_array[
+                                   27] * job_lv6) / 100 + 1)
+                    actlvl2 = base_array[22] * (0.5 - silmari * 0.06) * 0.0213 + base_array[24] * (
+                            0.5 - silmari * 0.06) * 0.04 + base_array[24] * (
+                                      0.1484 - silmari * 0.0284) * 0.0674 + 1
+                    paslvl = ((100 + base_array[16] * job_pas0) / 100) * (
+                            (100 + base_array[17] * job_pas1) / 100) * (
+                                     (100 + base_array[18] * job_pas2) / 100) * (
+                                     (100 + base_array[19] * job_pas3) / 100)
+                    if inv_tg == 2:
+                        inv_auto = inv_auto_dealer(base_array, only_bon, inv2_on_tg, inv_type_list)
+                        base_array = inv_auto[0]
+                        only_bon = inv_auto[1]
+                        inv1_opt = inv_auto[2]
+                        inv2_opt = inv_auto[3]
+                        inv1_val = inv_auto[4]
+                        inv2_val = inv_auto[5]
+                    if ult_2 != 0:
+                        ult1_per = job_ult1 * (1 + base_array[23] * 0.0653) / actlvl * (ult_1 / 100)
+                        ult2_per = job_ult2 * (1 + (base_array[25] * 0.1203 + 0.04348 * base_array[
+                            27] * silmari)) / actlvl * (ult_2 / 100)
+                        ult3_per = job_ult3 * (1 + base_array[27] * 0.1883) / actlvl * (ult_3 / 100)
+                        ult_skiper = (ult1_per + ult2_per + ult3_per) * 100
+                    real_bon_not_ele = only_bon + base_array[5] * (
+                            (base_array[9] - int(ele_skill)) * 0.0045 + 1.05)
+                    damage = ((base_array[2] / 100 + 1) * (base_array[3] / 100 + 1) * (
+                            base_array[4] / 100 + 1) * (base_array[6] / 100 + 1) * (
+                                      base_array[7] / 100 + 1) *
+                              (base_array[8] / 100 + 1) * (base_array[9] * 0.0045 + 1.05) * (
+                                      base_array[10] / 100 + 1) * (skiper / 100 + 1) *
+                              paslvl * ((54500 + 3.31 * base_array[0]) / 54500) * (
+                                      (4800 + base_array[1]) / 4800) / (
+                                      1.05 + 0.0045 * int(ele_skill))) * wep_pre_calced[calc_wep_num]
+                    final_damage = damage * ((100 / (100 - coolper) - 1) * cool_eff * cool_on + 1) * (
+                            (base_array[12] + (actlvl - 1) * 100 + ult_skiper) / 100 + 1) * \
+                                   cool_pre_calced[calc_wep_num]
+                    final_damage2 = damage * ((100 / (100 - coolper) - 1) * cool_eff2 + 1) * (
+                            (base_array[12] + (actlvl2 - 1) * 100) / 100 + 1) * cool_pre_calced2[
+                                        calc_wep_num]
+                    damage_not_ele = final_damage * (1.05 + 0.0045 * int(ele_skill)) / (
+                            base_array[9] * 0.0045 + 1.05) * ((base_array[9] - int(
+                        ele_skill)) * 0.0045 + 1.05) / 1.05 * (real_bon_not_ele / 100 + 1) / (
+                                             base_array[4] / 100 + 1)
+                    damage_not_ele2 = final_damage2 * (1.05 + 0.0045 * int(ele_skill)) / (
+                            base_array[9] * 0.0045 + 1.05) * ((base_array[9] - int(
+                        ele_skill)) * 0.0045 + 1.05) / 1.05 * (real_bon_not_ele / 100 + 1) / (
+                                              base_array[4] / 100 + 1)
+                    damage_only_equ = damage / paslvl / wep_pre_calced[calc_wep_num]
+
+                    inv_string = "잔향부여= " + inv1_opt + "(" + str(inv1_val) + "%) / " + inv2_opt + "(" + str(
+                        inv2_val) + "%)"
+                    thread_save_list[final_damage] = [calc_wep, base_array, damage, damage_not_ele, inv_string,
+                                                      [ult_1, ult_2, ult_3, ult_skiper], damage_only_equ,
+                                                      final_damage2, wep_name_list_temp[calc_wep_num]]
+                    thread_save_list0[final_damage2] = [calc_wep, base_array, damage, damage_not_ele2, inv_string,
+                                                        [ult_1, ult_2, ult_3, ult_skiper], damage_only_equ,
+                                                        final_damage, wep_name_list_temp[calc_wep_num]]
+                    with count_num.get_lock():
+                        count_num.value += 1
+                else:
+                    with count_all.get_lock():
+                        count_all.value += 1
+        else:
+            print('스킵됨')
+            with count_all.get_lock():
+                count_all.value += len(all_list)
+    else:  ##버퍼
+        base_b = 10 + int(db_preset['H2'].value) + int(db_preset['H4'].value) + int(
+            db_preset['H5'].value) + 1 + extra_blvl
+        base_c = 12 + int(db_preset['H3'].value) + 1 + extra_clvl
+        base_pas0 = 0
+        base_pas0_c = 3
+        base_pas0_b = 0
+        base_stat_s = 4339 + int(db_preset['H1'].value) + extra_stat - 40  ##2각 꺼지면 -528, 진각 추가로 40 제거
+        base_stat_d = int(db_preset['H6'].value) - int(db_preset['H1'].value)
+        base_stat_h = 4405 + int(db_preset['H1'].value) + extra_stat - 40  ##2각 꺼지면 -528, 진각 추가로 40 제거
+        base_pas0_1 = 0
+        lvlget = opt_buflvl.get
+        inv_string = "1옵션= " + inv3_opt + " [" + str(inv3_val) + "]\n2옵션= " + inv4_opt + " [" + str(
+            inv4_val) + "]"
+        # 코드 이름
+        # 0 체정 1 지능
+        # 축복 2 스탯% 3 물공% 4 마공% 5 독공%
+        # 아포 6 고정 7 스탯%
+        # 8 축렙 9 포렙
+        # 10 아리아/보징증폭
+        # 11 전직패 12 보징/크크 13 각패1 14 각패2 15 2각 16 각패3
+        # 17 깡신념 18 깡신실 19 아리아쿨 20 하베쿨 21 1각시특수피증(시로코옵션) 22 진각렙
+
+        setget = opt_buf.get
+        if len(all_list_god) != 0:
+            for calc_now in all_list_god:
+                if exit_calc.value == 1:
+                    print(f"Thread {thread_id} stopped")
+                    return
+
+                set_list, setopt_num = make_setopt_num(calc_now, 1)
+
+                if setopt_num >= max_setopt - set_perfect:
+                    base_array = np.array(
+                        [base_stat_h, base_stat_s, 0, 0, 0, 0, extra_cstat, 0, base_b, base_c, 0, base_pas0,
+                         base_pas0_1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+
+                    if setopt_num >= max_setopt: max_setopt = setopt_num
+                    b_stat = (extra_bstat / 100 + 1) * 1.236384 * 100 - 100  ##탈리스만 8%/8%/6%
+                    b_phy = extra_batt
+                    b_mag = extra_batt
+                    b_ind = extra_batt
+                    c_per = extra_cper
+                    calc_wep = wep_num[calc_wep_num] + calc_now
+                    for_calc = wep_num[calc_wep_num] + make_set_list(calc_now, set_list)
+                    hard_coding = for_calc.count
+                    oneone = len(for_calc)
+                    oneonelist = []
+                    for i in range(oneone):
+                        no_cut = np.array(setget(for_calc[i]))  ## 2 3 4 5 7
+                        base_array = base_array + no_cut
+                        b_stat = (b_stat / 100 + 1) * (no_cut[2] / 100 + 1) * 100 - 100
+                        b_phy = (b_phy / 100 + 1) * (no_cut[3] / 100 + 1) * 100 - 100
+                        b_mag = (b_mag / 100 + 1) * (no_cut[4] / 100 + 1) * 100 - 100
+                        b_ind = (b_ind / 100 + 1) * (no_cut[5] / 100 + 1) * 100 - 100
+                        c_per = (c_per / 100 + 1) * (no_cut[7] / 100 + 1) * 100 - 100
+                        oneonelist.append(no_cut)
+
+                    if hard_coding('1441') == 1:
+                        if hard_coding('11440') != 1:  ##3셋 스탯160, 영축힘지8%, 물마독3% 감소
+                            base_array[0] = base_array[0] - 160
+                            base_array[1] = base_array[1] - 160
+                            b_stat = (b_stat / 100 + 1) / 1.08 * 100 - 100
+                            b_phy = (b_phy / 100 + 1) / 1.03 * 100 - 100
+                            b_mag = (b_mag / 100 + 1) / 1.03 * 100 - 100
+                            b_ind = (b_ind / 100 + 1) / 1.03 * 100 - 100
+
+                    if job_name == "세인트":
+                        b_base_att = lvlget('hol_b_atta')[int(base_array[8])]
+                        stat_pas0lvl_b = lvlget('pas0')[int(base_array[11]) + base_pas0_b] + \
+                                         lvlget('hol_pas0_1')[int(base_array[12])]
+                        stat_pas0lvl_c = lvlget('pas0')[int(base_array[11]) + base_pas0_c] + \
+                                         lvlget('hol_pas0_1')[int(base_array[12])]
+                        stat_pas1lvl = lvlget('hol_pas1')[int(base_array[13])] + base_array[17]
+                        stat_pas2lvl = lvlget('hol_act2')[int(base_array[15])]
+                        stat_pas3lvl = lvlget('pas3')[int(base_array[16])]
+                        stat_b = base_array[
+                                     0] + stat_pas0lvl_b + stat_pas1lvl + stat_pas2lvl + stat_pas3lvl + 19 * \
+                                 base_array[10] + base_stat_d
+                        stat_c = base_array[
+                                     0] + stat_pas0lvl_c + stat_pas1lvl + stat_pas2lvl + stat_pas3lvl + 19 * \
+                                 base_array[10]
+                        b_stat_calc = int(
+                            int(lvlget('hol_b_stat')[int(base_array[8])] * (b_stat / 100 + 1)) * (
+                                    stat_b / 620 + 1))
+                        b_phy_calc = int(int(b_base_att * (b_phy / 100 + 1)) * (stat_b / 620 + 1))
+                        b_mag_calc = int(int(b_base_att * (b_mag / 100 + 1)) * (stat_b / 620 + 1))
+                        b_ind_calc = int(int(b_base_att * (b_ind / 100 + 1)) * (stat_b / 620 + 1))
+                        b_average = int((b_phy_calc + b_mag_calc + b_ind_calc) / 3) + 42 + int(
+                            lvlget('hol_act0')[int(base_array[12])])
+                        c_calc2 = int(int((lvlget('c_stat')[int(base_array[9])] + base_array[6]) * (
+                                1.1 + 0.01 * int(base_array[22])) * (c_per / 100 + 1)) * (
+                                              stat_c / 750 + 1))
+                        c_calc = int(int((lvlget('c_stat')[int(base_array[9])] + base_array[6]) * (
+                                1.25 + 0.01 * int(base_array[22])) * (c_per / 100 + 1)) * (
+                                             stat_c / 750 + 1))
+                        pas1_calc = int(lvlget('hol_pas1_out')[int(base_array[13])] + 273)
+                        pas1_out = str(int(lvlget('hol_pas1_out')[int(base_array[13])] + 273)) + "(" + str(
+                            int(20 + base_array[13])) + "렙)"
+                        save1 = '스탯=' + str(b_stat_calc) + "\n앞뎀=" + str(b_average) + "\n\n적용스탯= " + str(
+                            int(stat_b)) + "\n적용레벨= " + str(int(base_array[8])) + "렙"
+                        save2 = '스탯= ' + str(c_calc) + '(' + str(c_calc2) + ')' + "\n\n적용스탯= " + str(
+                            int(stat_c)) + "\n적용레벨= " + str(int(base_array[9])) + "렙"
+
+                    else:
+                        if job_name == "세라핌":
+                            b_value = 665
+                            aria = 1.3
+                            amuguna = 1.15
+                            amuguna2 = 1.15
+                            amuguna_stat = 40
+                            crux = 0
+                        if job_name == "헤카테":
+                            b_value = 665
+                            aria = 1.25 * 1.15
+                            amuguna = 1.25 + 0.01 * int(base_array[22])
+                            amuguna2 = 1.1 + 0.01 * int(base_array[22])
+                            amuguna_stat = 0
+                            crux = 42 + int(base_array[13])
+
+                        b_base_att = lvlget('se_b_atta')[int(base_array[8])]
+                        stat_pas0lvl_b = lvlget('pas0')[int(base_array[11]) + int(base_pas0_b)]
+                        stat_pas0lvl_c = lvlget('pas0')[int(base_array[11]) + int(base_pas0_c)]
+                        stat_pas1lvl = lvlget('se_pas1')[int(base_array[13])] + base_array[18]
+                        stat_pas2lvl = lvlget('se_pas2')[int(base_array[14])]
+                        stat_pas3lvl = lvlget('pas3')[int(base_array[16])]
+                        stat_b = base_array[
+                                     1] + stat_pas0lvl_b + stat_pas1lvl + stat_pas2lvl + stat_pas3lvl + base_stat_d + amuguna_stat
+                        stat_c = base_array[
+                                     1] + stat_pas0lvl_c + stat_pas1lvl + stat_pas2lvl + stat_pas3lvl + amuguna_stat
+                        b_stat_calc = int(
+                            int(lvlget('se_b_stat')[int(base_array[8])] * (b_stat / 100 + 1)) * (
+                                    stat_b / b_value + 1) * aria)
+                        b_phy_calc = int(
+                            int(b_base_att * (b_phy / 100 + 1) * (stat_b / b_value + 1)) * aria)
+                        b_mag_calc = int(
+                            int(b_base_att * (b_mag / 100 + 1) * (stat_b / b_value + 1)) * aria)
+                        b_ind_calc = int(
+                            int(b_base_att * (b_ind / 100 + 1) * (stat_b / b_value + 1)) * aria)
+                        b_average = int((b_phy_calc + b_mag_calc + b_ind_calc) / 3) + crux
+                        c_calc = int(int(
+                            (lvlget('c_stat')[int(base_array[9])] + base_array[6]) * amuguna * (
+                                    c_per / 100 + 1)) * (stat_c / 750 + 1))
+                        c_calc2 = 0
+                        pas1_calc = int(stat_pas1lvl + 442)
+                        pas1_out = str(int(stat_pas1lvl + 442)) + "(" + str(int(20 + base_array[13])) + "렙)"
+                        save1 = '스탯=' + str(b_stat_calc) + "(" + str(
+                            int(b_stat_calc / aria)) + ")\n앞뎀=" + str(b_average) + "(" + str(
+                            int(b_average / aria)) + ")\n\n적용스탯= " + str(int(stat_b)) + "\n적용레벨= " + str(
+                            int(base_array[8])) + "렙"
+                        save2 = '스탯= ' + str(c_calc) + "\n\n적용스탯= " + str(int(stat_c)) + "\n적용레벨= " + str(
+                            int(base_array[9])) + "렙"
+                        if job_name == "헤카테":
+                            c_calc2 = int(int(
+                                (lvlget('c_stat')[int(base_array[9])] + base_array[6]) * amuguna2 * (
+                                        c_per / 100 + 1)) * (stat_c / 750 + 1))
+                            save2 = '스탯= ' + str(c_calc) + '(' + str(c_calc2) + ')' + "\n\n적용스탯= " + str(
+                                int(stat_c)) + "\n적용레벨= " + str(int(base_array[9])) + "렙"
+                    ##1축 2포 3합
+                    final_buf1 = ((15000 + b_stat_calc) / 250 + 1) * (2650 + b_average)
+                    final_buf2 = ((15000 + c_calc) / 250 + 1) * 2650 * (base_array[21] / 100 + 1)
+                    final_buf2_2 = ((15000 + c_calc2) / 250 + 1) * 2650 * (base_array[21] / 100 + 1)
+                    final_buf3 = ((15000 + pas1_calc + c_calc + b_stat_calc) / 250 + 1) * (
+                            2650 + b_average) * (base_array[21] / 100 + 1)
+                    final_buf3_2 = ((15000 + pas1_calc + c_calc2 + b_stat_calc) / 250 + 1) * (
+                            2650 + b_average) * (base_array[21] / 100 + 1)
+                    thread_save_list1[final_buf1] = [list(calc_wep), [save1, save2, pas1_out], inv_string,
+                                                     base_array, final_buf1, wep_name_list_temp[calc_wep_num]]
+                    thread_save_list2[final_buf2] = [list(calc_wep), [save1, save2, pas1_out], inv_string,
+                                                     base_array, final_buf2_2, wep_name_list_temp[calc_wep_num]]
+                    thread_save_list3[final_buf3] = [list(calc_wep), [save1, save2, pas1_out], inv_string,
+                                                     base_array, final_buf3_2, wep_name_list_temp[calc_wep_num]]
+
+                    with count_num.get_lock():
+                        count_num.value += 1
+                else:
+                    with count_all.get_lock():
+                        count_all.value += 1
+
+        if max_setopt != 8 or set_perfect == 1:
+            for calc_now in all_list:
+                if exit_calc.value == 1:
+                    print(f"Thread {thread_id} stopped")
+                    return
+
+                set_list, setopt_num = make_setopt_num(calc_now, 0)
+
+                if setopt_num >= max_setopt - set_perfect:
+                    base_array = np.array(
+                        [base_stat_h, base_stat_s, 0, 0, 0, 0, extra_cstat, 0, base_b, base_c, 0, base_pas0,
+                         base_pas0_1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0])
+
+                    if setopt_num >= max_setopt: max_setopt = setopt_num
+                    b_stat = (extra_bstat / 100 + 1) * 1.236384 * 100 - 100  ##탈리스만 8%/8%/6%
+                    b_phy = extra_batt
+                    b_mag = extra_batt
+                    b_ind = extra_batt
+                    c_per = extra_cper
+                    calc_wep = wep_num[calc_wep_num] + calc_now
+                    for_calc = wep_num[calc_wep_num] + make_set_list(calc_now, set_list)
+                    hard_coding = for_calc.count
+                    oneone = len(for_calc)
+                    oneonelist = []
+                    for i in range(oneone):
+                        no_cut = np.array(setget(for_calc[i]))  ## 2 3 4 5 7
+                        base_array = base_array + no_cut
+                        b_stat = (b_stat / 100 + 1) * (no_cut[2] / 100 + 1) * 100 - 100
+                        b_phy = (b_phy / 100 + 1) * (no_cut[3] / 100 + 1) * 100 - 100
+                        b_mag = (b_mag / 100 + 1) * (no_cut[4] / 100 + 1) * 100 - 100
+                        b_ind = (b_ind / 100 + 1) * (no_cut[5] / 100 + 1) * 100 - 100
+                        c_per = (c_per / 100 + 1) * (no_cut[7] / 100 + 1) * 100 - 100
+                        oneonelist.append(no_cut)
+
+                    if hard_coding('1441') == 1:
+                        if hard_coding('11440') != 1:  ##3셋 스탯160, 영축힘지8%, 물마독3% 감소
+                            base_array[0] = base_array[0] - 160
+                            base_array[1] = base_array[1] - 160
+                            b_stat = (b_stat / 100 + 1) / 1.08 * 100 - 100
+                            b_phy = (b_phy / 100 + 1) / 1.03 * 100 - 100
+                            b_mag = (b_mag / 100 + 1) / 1.03 * 100 - 100
+                            b_ind = (b_ind / 100 + 1) / 1.03 * 100 - 100
+
+                    if job_name == "세인트":
+                        b_base_att = lvlget('hol_b_atta')[int(base_array[8])]
+                        stat_pas0lvl_b = lvlget('pas0')[int(base_array[11]) + base_pas0_b] + \
+                                         lvlget('hol_pas0_1')[int(base_array[12])]
+                        stat_pas0lvl_c = lvlget('pas0')[int(base_array[11]) + base_pas0_c] + \
+                                         lvlget('hol_pas0_1')[int(base_array[12])]
+                        stat_pas1lvl = lvlget('hol_pas1')[int(base_array[13])] + base_array[17]
+                        stat_pas2lvl = lvlget('hol_act2')[int(base_array[15])]
+                        stat_pas3lvl = lvlget('pas3')[int(base_array[16])]
+                        stat_b = base_array[
+                                     0] + stat_pas0lvl_b + stat_pas1lvl + stat_pas2lvl + stat_pas3lvl + 19 * \
+                                 base_array[10] + base_stat_d
+                        stat_c = base_array[
+                                     0] + stat_pas0lvl_c + stat_pas1lvl + stat_pas2lvl + stat_pas3lvl + 19 * \
+                                 base_array[10]
+                        b_stat_calc = int(
+                            int(lvlget('hol_b_stat')[int(base_array[8])] * (b_stat / 100 + 1)) * (
+                                    stat_b / 630 + 1))
+                        b_phy_calc = int(
+                            int(b_base_att * (b_phy / 100 + 1)) * (stat_b / 620 + 1) + lvlget('hol_act0')[
+                                int(base_array[12])]) + 42
+                        b_mag_calc = int(
+                            int(b_base_att * (b_mag / 100 + 1)) * (stat_b / 620 + 1) + lvlget('hol_act0')[
+                                int(base_array[12])]) + 42
+                        b_ind_calc = int(
+                            int(b_base_att * (b_ind / 100 + 1)) * (stat_b / 620 + 1) + lvlget('hol_act0')[
+                                int(base_array[12])]) + 42
+                        b_average = int((b_phy_calc + b_mag_calc + b_ind_calc) / 3)
+                        c_calc2 = int(int((lvlget('c_stat')[int(base_array[9])] + base_array[6]) * (
+                                1.1 + 0.01 * int(base_array[22])) * (c_per / 100 + 1)) * (
+                                              stat_c / 750 + 1))
+                        c_calc = int(int((lvlget('c_stat')[int(base_array[9])] + base_array[6]) * (
+                                1.25 + 0.01 * int(base_array[22])) * (c_per / 100 + 1)) * (
+                                             stat_c / 750 + 1))
+                        pas1_calc = int(lvlget('hol_pas1_out')[int(base_array[13])] + 273)
+                        pas1_out = str(int(lvlget('hol_pas1_out')[int(base_array[13])] + 273)) + "(" + str(
+                            int(20 + base_array[13])) + "렙)"
+                        save1 = '스탯=' + str(b_stat_calc) + "\n앞뎀=" + str(b_average) + "\n\n적용스탯= " + str(
+                            int(stat_b)) + "\n적용레벨= " + str(int(base_array[8])) + "렙"
+                        save2 = '스탯= ' + str(c_calc) + '(' + str(c_calc2) + ')' + "\n\n적용스탯= " + str(
+                            int(stat_c)) + "\n적용레벨= " + str(int(base_array[9])) + "렙"
+
+                    else:
+                        if job_name == "세라핌":
+                            b_value = 665
+                            aria = 1.3
+                            amuguna = 1.15
+                            amuguna2 = 1.15
+                            amuguna_stat = 40
+                            crux = 0
+                        if job_name == "헤카테":
+                            b_value = 665
+                            aria = 1.25 * 1.15
+                            amuguna = 1.25 + 0.01 * int(base_array[22])
+                            amuguna2 = 1.1 + 0.01 * int(base_array[22])
+                            amuguna_stat = 0
+                            crux = 42 + int(base_array[13])
+
+                        b_base_att = lvlget('se_b_atta')[int(base_array[8])]
+                        stat_pas0lvl_b = lvlget('pas0')[int(base_array[11]) + int(base_pas0_b)]
+                        stat_pas0lvl_c = lvlget('pas0')[int(base_array[11]) + int(base_pas0_c)]
+                        stat_pas1lvl = lvlget('se_pas1')[int(base_array[13])] + base_array[18]
+                        stat_pas2lvl = lvlget('se_pas2')[int(base_array[14])]
+                        stat_pas3lvl = lvlget('pas3')[int(base_array[16])]
+                        stat_b = base_array[
+                                     1] + stat_pas0lvl_b + stat_pas1lvl + stat_pas2lvl + stat_pas3lvl + base_stat_d + amuguna_stat
+                        stat_c = base_array[
+                                     1] + stat_pas0lvl_c + stat_pas1lvl + stat_pas2lvl + stat_pas3lvl + amuguna_stat
+                        b_stat_calc = int(
+                            int(lvlget('se_b_stat')[int(base_array[8])] * (b_stat / 100 + 1)) * (
+                                    stat_b / b_value + 1) * aria)
+                        b_phy_calc = int(
+                            int(b_base_att * (b_phy / 100 + 1) * (stat_b / b_value + 1)) * aria)
+                        b_mag_calc = int(
+                            int(b_base_att * (b_mag / 100 + 1) * (stat_b / b_value + 1)) * aria)
+                        b_ind_calc = int(
+                            int(b_base_att * (b_ind / 100 + 1) * (stat_b / b_value + 1)) * aria)
+                        b_average = int((b_phy_calc + b_mag_calc + b_ind_calc) / 3) + crux
+                        c_calc = int(int(
+                            (lvlget('c_stat')[int(base_array[9])] + base_array[6]) * amuguna * (
+                                    c_per / 100 + 1)) * (stat_c / 750 + 1))
+                        c_calc2 = 0
+                        pas1_calc = int(stat_pas1lvl + 442)
+                        pas1_out = str(int(stat_pas1lvl + 442)) + "(" + str(int(20 + base_array[13])) + "렙)"
+                        save1 = '스탯=' + str(b_stat_calc) + "(" + str(
+                            int(b_stat_calc / aria)) + ")\n앞뎀=" + str(b_average) + "(" + str(
+                            int(b_average / aria)) + ")\n\n적용스탯= " + str(int(stat_b)) + "\n적용레벨= " + str(
+                            int(base_array[8])) + "렙"
+                        save2 = '스탯= ' + str(c_calc) + "\n\n적용스탯= " + str(int(stat_c)) + "\n적용레벨= " + str(
+                            int(base_array[9])) + "렙"
+                        if job_name == "헤카테":
+                            c_calc2 = int(int(
+                                (lvlget('c_stat')[int(base_array[9])] + base_array[6]) * amuguna2 * (
+                                        c_per / 100 + 1)) * (stat_c / 750 + 1))
+                            save2 = '스탯= ' + str(c_calc) + '(' + str(c_calc2) + ')' + "\n\n적용스탯= " + str(
+                                int(stat_c)) + "\n적용레벨= " + str(int(base_array[9])) + "렙"
+                    ##1축 2포 3합
+                    final_buf1 = ((15000 + b_stat_calc) / 250 + 1) * (2650 + b_average)
+                    final_buf2 = ((15000 + c_calc) / 250 + 1) * 2650 * (base_array[21] / 100 + 1)
+                    final_buf2_2 = ((15000 + c_calc2) / 250 + 1) * 2650 * (base_array[21] / 100 + 1)
+                    final_buf3 = ((15000 + pas1_calc + c_calc + b_stat_calc) / 250 + 1) * (
+                            2650 + b_average) * (base_array[21] / 100 + 1)
+                    final_buf3_2 = ((15000 + pas1_calc + c_calc2 + b_stat_calc) / 250 + 1) * (
+                            2650 + b_average) * (base_array[21] / 100 + 1)
+                    thread_save_list1[final_buf1] = [list(calc_wep), [save1, save2, pas1_out], inv_string,
+                                                     base_array, final_buf1, wep_name_list_temp[calc_wep_num]]
+                    thread_save_list2[final_buf2] = [list(calc_wep), [save1, save2, pas1_out], inv_string,
+                                                     base_array, final_buf2_2, wep_name_list_temp[calc_wep_num]]
+                    thread_save_list3[final_buf3] = [list(calc_wep), [save1, save2, pas1_out], inv_string,
+                                                     base_array, final_buf3_2, wep_name_list_temp[calc_wep_num]]
+
+                    with count_num.get_lock():
+                        count_num.value += 1
+                else:
+                    with count_all.get_lock():
+                        count_all.value += 1
+        else:
+            print('스킵됨')
+            with count_all.get_lock():
+                count_all.value += len(all_list_god)
+
+    return thread_save_list, thread_save_list0, thread_save_list1, thread_save_list2, thread_save_list3
+
+
 class Calculator:
     def __init__(self):
         self.result_window: Toplevel = None
@@ -148,6 +822,10 @@ class Calculator:
         self.all_list_list_num = 0  # 계산 전체 경우의 수
         self.a_num_all = 0
         self.equip_list = {}
+
+        self.exit_calc = Value("i", 0)  # 계산 종료 판정
+        self.count_num = Value("i", 0)  # 유효 계산 카운터
+        self.count_all = Value("i", 0)  # 전체 계산 카운터
 
         self.jobtype_select: tkinter.ttk.Combobox = None
         self.jobup_select: tkinter.ttk.Combobox = None
@@ -189,16 +867,12 @@ class Calculator:
             "inv_select4_2": lambda: self.inv_select4_2
         }
 
-        self.count_num = 0  # 유효 계산 카운터
-        self.count_all = 0  # 전체 계산 카운터
         self.show_number = 0  # 숫자 갱신 여부
-        self.max_setopt = 0
         self.inv_tg = 0  # 잔향 부여 선택(0:미부여,1:선택부여,2:최적부여)
         self.wep_name_list: List[str] = []
         self.style_calced = ""
         self.creature_calced = ""
         self.default_base_equip = 0  # 레전더리(0), 차원 레전더리(1), 초오광(2)
-        self.exit_calc = 0  # 계산 종료 판정
         self.image_list_wep: Dict[str, PhotoImage] = {}
         self.image_list: Dict[str, PhotoImage] = {}
         self.image_list2: Dict[str, PhotoImage] = {}
@@ -2094,9 +2768,9 @@ class Calculator:
     # 정지
     def stop_calc(self):
         # TODO: thread fix
-        self.exit_calc = 1
+        self.exit_calc.value = 1
         time.sleep(1)
-        self.exit_calc = 0
+        self.exit_calc.value = 0
 
     ## 저장된 preset 불러오기
     def load_checklist(self):
@@ -2388,9 +3062,9 @@ class Calculator:
         select_perfect: tkinter.ttk.Combobox = self.select_perfect
 
         if select_perfect.get()[0:5] == '세트필터↓' or select_perfect.get()[0:4] == '풀셋모드' or select_perfect.get() == '메타몽풀셋모드':
-            set_perfect=1 #세트 필터 하락
+            set_perfect = 1 #세트 필터 하락
         else:
-            set_perfect=0
+            set_perfect = 0
         if self.a_num_all > 20000000:
             if select_perfect.get()[0:4] != "풀셋모드" and select_perfect.get() != "메타몽풀셋모드":
                 ask_really=tkinter.messagebox.askquestion('확인',"2천만 가지가 넘는 경우의 수는 풀셋/메타몽풀셋 모드를 권장합니다.\n그냥 진행하시겠습니까?")
@@ -2436,8 +3110,6 @@ class Calculator:
             aria_fix=0.25
             aria_dif=0
 
-        self.count_num = 0
-        self.count_all = 0
         self.show_number = 0
 
         #진각/2각에 따른 실마리, 쿨감 효율 차이
@@ -2660,6 +3332,15 @@ class Calculator:
             extra_pas2=1
 
         #잔향 부여 선기입 (직접 선택)
+        inv1_opt = ""
+        inv1_val = 0
+        inv2_opt = ""
+        inv2_val = 0
+        inv3_opt = ""
+        inv3_val = 0
+        inv4_opt = ""
+        inv4_val = 0
+
         if self.inv_tg ==1:
             inv_select1_1 = self.inv_select1_1
             inv_select1_2 = self.inv_select1_2
@@ -2812,7 +3493,7 @@ class Calculator:
 
 
         self.all_list_list_num = 0
-        all_list_list=[]
+        all_list_list = []
 
         ##풀셋모드##
         ##########################################################################################################################
@@ -3297,441 +3978,141 @@ class Calculator:
         #########################################################################################################################계산 시작
 
         self.change_state_text(text='계산 시작')
-        save_list={} #딜러1번
-        save_list0={} #딜러2번
-        save_list1={} #버퍼1번
-        save_list2={} #버퍼2번
-        save_list3={} #버퍼3번
-        self.max_setopt = 0
-        loop_counter=0
+        
+        save_list = {}  #딜러1번
+        save_list0 = {}  #딜러2번
+        save_list1 = {}  #버퍼1번
+        save_list2 = {}  #버퍼2번
+        save_list3 = {}  #버퍼3번
+
+        job_name: str = jobup_select.get()[4:7]
+        
+        all_list_list = reduce(lambda a, b: (a[0] + b[0], a[1] + b[1]), all_list_list)
+        normal_equip_list = all_list_list[0]
+        god_equip_list = all_list_list[1]
+        all_equip_cases = [(val, True) for val in god_equip_list] + [(val, False) for val in normal_equip_list]
+
+        if select_perfect.get()[0:4] == '풀셋모드' or select_perfect.get() == '메타몽풀셋모드':
+            num_thread = 1
+        else:
+            num_thread = os.cpu_count()
+
+        count_per_thread = len(all_equip_cases) // num_thread
+        leftover_per_thread = len(all_equip_cases) % num_thread
+
+        if count_per_thread == 0:
+            num_thread = 1
+            all_list_per_thread = [all_equip_cases]
+        elif num_thread == 1:
+            all_list_per_thread = [all_equip_cases]
+        else:
+            all_list_per_thread = [all_equip_cases[i * count_per_thread:(i + 1) * count_per_thread] for i in range(num_thread)]
+
+            for i in range(leftover_per_thread):
+                all_list_per_thread[i].append(all_equip_cases[num_thread * count_per_thread + i])
+
+        common_args = {
+            "job_name": job_name,
+            "opt_one": self.opt_one,
+            "opt_buf": self.opt_buf,
+            "opt_buflvl": self.opt_buflvl,
+            "inv_tg": self.inv_tg,
+            "inv_type_list": self.inv_type_list,
+            "set_perfect": set_perfect,
+            "wep_num": wep_num,
+            "extra_dam": extra_dam,
+            "extra_cri": extra_cri,
+            "extra_bon": extra_bon,
+            "extra_all": extra_all,
+            "extra_att": extra_att,
+            "extra_sta": extra_sta,
+            "ele_in": ele_in,
+            "fixed_dam": fixed_dam,
+            "fixed_cri": fixed_cri,
+            "extra_pas2": extra_pas2,
+            "cool_eff_dictnum": cool_eff_dictnum,
+            "betterang": betterang,
+
+            "active_eff_one": active_eff_one,
+            "job_lv1": job_lv1,
+            "job_lv2": job_lv2,
+            "job_lv3": job_lv3,
+            "job_lv4": job_lv4,
+            "job_lv5": job_lv5,
+            "job_lv6": job_lv6,
+            "silmari": silmari,
+            "job_pas0": job_pas0,
+            "job_pas1": job_pas1,
+            "job_pas2": job_pas2,
+            "job_pas3": job_pas3,
+            "inv2_on_tg": inv2_on_tg,
+            "job_ult1": job_ult1,
+            "job_ult2": job_ult2,
+            "job_ult3": job_ult3,
+            "ele_skill": ele_skill,
+            "wep_pre_calced": wep_pre_calced,
+            "cool_eff": cool_eff,
+            "cool_eff2": cool_eff2,
+            "cool_on": cool_on,
+            "cool_pre_calced": cool_pre_calced,
+            "cool_pre_calced2": cool_pre_calced2,
+            "wep_name_list_temp": wep_name_list_temp,
+            "db_preset": db_preset,
+            "extra_clvl": extra_clvl,
+            "extra_stat": extra_stat,
+            "inv1_opt": inv1_opt,
+            "inv1_val": inv1_val,
+            "inv2_opt": inv2_opt,
+            "inv2_val": inv2_val,
+            "inv3_opt": inv3_opt,
+            "inv3_val": inv3_val,
+            "inv4_opt": inv4_opt,
+            "inv4_val": inv4_val,
+            "extra_blvl": extra_blvl,
+            "extra_cstat": extra_cstat,
+            "extra_bstat": extra_bstat,
+            "extra_batt": extra_batt,
+            "extra_cper": extra_cper
+        }
+
+        self.exit_calc.value = 0
+        self.count_num.value = 0
+        self.count_all.value = 0
 
         for calc_wep_num in range(len(wep_num)):
+            if num_thread == 1:
+                init_global(self.exit_calc, self.count_num, self.count_all)
 
-            for now_all_list in all_list_list:
-                loop_counter=loop_counter+1
+                calc_result = calc_per_thread(all_list_per_thread[0], 1, calc_wep_num, **common_args)
+                save_list, save_list0, save_list1, save_list2, save_list3 = calc_result
+            else:
+                with ProcessPoolExecutor(max_workers=num_thread, initializer=init_global, initargs=(self.exit_calc, self.count_num, self.count_all)) as executor:
+                    futures: List[Future] = []
 
-                all_list_god=now_all_list[1]
-                all_list=now_all_list[0]
-                all_list_num=now_all_list[2]
-                print(str(loop_counter)+'회차 : '+str(all_list_num))
+                    print(f"Calc start: {num_thread} threads")
 
-                if jobup_select.get()[4:7] != "세인트" and jobup_select.get()[4:7] != "세라핌" and jobup_select.get()[4:7] != "헤카테":
-                    getone=self.opt_one.get
+                    for i, list_per_thread in enumerate(all_list_per_thread):
+                        fut: Future = executor.submit(calc_per_thread, list_per_thread, i + 1, calc_wep_num, **common_args)
+                        futures.append(fut)
 
-                    if len(all_list_god)!=0:
-                        for calc_now in all_list_god:
-                            if self.exit_calc==1:
-                                self.change_state_text(text='중지됨')
-                                return
-                            set_list=make_setopt_num(calc_now,1)[0]
-                            setopt_num=make_setopt_num(calc_now,1)[1]
-                            if setopt_num >= self.max_setopt-set_perfect :
-                                if setopt_num >= self.max_setopt: self.max_setopt = setopt_num
-                                base_array=np.array([0,0,extra_dam,extra_cri,extra_bon,0,extra_all,extra_att,extra_sta,ele_in,0,1,0,0,0,0,0,0,extra_pas2,0,0,0,0,0,0,0,0,0])
-                                max_damper=fixed_dam
-                                max_criper=fixed_cri
-                                skiper=0;damage=0;coolper=0
-                                ult_1=0;ult_2=0;ult_3=0;ult_skiper=0
-                                calc_wep=wep_num[calc_wep_num]+calc_now
-                                for_calc=wep_num[calc_wep_num]+make_set_list(calc_now,set_list)
-                                hard_coding=for_calc.count
-                                oneone=len(for_calc)
-                                oneonelist=[]
-                                for i in range(oneone):
-                                    no_cut=getone(for_calc[i])               ## 11번 스증 ## 20번 쿨감
+                    print(f"Thread spawn complete, calculating...")
 
-                                    cut=np.array(no_cut[0:20]+no_cut[22:23]+no_cut[34:35]+no_cut[38:44])
-                                    skiper=(skiper/100+1)*(cut[11]/100+1)*100-100
-                                    coolper=(1-(100-coolper)/100*(100-no_cut[22+cool_eff_dictnum])/100)*100
-                                    max_damper=max([no_cut[44],max_damper])
-                                    max_criper=max([no_cut[45],max_criper])
-                                    ult_1=(no_cut[46]/100+1)*(ult_1/100+1)*100-100
-                                    ult_2=(no_cut[47]/100+1)*(ult_2/100+1)*100-100
-                                    ult_3=(no_cut[48]/100+1)*(ult_3/100+1)*100-100
-                                    oneonelist.append(cut)
-                                for i in range(oneone):
-                                    base_array=base_array+oneonelist[i]
+                    executor.shutdown()
 
-                                hard_code_result=hard_coding_dealer(base_array,betterang,for_calc,coolper,skiper)
-                                base_array=hard_code_result[0]
-                                coolper=hard_code_result[1]
-                                skiper=hard_code_result[2]
+                    print(f"All calculations done")
 
-                                base_array[11]=skiper
-                                base_array[2]=max_damper+base_array[2]
-                                base_array[3]=max_criper+base_array[3]
-                                only_bon=base_array[4]
-                                base_array[4]=base_array[4]+base_array[5]*(base_array[9]*0.0045+1.05)
-                                actlvl=((base_array[active_eff_one]+base_array[22]*job_lv1+base_array[23]*job_lv2+base_array[24]*job_lv3+
-                                        base_array[25]*job_lv4+base_array[26]*job_lv5+base_array[27]*job_lv6)/100+1)
-                                actlvl2=base_array[22]*(0.5-silmari*0.06)*0.0213+base_array[24]*(0.5-silmari*0.06)*0.04+base_array[24]*(0.1484-silmari*0.0284)*0.0674+1
-                                paslvl=((100+base_array[16]*job_pas0)/100)*((100+base_array[17]*job_pas1)/100)*((100+base_array[18]*job_pas2)/100)*((100+base_array[19]*job_pas3)/100)
-                                if self.inv_tg == 2:
-                                    inv_auto = inv_auto_dealer(base_array, only_bon, inv2_on_tg, self.inv_type_list)
-                                    base_array=inv_auto[0]
-                                    only_bon=inv_auto[1]
-                                    inv1_opt=inv_auto[2]
-                                    inv2_opt=inv_auto[3]
-                                    inv1_val=inv_auto[4]
-                                    inv2_val=inv_auto[5]
-                                if ult_2 !=0:
-                                    ult1_per=job_ult1*(1+base_array[23]*0.0653)/actlvl*(ult_1/100)
-                                    ult2_per=job_ult2*(1+(base_array[25]*0.1203+0.04348*base_array[27]*silmari))/actlvl*(ult_2/100)
-                                    ult3_per=job_ult3*(1+base_array[27]*0.1883)/actlvl*(ult_3/100)
-                                    ult_skiper=(ult1_per+ult2_per+ult3_per)*100
-                                real_bon_not_ele=only_bon+base_array[5]*((base_array[9]-int(ele_skill))*0.0045+1.05)
-                                damage=((base_array[2]/100+1)*(base_array[3]/100+1)*(base_array[4]/100+1)*(base_array[6]/100+1)*(base_array[7]/100+1)*
-                                        (base_array[8]/100+1)*(base_array[9]*0.0045+1.05)*(base_array[10]/100+1)*(skiper/100+1)*
-                                        paslvl*((54500+3.31*base_array[0])/54500)*((4800+base_array[1])/4800)/(1.05+0.0045*int(ele_skill)))*wep_pre_calced[calc_wep_num]
-                                final_damage=damage*((100/(100-coolper)-1)*cool_eff*cool_on+1)*((base_array[12]+(actlvl-1)*100+ult_skiper)/100+1)*cool_pre_calced[calc_wep_num]
-                                final_damage2=damage*((100/(100-coolper)-1)*cool_eff2+1)*((base_array[12]+(actlvl2-1)*100)/100+1)*cool_pre_calced2[calc_wep_num]
-                                damage_not_ele=final_damage*(1.05+0.0045*int(ele_skill))/(base_array[9]*0.0045+1.05)*((base_array[9]-int(ele_skill))*0.0045+1.05)/1.05*(real_bon_not_ele/100+1)/(base_array[4]/100+1)
-                                damage_not_ele2=final_damage2*(1.05+0.0045*int(ele_skill))/(base_array[9]*0.0045+1.05)*((base_array[9]-int(ele_skill))*0.0045+1.05)/1.05*(real_bon_not_ele/100+1)/(base_array[4]/100+1)
-                                damage_only_equ=damage/paslvl/wep_pre_calced[calc_wep_num]
+                for fut in as_completed(futures):
+                    if self.exit_calc.value == 1:
+                        self.change_state_text(text='중지됨')
+                        return
 
-                                inv_string="잔향부여= "+inv1_opt+"("+str(inv1_val)+"%) / "+inv2_opt+"("+str(inv2_val)+"%)"
-                                save_list[final_damage]=[calc_wep,base_array,damage,damage_not_ele,inv_string,[ult_1,ult_2,ult_3,ult_skiper],damage_only_equ,final_damage2,wep_name_list_temp[calc_wep_num]]
-                                save_list0[final_damage2]=[calc_wep,base_array,damage,damage_not_ele2,inv_string,[ult_1,ult_2,ult_3,ult_skiper],damage_only_equ,final_damage,wep_name_list_temp[calc_wep_num]]
-                                self.count_num += 1
-                            else:
-                                self.count_all += 1
-                    # 코드 이름
-                    # 0추스탯 1추공 2증 3크 4추 5속추
-                    # 6모 7공 8스탯 9속강 10지속 11스증 12특수
-                    # 13공속 14크확 / 15 특수액티브 / 16~19 패시브 /20 그로기포함/21 2각캐특수액티브 /22~27 액티브레벨링/
-                    if self.max_setopt != 8 or set_perfect==1:
-                        for calc_now in all_list:
-                            if self.exit_calc==1:
-                                self.change_state_text(text='중지됨')
-                                return
-                            set_list=make_setopt_num(calc_now,0)[0]
-                            setopt_num=make_setopt_num(calc_now,0)[1]
-                            if setopt_num >= self.max_setopt-set_perfect :
-                                if setopt_num >= self.max_setopt: self.max_setopt = setopt_num
-                                base_array=np.array([0,0,extra_dam,extra_cri,extra_bon,0,extra_all,extra_att,extra_sta,ele_in,0,1,0,0,0,0,0,0,extra_pas2,0,0,0,0,0,0,0,0,0])
-                                ult_1=0;ult_2=0;ult_3=0;ult_skiper=0
-                                skiper=0;damage=0;coolper=0
-                                calc_wep=wep_num[calc_wep_num]+calc_now
-                                for_calc=wep_num[calc_wep_num]+make_set_list(calc_now,set_list)
-                                hard_coding=for_calc.count
-                                oneone=len(for_calc)
-                                oneonelist=[]
-                                max_damper=fixed_dam
-                                max_criper=fixed_cri
-                                for i in range(oneone):
-                                    no_cut=getone(for_calc[i])               ## 11번 스증
-                                    cut=np.array(no_cut[0:20]+no_cut[22:23]+no_cut[34:35]+no_cut[38:44])
-                                    skiper=(skiper/100+1)*(cut[11]/100+1)*100-100
-                                    coolper=(1-(100-coolper)/100*(100-no_cut[22+cool_eff_dictnum])/100)*100
-                                    max_damper=max([no_cut[44],max_damper])
-                                    max_criper=max([no_cut[45],max_criper])
-                                    ult_1=(no_cut[46]/100+1)*(ult_1/100+1)*100-100
-                                    ult_2=(no_cut[47]/100+1)*(ult_2/100+1)*100-100
-                                    ult_3=(no_cut[48]/100+1)*(ult_3/100+1)*100-100
-                                    oneonelist.append(cut)
-                                for i in range(oneone):
-                                    base_array=base_array+oneonelist[i]
+                    thread_save_list, thread_save_list0, thread_save_list1, thread_save_list2, thread_save_list3 = fut.result()
 
-                                hard_code_result=hard_coding_dealer(base_array,betterang,for_calc,coolper,skiper)
-                                base_array=hard_code_result[0]
-                                coolper=hard_code_result[1]
-                                skiper=hard_code_result[2]
-
-                                base_array[11]=skiper
-                                base_array[2]=max_damper+base_array[2]
-                                base_array[3]=max_criper+base_array[3]
-                                only_bon=base_array[4]
-                                base_array[4]=base_array[4]+base_array[5]*(base_array[9]*0.0045+1.05)
-                                actlvl=((base_array[active_eff_one]+base_array[22]*job_lv1+base_array[23]*job_lv2+base_array[24]*job_lv3+
-                                        base_array[25]*job_lv4+base_array[26]*job_lv5+base_array[27]*job_lv6)/100+1)
-                                actlvl2=base_array[22]*(0.5-silmari*0.06)*0.0213+base_array[24]*(0.5-silmari*0.06)*0.04+base_array[24]*(0.1484-silmari*0.0284)*0.0674+1
-                                paslvl=((100+base_array[16]*job_pas0)/100)*((100+base_array[17]*job_pas1)/100)*((100+base_array[18]*job_pas2)/100)*((100+base_array[19]*job_pas3)/100)
-                                if self.inv_tg == 2:
-                                    inv_auto = inv_auto_dealer(base_array, only_bon, inv2_on_tg, self.inv_type_list)
-                                    base_array=inv_auto[0]
-                                    only_bon=inv_auto[1]
-                                    inv1_opt=inv_auto[2]
-                                    inv2_opt=inv_auto[3]
-                                    inv1_val=inv_auto[4]
-                                    inv2_val=inv_auto[5]
-                                if ult_2 !=0:
-                                    ult1_per=job_ult1*(1+base_array[23]*0.0653)/actlvl*(ult_1/100)
-                                    ult2_per=job_ult2*(1+(base_array[25]*0.1203+0.04348*base_array[27]*silmari))/actlvl*(ult_2/100)
-                                    ult3_per=job_ult3*(1+base_array[27]*0.1883)/actlvl*(ult_3/100)
-                                    ult_skiper=(ult1_per+ult2_per+ult3_per)*100
-                                real_bon_not_ele=only_bon+base_array[5]*((base_array[9]-int(ele_skill))*0.0045+1.05)
-                                damage=((base_array[2]/100+1)*(base_array[3]/100+1)*(base_array[4]/100+1)*(base_array[6]/100+1)*(base_array[7]/100+1)*
-                                        (base_array[8]/100+1)*(base_array[9]*0.0045+1.05)*(base_array[10]/100+1)*(skiper/100+1)*
-                                        paslvl*((54500+3.31*base_array[0])/54500)*((4800+base_array[1])/4800)/(1.05+0.0045*int(ele_skill)))*wep_pre_calced[calc_wep_num]
-                                final_damage=damage*((100/(100-coolper)-1)*cool_eff*cool_on+1)*((base_array[12]+(actlvl-1)*100+ult_skiper)/100+1)*cool_pre_calced[calc_wep_num]
-                                final_damage2=damage*((100/(100-coolper)-1)*cool_eff2+1)*((base_array[12]+(actlvl2-1)*100)/100+1)*cool_pre_calced2[calc_wep_num]
-                                damage_not_ele=final_damage*(1.05+0.0045*int(ele_skill))/(base_array[9]*0.0045+1.05)*((base_array[9]-int(ele_skill))*0.0045+1.05)/1.05*(real_bon_not_ele/100+1)/(base_array[4]/100+1)
-                                damage_not_ele2=final_damage2*(1.05+0.0045*int(ele_skill))/(base_array[9]*0.0045+1.05)*((base_array[9]-int(ele_skill))*0.0045+1.05)/1.05*(real_bon_not_ele/100+1)/(base_array[4]/100+1)
-                                damage_only_equ=damage/paslvl/wep_pre_calced[calc_wep_num]
-
-                                inv_string="잔향부여= "+inv1_opt+"("+str(inv1_val)+"%) / "+inv2_opt+"("+str(inv2_val)+"%)"
-                                save_list[final_damage]=[calc_wep,base_array,damage,damage_not_ele,inv_string,[ult_1,ult_2,ult_3,ult_skiper],damage_only_equ,final_damage2,wep_name_list_temp[calc_wep_num]]
-                                save_list0[final_damage2]=[calc_wep,base_array,damage,damage_not_ele2,inv_string,[ult_1,ult_2,ult_3,ult_skiper],damage_only_equ,final_damage,wep_name_list_temp[calc_wep_num]]
-                                self.count_num += 1
-                            else:
-                                self.count_all += 1
-                    else:
-                        print('스킵됨')
-                        self.count_all += len(all_list)
-
-                else: ##버퍼
-                    base_b=10+int(db_preset['H2'].value)+int(db_preset['H4'].value)+int(db_preset['H5'].value)+1+extra_blvl
-                    base_c=12+int(db_preset['H3'].value)+1+extra_clvl
-                    base_pas0=0
-                    base_pas0_c=3
-                    base_pas0_b=0
-                    base_stat_s=4339+int(db_preset['H1'].value)+extra_stat-40 ##2각 꺼지면 -528, 진각 추가로 40 제거
-                    base_stat_d=int(db_preset['H6'].value)-int(db_preset['H1'].value)
-                    base_stat_h=4405+int(db_preset['H1'].value)+extra_stat-40  ##2각 꺼지면 -528, 진각 추가로 40 제거
-                    base_pas0_1=0
-                    load_presetc.close()
-                    lvlget = self.opt_buflvl.get
-                    inv_string="1옵션= "+inv3_opt+" ["+str(inv3_val)+"]\n2옵션= "+inv4_opt+" ["+str(inv4_val)+"]"
-                    #코드 이름
-                    #0 체정 1 지능
-                    #축복 2 스탯% 3 물공% 4 마공% 5 독공%
-                    #아포 6 고정 7 스탯%
-                    #8 축렙 9 포렙
-                    #10 아리아/보징증폭
-                    #11 전직패 12 보징/크크 13 각패1 14 각패2 15 2각 16 각패3
-                    #17 깡신념 18 깡신실 19 아리아쿨 20 하베쿨 21 1각시특수피증(시로코옵션) 22 진각렙
-
-                    setget = self.opt_buf.get
-                    if len(all_list_god)!=0:
-                        for calc_now in all_list_god:
-                            if self.exit_calc==1:
-                                self.change_state_text(text='중지됨')
-                                return
-                            set_list=make_setopt_num(calc_now,1)[0]
-                            setopt_num=make_setopt_num(calc_now,1)[1]
-                            if setopt_num >= self.max_setopt-set_perfect :
-                                base_array=np.array([base_stat_h,base_stat_s,0,0,0,0,extra_cstat,0,base_b,base_c,0,base_pas0,base_pas0_1,0,0,0,0,0,0,0,0,0,0])
-
-                                if setopt_num >= self.max_setopt: self.max_setopt = setopt_num
-                                b_stat=(extra_bstat/100+1)*1.236384*100-100  ##탈리스만 8%/8%/6%
-                                b_phy=extra_batt
-                                b_mag=extra_batt
-                                b_ind=extra_batt
-                                c_per=extra_cper
-                                calc_wep=wep_num[calc_wep_num]+calc_now
-                                for_calc=wep_num[calc_wep_num]+make_set_list(calc_now,set_list)
-                                hard_coding=for_calc.count
-                                oneone=len(for_calc)
-                                oneonelist=[]
-                                for i in range(oneone):
-                                    no_cut=np.array(setget(for_calc[i]))             ## 2 3 4 5 7
-                                    base_array=base_array+no_cut
-                                    b_stat=(b_stat/100+1)*(no_cut[2]/100+1)*100-100
-                                    b_phy=(b_phy/100+1)*(no_cut[3]/100+1)*100-100
-                                    b_mag=(b_mag/100+1)*(no_cut[4]/100+1)*100-100
-                                    b_ind=(b_ind/100+1)*(no_cut[5]/100+1)*100-100
-                                    c_per=(c_per/100+1)*(no_cut[7]/100+1)*100-100
-                                    oneonelist.append(no_cut)
-
-                                if hard_coding('1441') ==1:
-                                    if hard_coding('11440')!=1: ##3셋 스탯160, 영축힘지8%, 물마독3% 감소
-                                        base_array[0]=base_array[0]-160
-                                        base_array[1]=base_array[1]-160
-                                        b_stat=(b_stat/100+1)/1.08*100-100
-                                        b_phy=(b_phy/100+1)/1.03*100-100
-                                        b_mag=(b_mag/100+1)/1.03*100-100
-                                        b_ind=(b_ind/100+1)/1.03*100-100
-
-                                if jobup_select.get()[4:7] == "세인트":
-                                    b_base_att=lvlget('hol_b_atta')[int(base_array[8])]
-                                    stat_pas0lvl_b=lvlget('pas0')[int(base_array[11])+base_pas0_b]+lvlget('hol_pas0_1')[int(base_array[12])]
-                                    stat_pas0lvl_c=lvlget('pas0')[int(base_array[11])+base_pas0_c]+lvlget('hol_pas0_1')[int(base_array[12])]
-                                    stat_pas1lvl=lvlget('hol_pas1')[int(base_array[13])]+base_array[17]
-                                    stat_pas2lvl=lvlget('hol_act2')[int(base_array[15])]
-                                    stat_pas3lvl=lvlget('pas3')[int(base_array[16])]
-                                    stat_b=base_array[0]+stat_pas0lvl_b+stat_pas1lvl+stat_pas2lvl+stat_pas3lvl+19*base_array[10]+base_stat_d
-                                    stat_c=base_array[0]+stat_pas0lvl_c+stat_pas1lvl+stat_pas2lvl+stat_pas3lvl+19*base_array[10]
-                                    b_stat_calc=int(int(lvlget('hol_b_stat')[int(base_array[8])]*(b_stat/100+1))*(stat_b/620+1))
-                                    b_phy_calc=int(int(b_base_att*(b_phy/100+1))*(stat_b/620+1))
-                                    b_mag_calc=int(int(b_base_att*(b_mag/100+1))*(stat_b/620+1))
-                                    b_ind_calc=int(int(b_base_att*(b_ind/100+1))*(stat_b/620+1))
-                                    b_average=int((b_phy_calc+b_mag_calc+b_ind_calc)/3)+42+int(lvlget('hol_act0')[int(base_array[12])])
-                                    c_calc2=int(int((lvlget('c_stat')[int(base_array[9])]+base_array[6])*(1.1+0.01*int(base_array[22]))*(c_per/100+1))*(stat_c/750+1))
-                                    c_calc=int(int((lvlget('c_stat')[int(base_array[9])]+base_array[6])*(1.25+0.01*int(base_array[22]))*(c_per/100+1))*(stat_c/750+1))
-                                    pas1_calc=int(lvlget('hol_pas1_out')[int(base_array[13])]+273)
-                                    pas1_out=str(int(lvlget('hol_pas1_out')[int(base_array[13])]+273))+"("+str(int(20+base_array[13]))+"렙)"
-                                    save1='스탯='+str(b_stat_calc)+"\n앞뎀="+str(b_average)+"\n\n적용스탯= "+str(int(stat_b))+"\n적용레벨= "+str(int(base_array[8]))+"렙"
-                                    save2='스탯= '+str(c_calc)+'('+str(c_calc2)+')'+"\n\n적용스탯= "+str(int(stat_c))+"\n적용레벨= "+str(int(base_array[9]))+"렙"
-
-                                else:
-                                    if jobup_select.get()[4:7] == "세라핌":
-                                        b_value=665
-                                        aria=1.3
-                                        amuguna=1.15
-                                        amuguna2=1.15
-                                        amuguna_stat=40
-                                        crux=0
-                                    if jobup_select.get()[4:7] == "헤카테":
-                                        b_value=665
-                                        aria=1.25*1.15
-                                        amuguna=1.25+0.01*int(base_array[22])
-                                        amuguna2=1.1+0.01*int(base_array[22])
-                                        amuguna_stat=0
-                                        crux=42+int(base_array[13])
-
-                                    b_base_att=lvlget('se_b_atta')[int(base_array[8])]
-                                    stat_pas0lvl_b=lvlget('pas0')[int(base_array[11])+int(base_pas0_b)]
-                                    stat_pas0lvl_c=lvlget('pas0')[int(base_array[11])+int(base_pas0_c)]
-                                    stat_pas1lvl=lvlget('se_pas1')[int(base_array[13])]+base_array[18]
-                                    stat_pas2lvl=lvlget('se_pas2')[int(base_array[14])]
-                                    stat_pas3lvl=lvlget('pas3')[int(base_array[16])]
-                                    stat_b=base_array[1]+stat_pas0lvl_b+stat_pas1lvl+stat_pas2lvl+stat_pas3lvl+base_stat_d+amuguna_stat
-                                    stat_c=base_array[1]+stat_pas0lvl_c+stat_pas1lvl+stat_pas2lvl+stat_pas3lvl+amuguna_stat
-                                    b_stat_calc=int(int(lvlget('se_b_stat')[int(base_array[8])]*(b_stat/100+1))*(stat_b/b_value+1)*aria)
-                                    b_phy_calc=int(int(b_base_att*(b_phy/100+1)*(stat_b/b_value+1))*aria)
-                                    b_mag_calc=int(int(b_base_att*(b_mag/100+1)*(stat_b/b_value+1))*aria)
-                                    b_ind_calc=int(int(b_base_att*(b_ind/100+1)*(stat_b/b_value+1))*aria)
-                                    b_average=int((b_phy_calc+b_mag_calc+b_ind_calc)/3)+crux
-                                    c_calc=int(int((lvlget('c_stat')[int(base_array[9])]+base_array[6])*amuguna*(c_per/100+1))*(stat_c/750+1))
-                                    c_calc2=0
-                                    pas1_calc=int(stat_pas1lvl+442)
-                                    pas1_out=str(int(stat_pas1lvl+442))+"("+str(int(20+base_array[13]))+"렙)"
-                                    save1='스탯='+str(b_stat_calc)+"("+str(int(b_stat_calc/aria))+")\n앞뎀="+str(b_average)+"("+str(int(b_average/aria))+")\n\n적용스탯= "+str(int(stat_b))+"\n적용레벨= "+str(int(base_array[8]))+"렙"
-                                    save2='스탯= '+str(c_calc)+"\n\n적용스탯= "+str(int(stat_c))+"\n적용레벨= "+str(int(base_array[9]))+"렙"
-                                    if jobup_select.get()[4:7] == "헤카테":
-                                        c_calc2=int(int((lvlget('c_stat')[int(base_array[9])]+base_array[6])*amuguna2*(c_per/100+1))*(stat_c/750+1))
-                                        save2='스탯= '+str(c_calc)+'('+str(c_calc2)+')'+"\n\n적용스탯= "+str(int(stat_c))+"\n적용레벨= "+str(int(base_array[9]))+"렙"
-                                ##1축 2포 3합
-                                final_buf1=((15000+b_stat_calc)/250+1)*(2650+b_average)
-                                final_buf2=((15000+c_calc)/250+1)*2650*(base_array[21]/100+1)
-                                final_buf2_2=((15000+c_calc2)/250+1)*2650*(base_array[21]/100+1)
-                                final_buf3=((15000+pas1_calc+c_calc+b_stat_calc)/250+1)*(2650+b_average)*(base_array[21]/100+1)
-                                final_buf3_2=((15000+pas1_calc+c_calc2+b_stat_calc)/250+1)*(2650+b_average)*(base_array[21]/100+1)
-                                save_list1[final_buf1]=[list(calc_wep),[save1,save2,pas1_out],inv_string,base_array,final_buf1,wep_name_list_temp[calc_wep_num]]
-                                save_list2[final_buf2]=[list(calc_wep),[save1,save2,pas1_out],inv_string,base_array,final_buf2_2,wep_name_list_temp[calc_wep_num]]
-                                save_list3[final_buf3]=[list(calc_wep),[save1,save2,pas1_out],inv_string,base_array,final_buf3_2,wep_name_list_temp[calc_wep_num]]
-
-                                self.count_num += 1
-                            else:
-                                self.count_all += 1
-
-                    if self.max_setopt != 8 or set_perfect==1:
-                        for calc_now in all_list:
-                            if self.exit_calc==1:
-                                self.change_state_text(text='중지됨')
-                                return
-                            set_list=make_setopt_num(calc_now,0)[0]
-                            setopt_num=make_setopt_num(calc_now,0)[1]
-                            if setopt_num >= self.max_setopt-set_perfect :
-                                base_array=np.array([base_stat_h,base_stat_s,0,0,0,0,extra_cstat,0,base_b,base_c,0,base_pas0,base_pas0_1,0,0,0,0,0,0,0,0,0,0])
-
-                                if setopt_num >= self.max_setopt: self.max_setopt = setopt_num
-                                b_stat=(extra_bstat/100+1)*1.236384*100-100  ##탈리스만 8%/8%/6%
-                                b_phy=extra_batt
-                                b_mag=extra_batt
-                                b_ind=extra_batt
-                                c_per=extra_cper
-                                calc_wep=wep_num[calc_wep_num]+calc_now
-                                for_calc=wep_num[calc_wep_num]+make_set_list(calc_now,set_list)
-                                hard_coding=for_calc.count
-                                oneone=len(for_calc)
-                                oneonelist=[]
-                                for i in range(oneone):
-                                    no_cut=np.array(setget(for_calc[i]))             ## 2 3 4 5 7
-                                    base_array=base_array+no_cut
-                                    b_stat=(b_stat/100+1)*(no_cut[2]/100+1)*100-100
-                                    b_phy=(b_phy/100+1)*(no_cut[3]/100+1)*100-100
-                                    b_mag=(b_mag/100+1)*(no_cut[4]/100+1)*100-100
-                                    b_ind=(b_ind/100+1)*(no_cut[5]/100+1)*100-100
-                                    c_per=(c_per/100+1)*(no_cut[7]/100+1)*100-100
-                                    oneonelist.append(no_cut)
-
-                                if hard_coding('1441') ==1:
-                                    if hard_coding('11440')!=1: ##3셋 스탯160, 영축힘지8%, 물마독3% 감소
-                                        base_array[0]=base_array[0]-160
-                                        base_array[1]=base_array[1]-160
-                                        b_stat=(b_stat/100+1)/1.08*100-100
-                                        b_phy=(b_phy/100+1)/1.03*100-100
-                                        b_mag=(b_mag/100+1)/1.03*100-100
-                                        b_ind=(b_ind/100+1)/1.03*100-100
-
-                                if jobup_select.get()[4:7] == "세인트":
-                                    b_base_att=lvlget('hol_b_atta')[int(base_array[8])]
-                                    stat_pas0lvl_b=lvlget('pas0')[int(base_array[11])+base_pas0_b]+lvlget('hol_pas0_1')[int(base_array[12])]
-                                    stat_pas0lvl_c=lvlget('pas0')[int(base_array[11])+base_pas0_c]+lvlget('hol_pas0_1')[int(base_array[12])]
-                                    stat_pas1lvl=lvlget('hol_pas1')[int(base_array[13])]+base_array[17]
-                                    stat_pas2lvl=lvlget('hol_act2')[int(base_array[15])]
-                                    stat_pas3lvl=lvlget('pas3')[int(base_array[16])]
-                                    stat_b=base_array[0]+stat_pas0lvl_b+stat_pas1lvl+stat_pas2lvl+stat_pas3lvl+19*base_array[10]+base_stat_d
-                                    stat_c=base_array[0]+stat_pas0lvl_c+stat_pas1lvl+stat_pas2lvl+stat_pas3lvl+19*base_array[10]
-                                    b_stat_calc=int(int(lvlget('hol_b_stat')[int(base_array[8])]*(b_stat/100+1))*(stat_b/630+1))
-                                    b_phy_calc=int(int(b_base_att*(b_phy/100+1))*(stat_b/620+1)+lvlget('hol_act0')[int(base_array[12])])+42
-                                    b_mag_calc=int(int(b_base_att*(b_mag/100+1))*(stat_b/620+1)+lvlget('hol_act0')[int(base_array[12])])+42
-                                    b_ind_calc=int(int(b_base_att*(b_ind/100+1))*(stat_b/620+1)+lvlget('hol_act0')[int(base_array[12])])+42
-                                    b_average=int((b_phy_calc+b_mag_calc+b_ind_calc)/3)
-                                    c_calc2=int(int((lvlget('c_stat')[int(base_array[9])]+base_array[6])*(1.1+0.01*int(base_array[22]))*(c_per/100+1))*(stat_c/750+1))
-                                    c_calc=int(int((lvlget('c_stat')[int(base_array[9])]+base_array[6])*(1.25+0.01*int(base_array[22]))*(c_per/100+1))*(stat_c/750+1))
-                                    pas1_calc=int(lvlget('hol_pas1_out')[int(base_array[13])]+273)
-                                    pas1_out=str(int(lvlget('hol_pas1_out')[int(base_array[13])]+273))+"("+str(int(20+base_array[13]))+"렙)"
-                                    save1='스탯='+str(b_stat_calc)+"\n앞뎀="+str(b_average)+"\n\n적용스탯= "+str(int(stat_b))+"\n적용레벨= "+str(int(base_array[8]))+"렙"
-                                    save2='스탯= '+str(c_calc)+'('+str(c_calc2)+')'+"\n\n적용스탯= "+str(int(stat_c))+"\n적용레벨= "+str(int(base_array[9]))+"렙"
-
-                                else:
-                                    if jobup_select.get()[4:7] == "세라핌":
-                                        b_value=665
-                                        aria=1.3
-                                        amuguna=1.15
-                                        amuguna2=1.15
-                                        amuguna_stat=40
-                                        crux=0
-                                    if jobup_select.get()[4:7] == "헤카테":
-                                        b_value=665
-                                        aria=1.25*1.15
-                                        amuguna=1.25+0.01*int(base_array[22])
-                                        amuguna2=1.1+0.01*int(base_array[22])
-                                        amuguna_stat=0
-                                        crux=42+int(base_array[13])
-
-                                    b_base_att=lvlget('se_b_atta')[int(base_array[8])]
-                                    stat_pas0lvl_b=lvlget('pas0')[int(base_array[11])+int(base_pas0_b)]
-                                    stat_pas0lvl_c=lvlget('pas0')[int(base_array[11])+int(base_pas0_c)]
-                                    stat_pas1lvl=lvlget('se_pas1')[int(base_array[13])]+base_array[18]
-                                    stat_pas2lvl=lvlget('se_pas2')[int(base_array[14])]
-                                    stat_pas3lvl=lvlget('pas3')[int(base_array[16])]
-                                    stat_b=base_array[1]+stat_pas0lvl_b+stat_pas1lvl+stat_pas2lvl+stat_pas3lvl+base_stat_d+amuguna_stat
-                                    stat_c=base_array[1]+stat_pas0lvl_c+stat_pas1lvl+stat_pas2lvl+stat_pas3lvl+amuguna_stat
-                                    b_stat_calc=int(int(lvlget('se_b_stat')[int(base_array[8])]*(b_stat/100+1))*(stat_b/b_value+1)*aria)
-                                    b_phy_calc=int(int(b_base_att*(b_phy/100+1)*(stat_b/b_value+1))*aria)
-                                    b_mag_calc=int(int(b_base_att*(b_mag/100+1)*(stat_b/b_value+1))*aria)
-                                    b_ind_calc=int(int(b_base_att*(b_ind/100+1)*(stat_b/b_value+1))*aria)
-                                    b_average=int((b_phy_calc+b_mag_calc+b_ind_calc)/3)+crux
-                                    c_calc=int(int((lvlget('c_stat')[int(base_array[9])]+base_array[6])*amuguna*(c_per/100+1))*(stat_c/750+1))
-                                    c_calc2=0
-                                    pas1_calc=int(stat_pas1lvl+442)
-                                    pas1_out=str(int(stat_pas1lvl+442))+"("+str(int(20+base_array[13]))+"렙)"
-                                    save1='스탯='+str(b_stat_calc)+"("+str(int(b_stat_calc/aria))+")\n앞뎀="+str(b_average)+"("+str(int(b_average/aria))+")\n\n적용스탯= "+str(int(stat_b))+"\n적용레벨= "+str(int(base_array[8]))+"렙"
-                                    save2='스탯= '+str(c_calc)+"\n\n적용스탯= "+str(int(stat_c))+"\n적용레벨= "+str(int(base_array[9]))+"렙"
-                                    if jobup_select.get()[4:7] == "헤카테":
-                                        c_calc2=int(int((lvlget('c_stat')[int(base_array[9])]+base_array[6])*amuguna2*(c_per/100+1))*(stat_c/750+1))
-                                        save2='스탯= '+str(c_calc)+'('+str(c_calc2)+')'+"\n\n적용스탯= "+str(int(stat_c))+"\n적용레벨= "+str(int(base_array[9]))+"렙"
-                                ##1축 2포 3합
-                                final_buf1=((15000+b_stat_calc)/250+1)*(2650+b_average)
-                                final_buf2=((15000+c_calc)/250+1)*2650*(base_array[21]/100+1)
-                                final_buf2_2=((15000+c_calc2)/250+1)*2650*(base_array[21]/100+1)
-                                final_buf3=((15000+pas1_calc+c_calc+b_stat_calc)/250+1)*(2650+b_average)*(base_array[21]/100+1)
-                                final_buf3_2=((15000+pas1_calc+c_calc2+b_stat_calc)/250+1)*(2650+b_average)*(base_array[21]/100+1)
-                                save_list1[final_buf1]=[list(calc_wep),[save1,save2,pas1_out],inv_string,base_array,final_buf1,wep_name_list_temp[calc_wep_num]]
-                                save_list2[final_buf2]=[list(calc_wep),[save1,save2,pas1_out],inv_string,base_array,final_buf2_2,wep_name_list_temp[calc_wep_num]]
-                                save_list3[final_buf3]=[list(calc_wep),[save1,save2,pas1_out],inv_string,base_array,final_buf3_2,wep_name_list_temp[calc_wep_num]]
-
-                                self.count_num += 1
-                            else:
-                                self.count_all += 1
-                    else:
-                        print('스킵됨')
-                        self.count_all += len(all_list_god)
-
-
+                    save_list.update(thread_save_list)
+                    save_list0.update(thread_save_list0)
+                    save_list1.update(thread_save_list1)
+                    save_list2.update(thread_save_list2)
+                    save_list3.update(thread_save_list3)
 
         ###### 결과 순위 매기기 #######################################################################################
         self.show_number = 0
@@ -3785,7 +4166,10 @@ class Calculator:
                     pass
             ranking=[ranking1,ranking2,ranking3]
             self.show_result(ranking,'buf',ele_skill,cool_eff)
+
+        load_presetc.close()
         load_excel.close()
+
         self.change_state_text(text='출력 완료')
         print("걸린 시간 = "+str(time.time() - start_time)+"초")
 
@@ -5525,7 +5909,7 @@ class Calculator:
     ## 실시간 갱신 카운터 (1: 계산 카운트 / 2: 경우의 수 카운트)
     def update_count(self):
         while True:
-            text = f"{self.count_num}유효/{self.count_all}무효\n{self.all_list_list_num}전체"
+            text = f"{self.count_num.value}유효/{self.count_all.value}무효\n{self.all_list_list_num}전체"
             self.change_case_count_text(text)
             time.sleep(0.1)
 
