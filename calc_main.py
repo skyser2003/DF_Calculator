@@ -5814,8 +5814,6 @@ def sync_wep_list():
 
 
 ##디폴트 변경
-default_chawon=0
-default_old=0
 legend_on_tg=IntVar()
 default_img1n=calculator.get_photo_image("ext_img/default1n.png")
 default_img1f=calculator.get_photo_image("ext_img/default1f.png")
