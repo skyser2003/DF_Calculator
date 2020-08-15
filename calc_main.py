@@ -1268,6 +1268,9 @@ class Calculator:
         self.save_select.place(x=345 + 165, y=410 - 100)
         self.save_select.set(self.save_name_list[0])
 
+        self.tg_groggy_img1 = self.get_photo_image("ext_img/groggy_swi1.png")
+        self.tg_groggy_img2 = self.get_photo_image("ext_img/groggy_swi2.png")
+
     def init_equipments(self):
         # 일반 에픽
         normal_equip_combinations = [
@@ -2951,37 +2954,6 @@ def calc(mode):
 def calc_thread():
     threading.Thread(target=calc,args=(0,),daemon=True).start()
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-calculator.tg_groggy_img1 = calculator.get_photo_image('ext_img/groggy_swi1.png')
-calculator.tg_groggy_img2 = calculator.get_photo_image('ext_img/groggy_swi2.png')
 type1_img=calculator.get_photo_image('ext_img/type_bless.png')
 type2_img=calculator.get_photo_image('ext_img/type_crux.png')
 type3_img=calculator.get_photo_image('ext_img/type_all.png')
