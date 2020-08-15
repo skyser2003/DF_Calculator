@@ -1761,7 +1761,7 @@ class Calculator:
             select_item[f"tg{i}"] = 0
 
         check_equipment()
-        wep_list_reset()
+        self.wep_list_reset()
 
         for i in range(101, 156):
             try:
