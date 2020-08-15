@@ -263,13 +263,13 @@ class Calculator:
         self.owned_equipments: Dict[str, int] = {} # 장비 선택 시 점등
         self.auto_custom = 0  # 클라이언트 업데이트 시 preset 업데이트 여부
         self.opt_one: Dict[str, str] = {}
-        self.name_one: Dict[str, str] = {}
         self.opt_job: Dict[str, str] = {}
         self.opt_job_ele: Dict[str, str] = {}
         self.opt_buf: Dict[str, str] = {}
         self.opt_buflvl: Dict[str, str] = {}
         self.opt_leveling: Dict[str, str] = {}
         self.server_list = ["카인", "디레지에", "바칼", "힐더", "안톤", "카시야스", "프레이", "시로코"]
+        self.wep_list: List[str] = []
 
         # 에픽 장비
         self.normal_epic_list: List[str] = []
@@ -1430,10 +1430,9 @@ class Calculator:
         db_one = load_excel["one"]
 
         opt_one = self.opt_one
-        name_one = self.name_one
 
         opt_one.clear()
-        name_one.clear()
+        name_one = {}
         a = 1
 
         for row in db_one.rows:
@@ -1523,6 +1522,15 @@ class Calculator:
             load_preset.close()
         if load_excel_ext is None:
             load_excel.close()
+
+        # Info loaded from db
+        self.wep_list.clear()
+        wep_list = self.wep_list
+
+        for i in range(0, 75):
+            wep_list.append(name_one[str(i + 111001)][1])
+
+        wep_list.append(name_one["111076"][1])
 
     def load_preset_name(self, load_preset_ext: Workbook = None):
         load_preset = load_preset_ext
@@ -1759,8 +1767,8 @@ def calc(mode):
     else:
         wep_name_list_temp = calculator.wep_name_list
     for now_wep in wep_name_list_temp:
-        for i in range(0,76):
-            if now_wep == wep_list[i]:
+        for i, weapon_name in enumerate(calculator.wep_list):
+            if now_wep == weapon_name:
                 wep_num.append((str(i+111001),))
         if now_wep.count("흑천의 주인")==1: wep_num.append(("111001",))
         elif now_wep.count("원초의 꿈")==1: wep_num.append(("111076",))
@@ -5409,11 +5417,6 @@ def show_profile2(name,server):
 def show_profile(name,server):
     threading.Thread(target=show_profile2,args=(name,server),daemon=True).start()
 
-
-wep_list=[]
-for i in range(0,75):
-    wep_list.append(calculator.name_one[str(i+111001)][1])
-wep_list.append(calculator.name_one["111076"][1])
 
 wep_type_temp=[]
 def wep_job_selected(event):
