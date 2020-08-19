@@ -4084,7 +4084,14 @@ class Calculator:
                 init_global(self.exit_calc, self.count_num, self.count_all)
 
                 calc_result = calc_per_thread(all_list_per_thread[0], 1, calc_wep_num, **common_args)
-                save_list, save_list0, save_list1, save_list2, save_list3 = calc_result
+
+                local_save_list, local_save_list0, local_save_list1, local_save_list2, local_save_list3 = calc_result
+
+                save_list.update(local_save_list)
+                save_list0.update(local_save_list0)
+                save_list1.update(local_save_list1)
+                save_list2.update(local_save_list2)
+                save_list3.update(local_save_list3)
             else:
                 with ProcessPoolExecutor(max_workers=num_thread, initializer=init_global, initargs=(self.exit_calc, self.count_num, self.count_all)) as executor:
                     futures: List[Future] = []
