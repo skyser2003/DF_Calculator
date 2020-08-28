@@ -2172,7 +2172,7 @@ class Calculator:
         style_select.set('증뎀15%')
         style_select.place(x=390 - 17, y=250 + 52)
 
-        creature_list = ['증뎀10%', '모공15%', '크증18%', '물마독공18%', '기타(직접비교)']
+        creature_list = ['증뎀10%', '크증10%', '모공15%', '크증18%', '물마독공18%', '기타(직접비교)']
         creature_select = self.creature_select = tkinter.ttk.Combobox(self.window,
                                                                                              width=13,
                                                                                              values=creature_list)
@@ -3322,6 +3322,8 @@ class Calculator:
 
         if creature_calced == '증뎀10%':
             fixed_dam = max(fixed_dam, 10)
+        elif creature_calced == '크증10%':
+            fixed_cri = 10
         elif creature_calced == '모공15%':
             extra_all=15
         elif creature_calced == '크증18%':
@@ -5182,12 +5184,19 @@ class Calculator:
 
                 no_style_default = (now_updam + updam_diff + 100) / (now_updam + 100)
                 now_updam += updam_diff
-            elif style_calced=='크증10%' and creature_calced!='크증18%': no_style_default=(now_cridam-10+100)/(now_cridam+100);now_cridam=now_cridam-10
+            elif style_calced == '크증10%':
+                if creature_calced == '크증10%' or creature_calced == '크증18%':
+                    cridam_diff = 0
+                else:
+                    cridam_diff = -10
+
+                no_style_default = (now_cridam + cridam_diff + 100) / (now_cridam + 100)
+                now_cridam += cridam_diff
             elif style_calced=='추뎀10%': no_style_default=(now_bondam-10+100)/(now_bondam+100);now_bondam=now_bondam-10
             elif style_calced=='속강32': no_style_default=((now_ele-32)*0.0045+1.05)/((now_ele)*0.0045+1.05);now_ele=now_ele-32
 
-            if creature_calced=='크증18%':
-                change_cridam=0
+            if creature_calced == '크증10%' or creature_calced == '크증18%':
+                change_cridam = 0
             elif creature_calced == '증뎀10%':
                 change_updam = 5
 
