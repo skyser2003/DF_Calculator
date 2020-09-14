@@ -3,3 +3,4 @@ openpyxl
 opencv-python
 pillow
 requests
+opencv-contrib-python
